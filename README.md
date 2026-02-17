@@ -11,6 +11,7 @@
 - Vite
 - ESLint
 - Prettier
+- Sass (SCSS)
 - Husky
 - GitHub Actions (CI)
 
