@@ -23,7 +23,7 @@
 ### Steps:
 
 1. Clone repository:
-   git clone git@github.com:Webis-2022/rs-tandem.git
+   git clone [git@github.com:Webis-2022/rs-tandem.git](https://github.com/Webis-2022/rs-tandem.git)
 
 2. Go to project folder:
    cd project
