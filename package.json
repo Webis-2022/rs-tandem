@@ -42,5 +42,8 @@
     "vite": "^7.3.1",
     "vite-plugin-eslint2": "^5.0.5",
     "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1"
   }
 }
