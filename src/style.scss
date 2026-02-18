@@ -1,0 +1,7 @@
+@use 'sass:color';
+
+$primary-color: #3498db;
+
+body {
+  background: $primary-color;
+}
