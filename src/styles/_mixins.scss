@@ -1,0 +1,28 @@
+// Flex container
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Media query
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: 600px) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media (max-width: 900px) {
+      @content;
+    }
+  } @else if $breakpoint == desktop {
+    @media (min-width: 901px) {
+      @content;
+    }
+  }
+}
+
+// Button shadow
+@mixin button-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -1,6 +1,7 @@
 # rs-tandem
 
 ## Team:
+
 - Jevgeni Verjovkin
 - Aleksandra Potapova
 - Anna Makarenko
@@ -9,6 +10,7 @@
 
 - TypeScript
 - Vite
+- Vitest
 - ESLint
 - Prettier
 - Sass (SCSS)
@@ -18,6 +20,7 @@
 ## How to run locally
 
 ### Requirements:
+
 - Node.js >= 18
 - npm >= 9
 
@@ -42,6 +45,6 @@ http://localhost:3000
 
 - main — stable production branch
 - develop — integration branch
-- feature/* — feature branches
+- feature/\* — feature branches
 
 All changes must go through pull request.
