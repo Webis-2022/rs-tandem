@@ -4,7 +4,7 @@
 
 - Jevgeni Verjovkin
 - Aleksandra Potapova
-- Anna Makarenko
+- Anna Demyanovich
 
 ## Tech Stack
 
