@@ -1,10 +1,15 @@
 # rs-tandem
 
+## Project description
+
+HTML Trainer for interview preparation. Generating questions on various topics using LLM.
+
 ## Team:
 
-- Jevgeni Verjovkin
-- Aleksandra Potapova
-- Anna Demyanovich
+- Jevgeni Verjovkin - https://github.com/Webis-2022/Jevgeni-Verjovkin
+- Aleksandra Potapova - https://github.com/alekspanda
+- Anna Demyanovich - https://github.com/thefoxtale
+- Sergei Urazov - https://github.com/urazof
 
 ## Tech Stack
 
