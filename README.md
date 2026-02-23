@@ -59,3 +59,4 @@ All changes must go through pull request.
 ## For Developers:
 
 - [Add new route and page](./src/docs/new-route.md)
+- [Supabase API methods](./src/docs/api-test-guide.md)
