@@ -1,8 +1,8 @@
-import { BaseComponent } from '../../core';
+import { BaseComponent } from '../core';
 
 export class Footer extends BaseComponent<'footer'> {
   constructor() {
-    super({ tag: 'footer', className: ['landing-page-footer'] });
+    super({ tag: 'footer', className: ['app-footer'] });
 
     const year = new Date().getFullYear();
     const text = new BaseComponent({

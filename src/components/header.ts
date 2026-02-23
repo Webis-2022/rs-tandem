@@ -1,17 +1,26 @@
-import { BaseComponent } from '../../core';
-import { language$ } from '../../store/language.store';
-import { translations, type TranslationKey } from '../../i18n';
+import { BaseComponent } from '../core';
+import { language$ } from '../store/language-store.ts';
+import { translations, type TranslationKey } from '../i18n';
+
+type HeaderCallbacks = {
+  onHome: () => void;
+  onSignIn: () => void;
+  onTestApi: () => void;
+};
 
 export class Header extends BaseComponent<'header'> {
   private readonly logo: BaseComponent<'span'>;
+  private homeBtn: BaseComponent<'button'>;
   private readonly signInBtn: BaseComponent<'button'>;
   private readonly testApiBtn: BaseComponent<'button'>;
   private readonly langRuBtn: BaseComponent<'button'>;
   private readonly langEnBtn: BaseComponent<'button'>;
+  private callbacks: HeaderCallbacks;
   private readonly unsubscribe: () => void;
 
-  constructor() {
-    super({ tag: 'header', className: ['landing-page-header'] });
+  constructor(callbacks: HeaderCallbacks) {
+    super({ tag: 'header', className: ['app-header'] });
+    this.callbacks = callbacks;
 
     this.logo = new BaseComponent({ tag: 'span', className: ['logo'] });
 
@@ -20,15 +29,14 @@ export class Header extends BaseComponent<'header'> {
       className: ['nav-buttons'],
     });
 
+    this.homeBtn = new BaseComponent({ tag: 'button' });
+    this.homeBtn.addEventListener('click', this.callbacks.onHome);
+
     this.signInBtn = new BaseComponent({ tag: 'button' });
-    this.signInBtn.addEventListener('click', () => {
-      alert('Sign In clicked');
-    });
+    this.signInBtn.addEventListener('click', this.callbacks.onSignIn);
 
     this.testApiBtn = new BaseComponent({ tag: 'button' });
-    this.testApiBtn.addEventListener('click', () => {
-      alert('Test API clicked');
-    });
+    this.testApiBtn.addEventListener('click', this.callbacks.onTestApi);
 
     const langButtons = new BaseComponent({
       tag: 'div',
@@ -42,7 +50,12 @@ export class Header extends BaseComponent<'header'> {
     this.langEnBtn.addEventListener('click', () => language$.set('en'));
 
     langButtons.append(this.langRuBtn, this.langEnBtn);
-    navButtons.append(this.signInBtn, this.testApiBtn, langButtons);
+    navButtons.append(
+      this.homeBtn,
+      this.signInBtn,
+      this.testApiBtn,
+      langButtons
+    );
     this.append(this.logo, navButtons);
 
     this.unsubscribe = language$.subscribe(() => this.updateHeader());
@@ -60,6 +73,7 @@ export class Header extends BaseComponent<'header'> {
     const dictionary = (key: TranslationKey) => translations[lang][key];
 
     this.logo.element.textContent = dictionary('appName');
+    this.homeBtn.element.textContent = dictionary('home');
     this.signInBtn.element.textContent = dictionary('signIn');
     this.testApiBtn.element.textContent = dictionary('testApi');
   }

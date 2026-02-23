@@ -1,8 +1,8 @@
-import { LandingPage } from './components/landing-page';
+import { App } from './components';
 
 import './styles/main.scss';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const app = new LandingPage();
+  const app = new App();
   document.body.appendChild(app.element);
 });

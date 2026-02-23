@@ -1,13 +1,13 @@
 @use 'sass:color';
 @import '_variables.scss';
 
-.landing-page-container {
+.app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.landing-page-header {
+.app-header {
   background-color: $color-primary;
   color: white;
   padding: $spacing-md $spacing-xl;
@@ -42,7 +42,7 @@
   }
 }
 
-.landing-page-main {
+.app-main {
   flex: 1;
   padding: $spacing-xl;
   background-color: $color-background;
@@ -53,7 +53,7 @@
   color: color.adjust($color-text, $lightness: 40%);
 }
 
-.landing-page-footer {
+.app-footer {
   background-color: darken($color-background, 5%);
   color: color.adjust($color-text, $lightness: 20%);
   text-align: center;
