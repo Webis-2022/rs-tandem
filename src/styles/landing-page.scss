@@ -1,0 +1,62 @@
+@use "sass:color";
+@import '_variables.scss';
+
+.landing-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-page-header {
+  background-color: $color-primary;
+  color: white;
+  padding: $spacing-md $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: $shadow-default;
+
+  .logo {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  button {
+    background: white;
+    border: none;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color $transition-speed;
+
+    &:hover {
+      background-color: darken(white, 10%);
+    }
+  }
+}
+
+.landing-page-main {
+  flex: 1;
+  padding: $spacing-xl;
+  background-color: $color-background;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: color.adjust($color-text, $lightness: 40%);
+}
+
+.landing-page-footer {
+  background-color: darken($color-background, 5%);
+  color: color.adjust($color-text, $lightness: 20%);
+  text-align: center;
+  padding: $spacing-md;
+  border-top: 1px solid color.adjust($color-text, $lightness: 70%);
+}
