@@ -1,5 +1,5 @@
 @use 'sass:color';
-@import '_variables.scss';
+@use 'variables';
 
 .app-container {
   display: flex;
@@ -8,13 +8,13 @@
 }
 
 .app-header {
-  background-color: $color-primary;
+  background-color: variables.$color-primary;
   color: white;
-  padding: $spacing-md $spacing-xl;
+  padding: variables.$spacing-md variables.$spacing-xl;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: $shadow-default;
+  box-shadow: variables.$shadow-default;
 
   .logo {
     font-family: 'Poppins', sans-serif;
@@ -24,57 +24,57 @@
 
   .nav-buttons {
     display: flex;
-    gap: $spacing-md;
+    gap: variables.$spacing-md;
   }
 
   button {
     background: white;
     border: none;
-    padding: $spacing-xs $spacing-md;
-    border-radius: $border-radius;
+    padding: variables.$spacing-xs variables.$spacing-md;
+    border-radius: variables.$border-radius;
     cursor: pointer;
     font-weight: 500;
-    transition: background-color $transition-speed;
+    transition: background-color variables.$transition-speed;
 
     &:hover {
-      background-color: darken(white, 10%);
+      background-color: color.adjust(variables.$color-text, $lightness: -10%);
     }
   }
 }
 
 .app-main {
   flex: 1;
-  padding: $spacing-xl;
-  background-color: $color-background;
+  padding: variables.$spacing-xl;
+  background-color: variables.$color-background;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 2rem;
-  color: color.adjust($color-text, $lightness: 40%);
+  color: color.adjust(variables.$color-text, $lightness: 40%);
 }
 
 .app-footer {
-  background-color: darken($color-background, 5%);
-  color: color.adjust($color-text, $lightness: 20%);
+  background-color: color.adjust(variables.$color-text, $lightness: -5%);
+  color: color.adjust(variables.$color-text, $lightness: 20%);
   text-align: center;
-  padding: $spacing-md;
-  border-top: 1px solid color.adjust($color-text, $lightness: 70%);
+  padding: variables.$spacing-md;
+  border-top: 1px solid color.adjust(variables.$color-text, $lightness: 70%);
 }
 
 .lang-buttons {
   display: flex;
-  gap: $spacing-xs;
-  margin-left: $spacing-md;
+  gap: variables.$spacing-xs;
+  margin-left: variables.$spacing-md;
 
   button {
     background: transparent;
     border: 1px solid white;
     color: white;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $border-radius;
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$border-radius;
     cursor: pointer;
     font-weight: 500;
-    transition: background-color $transition-speed;
+    transition: background-color variables.$transition-speed;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.2);
@@ -82,7 +82,7 @@
 
     &.active {
       background-color: white;
-      color: $color-primary;
+      color: variables.$color-primary;
       border-color: white;
     }
   }

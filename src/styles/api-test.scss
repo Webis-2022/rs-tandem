@@ -1,0 +1,110 @@
+@use 'sass:color';
+@use 'variables';
+
+.api-test-container {
+  display: flex;
+  gap: variables.$spacing-xl;
+  padding: variables.$spacing-xl;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+
+  .api-test-left {
+    flex: 0 0 250px;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-sm;
+
+    .auth-title {
+      margin: 0 0 variables.$spacing-sm 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: variables.$color-secondary;
+      border-bottom: 2px solid variables.$color-primary;
+      padding-bottom: variables.$spacing-xs;
+    }
+
+    input {
+      width: 100%;
+      padding: variables.$spacing-sm;
+      margin-bottom: variables.$spacing-sm;
+      border: 1px solid #ccc;
+      border-radius: variables.$border-radius;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: variables.$spacing-sm;
+      background: variables.$color-primary;
+      color: white;
+      border: none;
+      border-radius: variables.$border-radius;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color variables.$transition-speed;
+
+      &:hover {
+        background: color.adjust(variables.$color-primary, $lightness: -10%);
+      }
+    }
+  }
+
+  .api-test-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    .textarea-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: variables.$spacing-xs variables.$spacing-sm;
+      background-color: lighten(variables.$color-background, 5%);
+      border: 1px solid #ccc;
+      border-radius: variables.$border-radius variables.$border-radius 0 0;
+
+      a {
+        color: variables.$color-primary;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .copy-btn {
+        background: variables.$color-secondary;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: variables.$border-radius;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color variables.$transition-speed;
+
+        &:hover {
+          background: darken(variables.$color-secondary, 10%);
+        }
+      }
+    }
+
+    textarea {
+      height: 100%;
+      min-height: 400px;
+      padding: variables.$spacing-md;
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #ccc;
+      border-radius: 0 0 variables.$border-radius variables.$border-radius;
+      resize: vertical;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+  }
+}
