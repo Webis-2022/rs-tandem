@@ -1,4 +1,4 @@
-@use "sass:color";
+@use 'sass:color';
 @import '_variables.scss';
 
 .landing-page-container {
@@ -59,4 +59,31 @@
   text-align: center;
   padding: $spacing-md;
   border-top: 1px solid color.adjust($color-text, $lightness: 70%);
+}
+
+.lang-buttons {
+  display: flex;
+  gap: $spacing-xs;
+  margin-left: $spacing-md;
+
+  button {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color $transition-speed;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+      background-color: white;
+      color: $color-primary;
+      border-color: white;
+    }
+  }
 }
