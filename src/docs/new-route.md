@@ -111,15 +111,19 @@ export const mainTranslations: Record<
 
 Затем нужно добавить свой файл в `src/i18n/index.ts`. После этого он станет доступен для использования в приложении.
 
-## 3. Добавление нового маршрута и новой страницы в роутер
+## 3. Добавление константы для маршрута
+
+В файле `src/constants/routes.ts` нужно добавить в константу новый маршрут, например `API_TEST: '/api-test'`
+
+## 4. Добавление нового маршрута и новой страницы в роутер
 
 В файле `src/components/app.ts` нужно найти метод setupRoutes() и добавить в него новую строку для своей страницы:
 
 ```typescript
 private setupRoutes(): void {
-  this.router.addRoute('/', homePage);
-  this.router.addRoute('/login', loginPage);
-  this.router.addRoute('/api-test', apiTestPage);
+  this.router.addRoute(Routes.HOME, homePage);
+  this.router.addRoute(Routes.LOGIN, loginPage);
+  this.router.addRoute(Routes.API_TEST, apiTestPage);
   this.router.setNotFound(notFoundPage);
   this.router.start();
 }
@@ -127,7 +131,7 @@ private setupRoutes(): void {
 
 Также нужно импортировать компонент страницы.
 
-## 4. Добавление кнопки в header (если нужно)
+## 5. Добавление кнопки в header (если нужно)
 
 Для разработки можно добавлять кнопку для перехода на страницу в header. Для этого нужно выполнить несколько шагов:
 
@@ -149,9 +153,9 @@ this.testApiBtn.element.textContent = dictionary('testApi');
 
 ```typescript
 this.header = new Header({
-  onHome: () => this.router.navigate('/'),
-  onSignIn: () => this.router.navigate('/login'),
-  onTestApi: () => this.router.navigate('/api-test'),
+  onHome: () => this.router.navigate(Routes.HOME),
+  onSignIn: () => this.router.navigate(Routes.LOGIN),
+  onTestApi: () => this.router.navigate(Routes.API_TEST),
 });
 ```
 
