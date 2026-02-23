@@ -40,7 +40,9 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 3. Install dependencies:
    npm install
 
-4. Run development server:
+4. Create .env file from .env.example
+
+5. Run development server:
    npm run dev
 
 Project will be available at:
@@ -53,3 +55,7 @@ http://localhost:3000
 - feature/\* — feature branches
 
 All changes must go through pull request.
+
+## For Developers:
+
+- [Add new route and page](./src/docs/new-route.md)
