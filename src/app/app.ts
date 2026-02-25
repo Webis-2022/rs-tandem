@@ -1,12 +1,15 @@
 import { ROUTES } from '../types';
 import { createRouter } from './router';
-import { createLayout } from './layout';
+import { createLayout } from './layout/layout';
 import { auth } from './services/auth';
 import { setNavigate } from './navigation';
 
-import { createLandingView } from '../pages/landing';
-import { createLoginView } from '../pages/login';
-import { createDashboardView } from '../pages/dashboard';
+// import { createLandingView } from '../pages/landing/landing';
+// import { createLoginView } from '../pages/login/login';
+import { createDashboardView } from '../pages/dashboard/dashboard';
+import { createLandingView } from '../pages/landing/landing';
+import { createLoginView } from '../pages/login/login';
+// import { createDashboardView } from '../pages/dashboard';
 
 export function initApp(mount: HTMLElement): void {
   const layout = createLayout();

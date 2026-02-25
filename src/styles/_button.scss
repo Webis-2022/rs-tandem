@@ -1,0 +1,21 @@
+@use './variables' as v;
+
+.btn {
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$border-radius;
+  border: none;
+  cursor: pointer;
+  transition: v.$transition-speed;
+
+  background: v.$primary-color;
+  color: v.$color-white;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
