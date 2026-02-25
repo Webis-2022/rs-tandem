@@ -32,10 +32,18 @@ export const createRouter = (options: CreateRouterOptions): Router => {
     );
   };
 
-  // Рендер текущего URL
+  // Рендер текущего URL (посмотреть на текущий URL и отрисовать нужную страницу)
   const render = (): void => {
-    const path = (window.location.pathname || fallback) as RoutePath; // текущий путь
-    const route = resolve(path); // берём конфиг для этого пути (или fallback)
+    const rawPath = window.location.pathname; // текущий путь из адресной строки
+
+    // если путь неизвестен — заменяем URL на fallback (без записи в историю)
+    if (!(rawPath in routes)) {
+      go(fallback, true);
+      return;
+    }
+
+    const path = rawPath as RoutePath; // приводим тип к RoutePath
+    const route = resolve(path); // получаем настройки (конфигурацию) текущего маршрута ({ createView, guard, redirectTo })
 
     if (route.guard === 'authed' && !isAuthed()) {
       go(route.redirectTo ?? fallback, true);
