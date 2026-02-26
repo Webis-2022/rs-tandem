@@ -17,6 +17,8 @@ dist-ssr
 .eslintcache
 .vscode/*
 !.vscode/extensions.json
+.env
+.eslintcache
 .idea
 .DS_Store
 *.suo
