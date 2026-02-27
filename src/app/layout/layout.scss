@@ -1,0 +1,27 @@
+@use '../../styles/variables' as v;
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  padding: v.$spacing-lg v.$spacing-xl;
+  border-bottom: 1px solid v.$color-divider;
+}
+
+.nav {
+  display: flex;
+  gap: v.$spacing-lg;
+}
+
+.nav__link {
+  text-decoration: none;
+  color: v.$text-color;
+}
+
+.app-main {
+  flex: 1;
+  padding: v.$spacing-xl;
+}
