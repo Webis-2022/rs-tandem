@@ -1,0 +1,13 @@
+@use './variables' as v;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.page__actions {
+  display: flex;
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+}
