@@ -53,3 +53,5 @@ http://localhost:3000
 - feature/\* — feature branches
 
 All changes must go through pull request.
+
+<!-- CI trigger -->
