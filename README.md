@@ -46,6 +46,10 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 Project will be available at:
 http://localhost:3000
 
+## App Deploy Link
+
+[https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
+
 ## Branch Strategy
 
 - main — stable production branch
