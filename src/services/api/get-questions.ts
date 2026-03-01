@@ -1,8 +1,8 @@
 import { supabase } from '../supabaseClient';
 
-export async function getQuestions() {
+export async function getQuestions(topicId: number, difficulty: string) {
   const { data, error } = await supabase.functions.invoke('getQuestions', {
-    body: { topicId: 10, difficulty: 'easy' },
+    body: { topicId, difficulty },
   });
   if (error) {
     throw new Error(error.message);

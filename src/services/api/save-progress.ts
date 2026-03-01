@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 type SaveProgressParams = {
   userId: string;
   topic: string;
-  time: string;
+  time: number;
   score: number;
 };
 

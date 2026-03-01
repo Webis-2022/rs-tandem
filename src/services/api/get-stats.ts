@@ -1,10 +1,9 @@
 import { supabase } from '../supabaseClient';
-export async function getStats() {
+export async function getStats(userId: string) {
   const { data, error } = await supabase
     .from('game_results')
     .select('*')
-    // TODO: replace user.id
-    .eq('user_id', '550e8400-e29b-41d4-a716-446655440088');
+    .eq('user_id', userId);
 
   if (error) {
     throw new Error(error.message);
