@@ -53,4 +53,31 @@ http://localhost:3000
 
 All changes must go through pull request.
 
-<!-- CI trigger -->
+## APIService
+
+Responsible for:
+
+- Communication with Supabase (database, auth, edge functions)
+
+- Calling Supabase Edge Functions (e.g. question batch generation)
+
+- Normalizing and forwarding errors
+
+- Optional retry logic for network failures
+
+- Attaching session context automatically (handled via Supabase client)
+
+- Returning clean data to higher layers (QuestionService, etc.)
+
+Not responsible for:
+
+- AI logic or prompt generation
+
+- Business logic (game rules, scoring, validation)
+
+- State management
+
+- UI rendering
+
+- Deciding when to generate vs reuse cached questions
+  (this must be handled inside Edge Functions)
