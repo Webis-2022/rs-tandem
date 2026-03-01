@@ -9,6 +9,7 @@ import { setNavigate } from './navigation';
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
 import { createLoginView } from '../pages/login/login';
+import { createPracticeView } from '../pages/practice/practice';
 // import { createDashboardView } from '../pages/dashboard';
 
 export function initApp(mount: HTMLElement): void {
@@ -28,6 +29,11 @@ export function initApp(mount: HTMLElement): void {
       },
       [ROUTES.Dashboard]: {
         createView: createDashboardView,
+        guard: 'authed',
+        redirectTo: ROUTES.Login,
+      },
+      [ROUTES.Practice]: {
+        createView: createPracticeView,
         guard: 'authed',
         redirectTo: ROUTES.Login,
       },
