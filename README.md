@@ -8,7 +8,6 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 
 - Jevgeni Verjovkin - https://github.com/Webis-2022/Jevgeni-Verjovkin
 - Aleksandra Potapova - https://github.com/alekspanda
-- Anna Makarenko - https://github.com/thefoxtale
 - Sergei Urazov - https://github.com/urazof
 
 ## Tech Stack
@@ -46,6 +45,10 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 Project will be available at:
 http://localhost:3000
 
+## App Deploy Link
+
+[https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
+
 ## Branch Strategy
 
 - main — stable production branch
@@ -53,3 +56,32 @@ http://localhost:3000
 - feature/\* — feature branches
 
 All changes must go through pull request.
+
+## APIService
+
+Responsible for:
+
+- Communication with Supabase (database, auth, edge functions)
+
+- Calling Supabase Edge Functions (e.g. question batch generation)
+
+- Normalizing and forwarding errors
+
+- Optional retry logic for network failures
+
+- Attaching session context automatically (handled via Supabase client)
+
+- Returning clean data to higher layers (QuestionService, etc.)
+
+Not responsible for:
+
+- AI logic or prompt generation
+
+- Business logic (game rules, scoring, validation)
+
+- State management
+
+- UI rendering
+
+- Deciding when to generate vs reuse cached questions
+  (this must be handled inside Edge Functions)
