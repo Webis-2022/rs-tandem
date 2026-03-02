@@ -2,9 +2,9 @@ import './auth-page.scss';
 import { ROUTES } from '../../types';
 import { auth } from '../../app/services/auth';
 import { navigate } from '../../app/navigation';
-import { createElement, createButton, createLink } from '../../shared/dom';
-
-type Mode = 'login' | 'register';
+import { createEl, createButton, createLink } from '../../shared/dom';
+import type { Mode, AuthErrors } from './validate';
+import { validateAuth, isValid } from './validate';
 
 type Field = {
   root: HTMLElement;
@@ -29,23 +29,23 @@ function createField(params: {
     hint,
   } = params;
 
-  const root = createElement('label', undefined, 'auth__field');
+  const root = createEl('label', { className: 'auth__field' });
 
-  const labelEl = createElement('span', label, 'auth__label');
+  const labelEl = createEl('span', { text: label, className: 'auth__label' });
 
-  const hintEl = hint ? createElement('div', hint, 'auth__hint') : null;
+  const hintEl = hint
+    ? createEl('div', { text: hint, className: 'auth__hint' })
+    : null;
 
-  const input = createElement(
-    'input',
-    undefined,
-    'auth__input'
-  ) as HTMLInputElement;
+  const input = createEl('input', {
+    className: 'auth__input',
+  }) as HTMLInputElement;
   input.name = name;
   input.type = type;
   if (placeholder) input.placeholder = placeholder;
   if (autocomplete) input.setAttribute('autocomplete', autocomplete);
 
-  const error = createElement('div', '', 'auth__error');
+  const error = createEl('div', { text: '', className: 'auth__error' });
 
   root.append(labelEl);
   if (hintEl) root.append(hintEl);
@@ -54,63 +54,31 @@ function createField(params: {
   return { root, input, error };
 }
 
-function isValidEmail(value: string): boolean {
-  // intentionally simple for UI stage
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
-function validate(
-  mode: Mode,
-  values: { email: string; password: string; confirm: string }
-) {
-  const errors: Record<string, string> = {};
-
-  if (!values.email.trim()) errors.email = 'Email is required';
-  else if (!isValidEmail(values.email.trim()))
-    errors.email = 'Enter a valid email';
-
-  if (!values.password) errors.password = 'Password is required';
-  else if (values.password.length < 6) errors.password = 'Min 6 characters';
-
-  if (mode === 'register') {
-    if (!values.confirm) errors.confirm = 'Please confirm password';
-    else if (values.confirm !== values.password)
-      errors.confirm = 'Passwords do not match';
-  }
-
-  return errors;
-}
-
 export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   let mode: Mode = initialMode;
 
-  const section = createElement('section', undefined, 'auth');
+  // Layout
+  const section = createEl('section', { className: 'auth' });
+  const card = createEl('div', { className: 'auth__card' });
 
-  const card = createElement('div', undefined, 'auth__card');
-
-  const title = createElement('h1', 'Welcome', 'auth__title');
-  const subtitle = createElement(
-    'p',
-    'Use your email and password to continue',
-    'auth__subtitle'
-  );
+  const title = createEl('h1', { text: 'Welcome', className: 'auth__title' });
+  const subtitle = createEl('p', {
+    text: 'Use your email and password to continue',
+    className: 'auth__subtitle',
+  });
 
   // Tabs
-  const tabs = createElement('div', undefined, 'auth__tabs');
-
+  const tabs = createEl('div', { className: 'auth__tabs' });
   const loginTab = createButton('Login', undefined, 'auth__tab');
   const registerTab = createButton('Register', undefined, 'auth__tab');
-
   tabs.append(loginTab, registerTab);
 
   // Form
-  const form = createElement(
-    'form',
-    undefined,
-    'auth__form'
-  ) as HTMLFormElement;
-
-  const formError = createElement('div', '', 'auth__form-error');
+  const form = createEl('form', { className: 'auth__form' }) as HTMLFormElement;
+  const formError = createEl('div', {
+    text: '',
+    className: 'auth__form-error', // неверный логин/пароль, пользователь уже существует, сервер недоступен и тд
+  });
 
   const emailField = createField({
     label: 'Email',
@@ -140,19 +108,16 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
   // Submit
   const submitBtn = createButton('Continue', undefined, 'btn auth__submit');
-  // createButton делает type="button" — для формы меняем на submit
   submitBtn.type = 'submit';
 
-  // Footer links / mode switch text
-  const footer = createElement('div', undefined, 'auth__footer');
+  // Footer
+  const footer = createEl('div', { className: 'auth__footer' });
   const backLink = createLink('Back to landing', ROUTES.Landing, 'auth__link');
-  const switchText = createElement('div', '', 'auth__switch');
-
+  const switchText = createEl('div', { text: '', className: 'auth__switch' });
   const switchBtn = createButton('', undefined, 'auth__switch-btn');
-  // тоже будет type="button" — ок
-
   footer.append(backLink, switchText);
 
+  // Compose
   form.append(
     formError,
     emailField.root,
@@ -165,13 +130,36 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   card.append(title, subtitle, tabs, form);
   section.append(card);
 
+  // Helpers
+  const getValues = () => ({
+    email: emailField.input.value,
+    password: passwordField.input.value,
+    confirm: confirmField.input.value,
+  });
+
+  const showErrors = (errors: AuthErrors) => {
+    emailField.error.textContent = errors.email ?? '';
+    passwordField.error.textContent = errors.password ?? '';
+    confirmField.error.textContent = errors.confirm ?? '';
+  };
+
+  const clearErrors = () => {
+    formError.textContent = '';
+    showErrors({});
+  };
+
+  const updateValidity = () => {
+    const errors = validateAuth(mode, getValues());
+    showErrors(errors);
+    submitBtn.disabled = !isValid(errors);
+  };
+
   const setActiveModeUI = () => {
     loginTab.classList.toggle('is-active', mode === 'login');
     registerTab.classList.toggle('is-active', mode === 'register');
 
     confirmField.root.classList.toggle('is-hidden', mode !== 'register');
 
-    // autocomplete: login vs register
     passwordField.input.setAttribute(
       'autocomplete',
       mode === 'login' ? 'current-password' : 'new-password'
@@ -186,35 +174,8 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
     // очистка confirm при уходе в login
     if (mode !== 'register') confirmField.input.value = '';
 
-    // очистим ошибки при переключении
-    formError.textContent = '';
-    emailField.error.textContent = '';
-    passwordField.error.textContent = '';
-    confirmField.error.textContent = '';
-
-    // обновим состояние кнопки
+    clearErrors();
     updateValidity();
-  };
-
-  const getValues = () => ({
-    email: emailField.input.value,
-    password: passwordField.input.value,
-    confirm: confirmField.input.value,
-  });
-
-  const showErrors = (errors: Record<string, string>) => {
-    emailField.error.textContent = errors.email ?? '';
-    passwordField.error.textContent = errors.password ?? '';
-    confirmField.error.textContent = errors.confirm ?? '';
-  };
-
-  const updateValidity = () => {
-    const values = getValues();
-    const errors = validate(mode, values);
-    showErrors(errors);
-
-    const ok = Object.keys(errors).length === 0;
-    submitBtn.disabled = !ok;
   };
 
   // Events
@@ -233,7 +194,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
     setActiveModeUI();
   });
 
-  // чтобы кнопка была рядом с текстом
+  // кнопка рядом с текстом
   switchText.append(switchBtn);
 
   const onInput = () => updateValidity();
@@ -244,14 +205,12 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const values = getValues();
-    const errors = validate(mode, values);
-    if (Object.keys(errors).length) {
+    const errors = validateAuth(mode, getValues());
+    if (!isValid(errors)) {
       showErrors(errors);
       return;
     }
 
-    // пока нет AuthService — делаем mock flow
     try {
       auth.login();
       navigate(ROUTES.Dashboard, true);
@@ -269,6 +228,4 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
 // чтобы роутинг не ломать: оставим createLoginView, но по факту это auth screen
 export const createLoginView = (): HTMLElement => createAuthView('login');
-
-// если позже добавишь ROUTES.Register — можно сразу использовать
 export const createRegisterView = (): HTMLElement => createAuthView('register');

@@ -16,6 +16,18 @@ export function createElement(
   return element;
 }
 
+type CreateElOptions = {
+  text?: string;
+  className?: string;
+};
+
+export function createEl(
+  tag: string,
+  options: CreateElOptions = {}
+): HTMLElement {
+  return createElement(tag, options.text, options.className);
+}
+
 export function createButton(
   text: string,
   onClick?: (event: MouseEvent) => void,

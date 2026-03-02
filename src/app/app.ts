@@ -6,7 +6,7 @@ import { setNavigate } from './navigation';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
-import { createLoginView } from '../pages/login/auth-page';
+import { createLoginView } from '../pages/auth/auth-page';
 
 export function initApp(mount: HTMLElement): void {
   const layout = createLayout();
