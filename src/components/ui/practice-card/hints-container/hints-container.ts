@@ -1,4 +1,4 @@
-import { createElement, createButton } from '../../../shared/dom';
+import { createElement, createButton } from '../../../../shared/dom';
 
 export function createHintsContainer() {
   const hintButtons = {

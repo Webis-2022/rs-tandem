@@ -7,5 +7,6 @@ export async function getQuestions(topicId: number, difficulty: string) {
   if (error) {
     throw new Error(error.message);
   }
-  return data;
+  console.log(data.questionsBatch[0].options);
+  return data.questionsBatch;
 }

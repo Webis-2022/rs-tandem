@@ -19,7 +19,7 @@ type User = {
 };
 
 type GameState = {
-  currentQuestionIndex: number;
+  round: number;
   score: number;
   usedHints: string[];
   wrongAnswers: number[];

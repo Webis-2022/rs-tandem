@@ -1,5 +1,9 @@
 import './styles/main.scss';
 import { initApp } from './app/app';
+import { getQuestions } from './services/api/get-questions';
+
+//remove
+getQuestions(7, 'easy');
 
 function getOrCreateMount(): HTMLElement {
   const existing = document.getElementById('app');

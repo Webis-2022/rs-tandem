@@ -1,9 +1,9 @@
 import { type AppState } from '../../types';
 
-export const state: AppState = {
+export let state: AppState = {
   user: null,
   game: {
-    currentQuestionIndex: 0,
+    round: 0,
     score: 0,
     usedHints: [],
     wrongAnswers: [],
@@ -20,4 +20,12 @@ export function subscribe(listener: (state: AppState) => void) {
 
 export function notify() {
   listeners.forEach((fn) => fn(state));
+}
+
+export function getState() {
+  return state;
+}
+export function setState(newState: AppState) {
+  state = newState;
+  notify();
 }
