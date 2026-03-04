@@ -4,8 +4,8 @@
 
 **Что было сделано:**
 
-- Сделала ревью на Feature/practice page creation #42
-- Внесла изменения в свой PR Feature/auth screen UI #41 согласно замечаниям ревьюера. Обсудили и согласовали разграничения по Auth screen UI и Auth Service.
+- Сделала ревью на [PR Feature/practice page creation #42](https://github.com/Webis-2022/rs-tandem/pull/42)
+- Внесла изменения в свой [PR Feature/auth screen UI #41](https://github.com/Webis-2022/rs-tandem/pull/41) согласно замечаниям ревьюера. Обсудили и согласовали разграничения по Auth screen UI и Auth Service.
 
 **Проблемы:**
 
@@ -20,4 +20,4 @@
 - Реализовать интеграцию Auth screen UI с Auth Service, когда сервис будет готов
 - Реализовать блок Library
 
-**Затраченное время:** 3 часа
+**Затраченное время:** 4 часа
