@@ -20,8 +20,9 @@ export function validateAuth(mode: Mode, values: AuthValues): AuthErrors {
   if (!email) errors.email = 'Email is required';
   else if (!isValidEmail(email)) errors.email = 'Enter a valid email';
 
-  if (!values.password) errors.password = 'Password is required';
-  else if (values.password.length < 6) errors.password = 'Min 6 characters';
+  const password = values.password;
+  if (!password) errors.password = 'Password is required';
+  else if (password.trim().length < 6) errors.password = 'Min 6 characters';
 
   if (mode === 'register') {
     if (!values.confirm) errors.confirm = 'Please confirm password';
