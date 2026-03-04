@@ -1,4 +1,5 @@
-import { createElement } from '../../../shared/dom';
+import { createButton, createElement } from '../../../shared/dom';
+import { createHintsContainer } from './hints-container/hints-container';
 import './practice-card.scss';
 
 type Question = {
@@ -12,17 +13,28 @@ export function createPracticeCard(question: Question) {
   console.log(question);
   const editedQuestion = {
     ...question,
-    id: question.level,
+    id: Date.now(),
   };
-  console.log('eQ', editedQuestion);
+
   const card = createElement('div', undefined, 'card');
   const cardHeader = createElement('div', undefined, 'card-header');
+  const score = createElement('span', undefined, 'score');
+  score.textContent = '0';
+  const buttonContainer = createElement('div', undefined, 'button-container');
+  const nextTopicButton = createButton(
+    'Next topic',
+    undefined,
+    'next-topic-btn',
+    true
+  );
+  const libraryButton = createButton('Library', undefined, 'library-btn', true);
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
-  const score = createElement('span', undefined, 'score');
-  const divider = createElement('div', undefined, 'divider');
+  const hintsContainer = createHintsContainer();
+  const topDivider = createElement('div', undefined, 'divider');
+  const bottomDivider = createElement('div', undefined, 'divider');
   const questionContainer = createElement(
-    'span',
+    'div',
     undefined,
     'question-container'
   );
@@ -40,8 +52,15 @@ export function createPracticeCard(question: Question) {
     answerContainer.append(label);
   });
 
-  cardHeader.append(score);
-  cardBody.append(divider, questionContainer, divider, answerContainer);
+  buttonContainer.append(nextTopicButton, libraryButton);
+  cardHeader.append(score, buttonContainer);
+  cardBody.append(
+    topDivider,
+    questionContainer,
+    bottomDivider,
+    answerContainer
+  );
+  cardFooter.append(hintsContainer);
 
   card.append(cardHeader, cardBody, cardFooter);
   return card;
