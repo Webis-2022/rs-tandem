@@ -4,13 +4,15 @@ import { createLayout } from './layout/layout';
 import { auth } from './services/auth';
 import { setNavigate } from './navigation';
 
-// import { createLandingView } from '../pages/landing/landing';
-// import { createLoginView } from '../pages/login/login';
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
+<<<<<<< feature/practicePageCreation
 import { createLoginView } from '../pages/login/login';
 import { createPracticeView } from '../pages/practice/practice';
 // import { createDashboardView } from '../pages/dashboard';
+=======
+import { createLoginView } from '../pages/auth/auth-page';
+>>>>>>> develop
 
 export function initApp(mount: HTMLElement): void {
   const layout = createLayout();
