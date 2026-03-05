@@ -19,6 +19,8 @@ type User = {
 };
 
 type GameState = {
+  topicId: number;
+  difficulty: string;
   round: number;
   score: number;
   usedHints: string[];

@@ -7,11 +7,13 @@ export function createPracticeView(): HTMLElement {
   const section = createElement('section', undefined, 'page');
   const state = getState();
   const questionNum = state.game.round;
-  //remove hardcode
-  getQuestions(7, 'easy').then((questions) => {
+  const topicId = state.game.topicId;
+  const difficulty = state.game.difficulty;
+  getQuestions(topicId, difficulty).then((questions) => {
+    if (questionNum >= questions.length) return;
+
     const roundQuestion = questions[questionNum];
     const practiceCard = createPracticeCard(roundQuestion);
-    console.log(practiceCard);
     section.append(practiceCard);
   });
   return section;
