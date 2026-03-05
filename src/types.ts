@@ -2,6 +2,7 @@ export const ROUTES = {
   Landing: '/landing',
   Login: '/login',
   Dashboard: '/dashboard',
+  Practice: '/practice',
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
@@ -18,7 +19,9 @@ type User = {
 };
 
 type GameState = {
-  currentQuestionIndex: number;
+  topicId: number;
+  difficulty: string;
+  round: number;
   score: number;
   usedHints: string[];
   wrongAnswers: number[];
