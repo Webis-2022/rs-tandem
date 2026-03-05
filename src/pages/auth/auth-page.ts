@@ -1,0 +1,231 @@
+import './auth-page.scss';
+import { ROUTES } from '../../types';
+import { auth } from '../../app/services/auth';
+import { navigate } from '../../app/navigation';
+import { createEl, createButton, createLink } from '../../shared/dom';
+import type { Mode, AuthErrors } from './validate';
+import { validateAuth, isValid } from './validate';
+
+type Field = {
+  root: HTMLElement;
+  input: HTMLInputElement;
+  error: HTMLElement;
+};
+
+function createField(params: {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  autocomplete?: string;
+  hint?: string;
+}): Field {
+  const {
+    label,
+    name,
+    type = 'text',
+    placeholder,
+    autocomplete,
+    hint,
+  } = params;
+
+  const root = createEl('label', { className: 'auth__field' });
+
+  const labelEl = createEl('span', { text: label, className: 'auth__label' });
+
+  const hintEl = hint
+    ? createEl('div', { text: hint, className: 'auth__hint' })
+    : null;
+
+  const input = createEl('input', {
+    className: 'auth__input',
+  }) as HTMLInputElement;
+  input.name = name;
+  input.type = type;
+  if (placeholder) input.placeholder = placeholder;
+  if (autocomplete) input.setAttribute('autocomplete', autocomplete);
+
+  const error = createEl('div', { text: '', className: 'auth__error' });
+
+  root.append(labelEl);
+  if (hintEl) root.append(hintEl);
+  root.append(input, error);
+
+  return { root, input, error };
+}
+
+export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
+  let mode: Mode = initialMode;
+
+  // Layout
+  const section = createEl('section', { className: 'auth' });
+  const card = createEl('div', { className: 'auth__card' });
+
+  const title = createEl('h1', { text: 'Welcome', className: 'auth__title' });
+  const subtitle = createEl('p', {
+    text: 'Use your email and password to continue',
+    className: 'auth__subtitle',
+  });
+
+  // Tabs
+  const tabs = createEl('div', { className: 'auth__tabs' });
+  const loginTab = createButton('Login', undefined, 'auth__tab');
+  const registerTab = createButton('Register', undefined, 'auth__tab');
+  tabs.append(loginTab, registerTab);
+
+  // Form
+  const form = createEl('form', { className: 'auth__form' }) as HTMLFormElement;
+  const formError = createEl('div', {
+    text: '',
+    className: 'auth__form-error', // неверный логин/пароль, пользователь уже существует, сервер недоступен и тд
+  });
+
+  const emailField = createField({
+    label: 'Email',
+    name: 'email',
+    type: 'email',
+    placeholder: 'name@example.com',
+    autocomplete: 'email',
+    hint: 'Example: name@example.com',
+  });
+
+  const passwordField = createField({
+    label: 'Password',
+    name: 'password',
+    type: 'password',
+    placeholder: '••••••••',
+    autocomplete: 'current-password',
+    hint: 'Min 6 characters',
+  });
+
+  const confirmField = createField({
+    label: 'Confirm password',
+    name: 'confirm',
+    type: 'password',
+    placeholder: '••••••••',
+    autocomplete: 'new-password',
+  });
+
+  // Submit
+  const submitBtn = createButton('Continue', undefined, 'btn auth__submit');
+  submitBtn.type = 'submit';
+
+  // Footer
+  const footer = createEl('div', { className: 'auth__footer' });
+  const backLink = createLink('Back to landing', ROUTES.Landing, 'auth__link');
+  const switchText = createEl('div', { text: '', className: 'auth__switch' });
+  const switchBtn = createButton('', undefined, 'auth__switch-btn');
+  footer.append(backLink, switchText);
+
+  // Compose
+  form.append(
+    formError,
+    emailField.root,
+    passwordField.root,
+    confirmField.root,
+    submitBtn,
+    footer
+  );
+
+  card.append(title, subtitle, tabs, form);
+  section.append(card);
+
+  // Helpers
+  const getValues = () => ({
+    email: emailField.input.value,
+    password: passwordField.input.value,
+    confirm: confirmField.input.value,
+  });
+
+  const showErrors = (errors: AuthErrors) => {
+    emailField.error.textContent = errors.email ?? '';
+    passwordField.error.textContent = errors.password ?? '';
+    confirmField.error.textContent = errors.confirm ?? '';
+  };
+
+  const clearErrors = () => {
+    formError.textContent = '';
+    showErrors({});
+  };
+
+  const updateValidity = () => {
+    const errors = validateAuth(mode, getValues());
+    showErrors(errors);
+    submitBtn.disabled = !isValid(errors);
+  };
+
+  const setActiveModeUI = () => {
+    loginTab.classList.toggle('is-active', mode === 'login');
+    registerTab.classList.toggle('is-active', mode === 'register');
+
+    confirmField.root.classList.toggle('is-hidden', mode !== 'register');
+
+    passwordField.input.setAttribute(
+      'autocomplete',
+      mode === 'login' ? 'current-password' : 'new-password'
+    );
+
+    submitBtn.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+
+    switchText.textContent =
+      mode === 'login' ? 'No account? ' : 'Already have an account? ';
+    switchBtn.textContent = mode === 'login' ? 'Register' : 'Login';
+
+    // очистка confirm при уходе в login
+    if (mode !== 'register') confirmField.input.value = '';
+
+    clearErrors();
+    updateValidity();
+  };
+
+  // Events
+  loginTab.addEventListener('click', () => {
+    mode = 'login';
+    setActiveModeUI();
+  });
+
+  registerTab.addEventListener('click', () => {
+    mode = 'register';
+    setActiveModeUI();
+  });
+
+  switchBtn.addEventListener('click', () => {
+    mode = mode === 'login' ? 'register' : 'login';
+    setActiveModeUI();
+  });
+
+  // кнопка рядом с текстом
+  switchText.append(switchBtn);
+
+  const onInput = () => updateValidity();
+  emailField.input.addEventListener('input', onInput);
+  passwordField.input.addEventListener('input', onInput);
+  confirmField.input.addEventListener('input', onInput);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const errors = validateAuth(mode, getValues());
+    if (!isValid(errors)) {
+      showErrors(errors);
+      return;
+    }
+
+    try {
+      auth.login();
+      navigate(ROUTES.Dashboard, true);
+    } catch {
+      formError.textContent = 'Something went wrong. Please try again.';
+    }
+  });
+
+  // Init
+  setActiveModeUI();
+  updateValidity();
+
+  return section;
+}
+
+// чтобы роутинг не ломать: оставим createLoginView, но по факту это auth screen
+export const createLoginView = (): HTMLElement => createAuthView('login');
+export const createRegisterView = (): HTMLElement => createAuthView('register');
