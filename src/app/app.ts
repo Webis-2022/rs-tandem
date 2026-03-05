@@ -4,12 +4,9 @@ import { createLayout } from './layout/layout';
 import { auth } from './services/auth';
 import { setNavigate } from './navigation';
 
-// import { createLandingView } from '../pages/landing/landing';
-// import { createLoginView } from '../pages/login/login';
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
-import { createLoginView } from '../pages/login/login';
-// import { createDashboardView } from '../pages/dashboard';
+import { createLoginView } from '../pages/auth/auth-page';
 
 export function initApp(mount: HTMLElement): void {
   const layout = createLayout();
