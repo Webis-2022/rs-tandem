@@ -16,6 +16,28 @@ export function createElement(
   return element;
 }
 
+type CreateElOptions = {
+  text?: string;
+  className?: string;
+};
+
+export function createEl(
+  tag: string,
+  options: CreateElOptions = {}
+): HTMLElement {
+  const element = document.createElement(tag);
+
+  if (options.text !== undefined) {
+    element.textContent = options.text;
+  }
+
+  if (options.className) {
+    element.className = options.className;
+  }
+
+  return element;
+}
+
 export function createButton(
   text: string,
   onClick?: (event: MouseEvent) => void,
