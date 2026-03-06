@@ -1,12 +1,12 @@
 @use '../../styles/variables' as v;
 
-.app {
+.layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.app-header {
+.layout-header {
   padding: v.$spacing-lg v.$spacing-xl;
   border-bottom: 1px solid v.$color-divider;
 }
@@ -21,7 +21,7 @@
   color: v.$text-color;
 }
 
-.app-main {
+.layout-main {
   flex: 1;
   padding: v.$spacing-xl;
 }

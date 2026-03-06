@@ -8,9 +8,9 @@ export type AppLayout = {
 };
 
 export function createLayout(): AppLayout {
-  const root = createElement('div', undefined, 'app');
+  const root = createElement('div', undefined, 'layout');
 
-  const header = createElement('header', undefined, 'app-header');
+  const header = createElement('header', undefined, 'layout-header');
   const nav = createElement('nav', undefined, 'nav');
 
   nav.append(
@@ -23,7 +23,7 @@ export function createLayout(): AppLayout {
 
   header.append(nav);
 
-  const outlet = createElement('main', undefined, 'app-main');
+  const outlet = createElement('main', undefined, 'layout-main');
 
   root.append(header, outlet);
 
