@@ -5,7 +5,7 @@
   min-height: calc(100vh - 40px);
   padding: v.$spacing-xl v.$spacing-md;
 
-  @include m.flex(row, center, center);
+  @include m.flex(column, center, center);
 }
 
 .auth-card {
