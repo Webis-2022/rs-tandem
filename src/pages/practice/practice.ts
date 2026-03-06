@@ -6,11 +6,14 @@ import { createElement } from '../../shared/dom';
 
 export function createPracticeView(): HTMLElement {
   const section = createElement('section', undefined, 'page');
+  if (window.location.pathname === '/practice') {
+    section.style.flexDirection = 'row';
+  }
   const state = getState();
   const questionNum = state.game.round;
-  // const topicId = state.game.topicId;
-  // const difficulty = state.game.difficulty;
-  getQuestions(7, 'easy')
+  const topicId = state.game.topicId;
+  const difficulty = state.game.difficulty;
+  getQuestions(topicId, difficulty)
     .then((questions) => {
       if (questionNum >= questions.length) return;
 
