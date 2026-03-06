@@ -15,26 +15,27 @@ export const createLibraryView = (): HTMLElement => {
 
   const title = createEl('h1', {
     text: 'Library',
-    className: 'library__title',
+    className: 'library-title',
   });
+
   const subtitle = createEl('p', {
     text: 'Choose difficulty and select a topic to start practice.',
-    className: 'library__subtitle',
+    className: 'library-subtitle',
   });
 
-  // Difficulty selector
   let difficulty: Difficulty = getState().game.difficulty || 'easy';
 
-  const difficultyRow = createEl('div', { className: 'library__difficulty' });
+  const difficultyRow = createEl('div', { className: 'library-difficulty' });
+
   const difficultyLabel = createEl('span', {
     text: 'Difficulty:',
-    className: 'library__difficulty-label',
+    className: 'library-difficulty-label',
   });
 
   const diffBtns: Record<Difficulty, HTMLButtonElement> = {
-    easy: createButton('Easy', undefined, 'btn library__diff-btn'),
-    medium: createButton('Medium', undefined, 'btn library__diff-btn'),
-    hard: createButton('Hard', undefined, 'btn library__diff-btn'),
+    easy: createButton('Easy', undefined, 'btn library-diff-btn'),
+    medium: createButton('Medium', undefined, 'btn library-diff-btn'),
+    hard: createButton('Hard', undefined, 'btn library-diff-btn'),
   };
 
   const setActiveDifficultyUI = () => {
@@ -51,6 +52,7 @@ export const createLibraryView = (): HTMLElement => {
   });
 
   setActiveDifficultyUI();
+
   difficultyRow.append(
     difficultyLabel,
     diffBtns.easy,
@@ -58,24 +60,25 @@ export const createLibraryView = (): HTMLElement => {
     diffBtns.hard
   );
 
-  // Topics list
-  const list = createEl('div', { className: 'library__list' });
+  const list = createEl('div', { className: 'library-list' });
 
   const loading = createEl('div', {
     text: 'Loading topics...',
-    className: 'library__status',
+    className: 'library-status',
   });
+
   list.append(loading);
 
   const renderTopicCard = (topic: Topic): HTMLElement => {
-    const card = createEl('div', { className: 'library__card' });
+    const card = createEl('div', { className: 'library-card' });
 
     const name = createEl('div', {
-      text: topic.name ?? `Topic #${topic.id}`, // если вдруг придет null name
-      className: 'library__card-title',
+      text: topic.name ?? `Topic #${topic.id}`,
+      className: 'library-card-title',
     });
 
-    const actions = createEl('div', { className: 'library__card-actions' });
+    const actions = createEl('div', { className: 'library-card-actions' });
+
     const startBtn = createButton(
       'Start',
       () => {
@@ -101,6 +104,7 @@ export const createLibraryView = (): HTMLElement => {
 
     actions.append(startBtn);
     card.append(name, actions);
+
     return card;
   };
 
@@ -112,7 +116,7 @@ export const createLibraryView = (): HTMLElement => {
         list.append(
           createEl('div', {
             text: 'No topics found.',
-            className: 'library__status',
+            className: 'library-status',
           })
         );
         return;
@@ -125,10 +129,11 @@ export const createLibraryView = (): HTMLElement => {
     .catch((err: unknown) => {
       const message =
         err instanceof Error ? err.message : 'Failed to load topics.';
+
       list.replaceChildren(
         createEl('div', {
           text: message,
-          className: 'library__status library__status--error',
+          className: 'library-status is-error',
         })
       );
     });
