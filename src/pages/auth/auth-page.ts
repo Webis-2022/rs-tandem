@@ -29,23 +29,24 @@ function createField(params: {
     hint,
   } = params;
 
-  const root = createEl('label', { className: 'auth__field' });
+  const root = createEl('label', { className: 'auth-field' });
 
-  const labelEl = createEl('span', { text: label, className: 'auth__label' });
+  const labelEl = createEl('span', { text: label, className: 'auth-label' });
 
   const hintEl = hint
-    ? createEl('div', { text: hint, className: 'auth__hint' })
+    ? createEl('div', { text: hint, className: 'auth-hint' })
     : null;
 
   const input = createEl('input', {
-    className: 'auth__input',
+    className: 'auth-input',
   }) as HTMLInputElement;
+
   input.name = name;
   input.type = type;
   if (placeholder) input.placeholder = placeholder;
   if (autocomplete) input.setAttribute('autocomplete', autocomplete);
 
-  const error = createEl('div', { text: '', className: 'auth__error' });
+  const error = createEl('div', { text: '', className: 'auth-error' });
 
   root.append(labelEl);
   if (hintEl) root.append(hintEl);
@@ -59,25 +60,26 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
   // Layout
   const section = createEl('section', { className: 'auth' });
-  const card = createEl('div', { className: 'auth__card' });
+  const card = createEl('div', { className: 'auth-card' });
 
-  const title = createEl('h1', { text: 'Welcome', className: 'auth__title' });
+  const title = createEl('h1', { text: 'Welcome', className: 'auth-title' });
   const subtitle = createEl('p', {
     text: 'Use your email and password to continue',
-    className: 'auth__subtitle',
+    className: 'auth-subtitle',
   });
 
   // Tabs
-  const tabs = createEl('div', { className: 'auth__tabs' });
-  const loginTab = createButton('Login', undefined, 'auth__tab');
-  const registerTab = createButton('Register', undefined, 'auth__tab');
+  const tabs = createEl('div', { className: 'auth-tabs' });
+  const loginTab = createButton('Login', undefined, 'auth-tab');
+  const registerTab = createButton('Register', undefined, 'auth-tab');
   tabs.append(loginTab, registerTab);
 
   // Form
-  const form = createEl('form', { className: 'auth__form' }) as HTMLFormElement;
+  const form = createEl('form', { className: 'auth-form' }) as HTMLFormElement;
+
   const formError = createEl('div', {
     text: '',
-    className: 'auth__form-error', // неверный логин/пароль, пользователь уже существует, сервер недоступен и тд
+    className: 'auth-form-error',
   });
 
   const emailField = createField({
@@ -107,14 +109,16 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   });
 
   // Submit
-  const submitBtn = createButton('Continue', undefined, 'btn auth__submit');
+  const submitBtn = createButton('Continue', undefined, 'btn auth-submit');
   submitBtn.type = 'submit';
 
   // Footer
-  const footer = createEl('div', { className: 'auth__footer' });
-  const backLink = createLink('Back to landing', ROUTES.Landing, 'auth__link');
-  const switchText = createEl('div', { text: '', className: 'auth__switch' });
-  const switchBtn = createButton('', undefined, 'auth__switch-btn');
+  const footer = createEl('div', { className: 'auth-footer' });
+  const backLink = createLink('Back to landing', ROUTES.Landing, 'auth-link');
+
+  const switchText = createEl('div', { text: '', className: 'auth-switch' });
+  const switchBtn = createButton('', undefined, 'auth-switch-btn');
+
   footer.append(backLink, switchText);
 
   // Compose
@@ -171,7 +175,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       mode === 'login' ? 'No account? ' : 'Already have an account? ';
     switchBtn.textContent = mode === 'login' ? 'Register' : 'Login';
 
-    // очистка confirm при уходе в login
     if (mode !== 'register') confirmField.input.value = '';
 
     clearErrors();
