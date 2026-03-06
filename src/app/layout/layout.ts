@@ -10,20 +10,20 @@ export type AppLayout = {
 export function createLayout(): AppLayout {
   const root = createElement('div', undefined, 'layout');
 
-  const header = createElement('header', undefined, 'layout-header');
+  const header = createElement('header', undefined, 'header');
   const nav = createElement('nav', undefined, 'nav');
 
   nav.append(
-    createLink('Landing', ROUTES.Landing, 'nav__link'),
-    createLink('Login', ROUTES.Login, 'nav__link'),
-    createLink('Dashboard', ROUTES.Dashboard, 'nav__link'),
-    createLink('Library', ROUTES.Library, 'nav__link'),
-    createLink('Practice', ROUTES.Practice, 'nav__link')
+    createLink('Landing', ROUTES.Landing, 'nav-link'),
+    createLink('Login', ROUTES.Login, 'nav-link'),
+    createLink('Dashboard', ROUTES.Dashboard, 'nav-link'),
+    createLink('Library', ROUTES.Library, 'nav-link'),
+    createLink('Practice', ROUTES.Practice, 'nav-link')
   );
 
   header.append(nav);
 
-  const outlet = createElement('main', undefined, 'layout-main');
+  const outlet = createElement('main', undefined, 'main');
 
   root.append(header, outlet);
 

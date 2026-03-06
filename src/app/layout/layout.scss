@@ -6,7 +6,7 @@
   flex-direction: column;
 }
 
-.layout-header {
+.header {
   padding: v.$spacing-lg v.$spacing-xl;
   border-bottom: 1px solid v.$color-divider;
 }
@@ -16,12 +16,12 @@
   gap: v.$spacing-lg;
 }
 
-.nav__link {
+.nav-link {
   text-decoration: none;
   color: v.$text-color;
 }
 
-.layout-main {
+.main {
   flex: 1;
   padding: v.$spacing-xl;
 }
