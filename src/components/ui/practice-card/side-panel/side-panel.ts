@@ -1,4 +1,7 @@
-import { closeSidePanel } from '../../../../shared/close-side-panel';
+import {
+  closeSidePanel,
+  initSidePanelClose,
+} from '../../../../shared/close-side-panel';
 import { createEl } from '../../../../shared/dom';
 import { createDivider } from '../divider/divider';
 import './side-panel.scss';
@@ -23,4 +26,5 @@ export function createSidePanel() {
   const cardHeight = card?.style.height;
   sidePanel.style.height = cardHeight as string;
   sectionPage?.append(sidePanel);
+  initSidePanelClose();
 }
