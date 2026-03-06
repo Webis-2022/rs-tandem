@@ -2,6 +2,7 @@ export const ROUTES = {
   Landing: '/landing',
   Login: '/login',
   Dashboard: '/dashboard',
+  Library: '/library',
   Practice: '/practice',
 } as const;
 

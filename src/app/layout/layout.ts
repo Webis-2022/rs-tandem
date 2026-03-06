@@ -17,6 +17,7 @@ export function createLayout(): AppLayout {
     createLink('Landing', ROUTES.Landing, 'nav__link'),
     createLink('Login', ROUTES.Login, 'nav__link'),
     createLink('Dashboard', ROUTES.Dashboard, 'nav__link'),
+    createLink('Library', ROUTES.Library, 'nav__link'),
     createLink('Practice', ROUTES.Practice, 'nav__link')
   );
 
