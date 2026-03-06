@@ -1,0 +1,81 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.library__title {
+  margin: 0;
+}
+
+.library__subtitle {
+  margin: 0;
+  color: v.$text-light;
+  font-size: v.$font-size-base;
+}
+
+.library__difficulty {
+  margin: 0;
+  @include m.flex(row, flex-start, center);
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+}
+
+.library__difficulty-label {
+  color: v.$text-light;
+  font-size: v.$font-size-base;
+}
+
+.library__diff-btn {
+  background: v.$secondary-color;
+  color: v.$text-color;
+  border: 1px solid v.$border-color;
+
+  &.is-active {
+    background: v.$primary-color;
+    color: v.$color-white;
+    border-color: v.$primary-color;
+  }
+}
+
+.library__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: v.$spacing-md;
+}
+
+.library__card {
+  background: v.$color-white;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius;
+  box-shadow: v.$shadow-default;
+  padding: v.$spacing-md;
+
+  @include m.flex(column, flex-start, stretch);
+  gap: v.$spacing-sm;
+}
+
+.library__card-title {
+  font-size: v.$font-size-lg;
+  color: v.$text-color;
+}
+
+.library__card-actions {
+  @include m.flex(row, flex-end, center);
+}
+
+.library__status {
+  color: v.$text-light;
+}
+
+.library__status--error {
+  color: v.$color-error;
+}
+
+@include m.respond-to(mobile) {
+  .library__list {
+    grid-template-columns: 1fr;
+  }
+
+  .library__difficulty {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
