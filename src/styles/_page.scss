@@ -2,6 +2,7 @@
 
 .page {
   display: flex;
+  justify-content: end;
   flex-direction: column;
   gap: v.$spacing-md;
 }

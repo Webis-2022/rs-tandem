@@ -4,7 +4,7 @@
 .card {
   width: 50%;
   max-width: 600px;
-  margin: 0 auto;
+
   border-radius: v.$border-radius;
   background-color: v.$primary-dark;
   box-shadow: v.$shadow-default;
@@ -25,6 +25,34 @@
   src: url('/fonts/digital-7.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+.question-icon {
+  position: absolute;
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  margin-right: v.$spacing-md;
+  cursor: pointer;
+  filter: invert(1);
+
+  &:hover {
+    animation: scale 0.5s ease-in-out infinite;
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1) translateY(-50%);
+  }
+  50% {
+    transform: scale(1.2) translateY(-50%);
+  }
+  100% {
+    transform: scale(1) translateY(-50%);
+  }
 }
 
 .score {
@@ -87,19 +115,11 @@
 .answer-container {
   @include m.flex(column, center, flex-start);
   gap: v.$spacing-md;
-  margin-bottom: v.$spacing-lg;
   width: 100%;
 }
 
 .answer-button {
   margin-right: v.$spacing-md;
-}
-
-.divider {
-  width: 100%;
-  height: v.$border-width-md;
-  background-color: v.$color-divider;
-  margin-bottom: v.$spacing-lg;
 }
 
 .card-footer {
@@ -108,4 +128,52 @@
   border-bottom-right-radius: v.$border-radius;
   color: v.$color-white;
   @include m.flex(row, center, center);
+}
+
+.check-button-container {
+  width: 100%;
+  @include m.flex(row, center, center);
+  gap: v.$spacing-md;
+}
+
+.check-button {
+  background-color: transparent;
+  color: v.$text-light;
+  border: v.$border-width-md solid v.$color-success;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-xs v.$spacing-md;
+  cursor: pointer;
+  transition: all v.$transition-speed ease-in-out;
+  font-size: v.$font-size-sm;
+  position: relative;
+}
+
+.check-button::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    v.$color-success,
+    transparent
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.check-button:hover::before {
+  opacity: 1;
+  animation: borderRun 1s linear infinite;
+}
+
+@keyframes borderRun {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
