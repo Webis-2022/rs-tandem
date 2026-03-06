@@ -1,5 +1,6 @@
-import { createButton, createElement } from '../../../shared/dom';
+import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
+import { createDivider } from './divider/divider';
 import './practice-card.scss';
 
 type Question = {
@@ -25,13 +26,18 @@ export function createPracticeCard(question: Question) {
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
   const hintsContainer = createHintsContainer();
-  const topDivider = createElement('div', undefined, 'divider');
-  const bottomDivider = createElement('div', undefined, 'divider');
+  const topDivider = createDivider();
+  const bottomDivider = createDivider();
   const questionContainer = createElement(
     'div',
     undefined,
     'question-container'
   );
+  const questionIcon = createEl('img', {
+    text: '',
+    className: 'question-icon',
+  }) as HTMLImageElement;
+  questionIcon.src = './img/question.png';
   questionContainer.textContent = question.question;
   const answerContainer = createElement('div', undefined, 'answer-container');
   question.options.forEach((option) => {
@@ -47,8 +53,17 @@ export function createPracticeCard(question: Question) {
     answerContainer.append(label);
   });
 
+  const checkButtonContainer = createElement(
+    'div',
+    undefined,
+    'check-button-container'
+  );
+  const checkButton = createButton('Check', undefined, 'check-button');
+
   buttonContainer.append(nextTopicButton, libraryButton);
-  cardHeader.append(score, buttonContainer);
+  cardHeader.append(questionIcon, score, buttonContainer);
+  checkButtonContainer.append(checkButton);
+  answerContainer.append(checkButtonContainer);
   cardBody.append(
     topDivider,
     questionContainer,

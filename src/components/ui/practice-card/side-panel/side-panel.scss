@@ -1,0 +1,32 @@
+@use '../../../../styles/variables' as v;
+
+.side-panel {
+  width: 300px;
+  background-color: v.$secondary-color;
+  position: relative;
+  right: -350px;
+  display: flex;
+  flex-direction: column;
+  border-radius: v.$border-radius;
+}
+
+.opened {
+  transform: translateX(-350px);
+  transition: transform 0.5s ease-in-out;
+}
+
+.closed {
+  transform: translateX(0);
+  transition: transform 0.5s ease-in-out;
+}
+
+.close-btn {
+  align-self: end;
+  cursor: pointer;
+}
+
+.side-panel-title {
+  text-align: center;
+  margin-top: v.$spacing-xs;
+  font-family: v.$font-family-base;
+}
