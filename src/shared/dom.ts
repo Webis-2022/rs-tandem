@@ -46,11 +46,7 @@ export function createButton(
 ): HTMLButtonElement {
   const button = document.createElement('button');
 
-  // В HTML <button> по умолчанию имеет type="submit".
-  // Если не перехватить событие, страница перезагрузится -> нежелательно для SPA
-  // Поэтому по умолчанию задаем type="button" (UI-кнопки, модалки, навигация, фильтры)
   button.type = 'button';
-
   button.textContent = text;
   button.disabled = disabled;
 
