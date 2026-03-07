@@ -2,6 +2,7 @@ export const ROUTES = {
   Landing: '/landing',
   Login: '/login',
   Dashboard: '/dashboard',
+  Library: '/library',
   Practice: '/practice',
 } as const;
 
@@ -18,9 +19,11 @@ type User = {
   token: string;
 };
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 type GameState = {
   topicId: number;
-  difficulty: string;
+  difficulty: Difficulty | '';
   round: number;
   score: number;
   usedHints: string[];

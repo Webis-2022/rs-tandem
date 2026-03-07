@@ -1,17 +1,16 @@
 import './landing.scss';
 import { ROUTES } from '../../types';
 import { navigate } from '../../app/navigation';
-import { createElement, createButton } from '../../shared/dom';
+import { createEl, createButton } from '../../shared/dom';
 
 export const createLandingView = (): HTMLElement => {
-  const section = createElement('section', undefined, 'page');
+  const section = createEl('section', { className: 'page' });
 
-  const title = createElement(
-    'h1',
-    'Landing. Привет! Тут мы сделаем классное описание нашего тренажера :)'
-  );
+  const title = createEl('h1', {
+    text: 'Landing. Привет! Тут мы сделаем классное описание нашего тренажера :)',
+  });
 
-  const buttons = createElement('div', undefined, 'page__actions');
+  const buttons = createEl('div', { className: 'page-actions' });
 
   const toLogin = createButton('Login', () => navigate(ROUTES.Login), 'btn');
 
