@@ -97,7 +97,6 @@
   color: v.$text-color;
   font-size: v.$font-size-base;
   font-weight: bold;
-  text-align: center;
   @include m.flex(column, center, center);
 }
 

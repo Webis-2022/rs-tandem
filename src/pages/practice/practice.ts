@@ -1,4 +1,5 @@
 import { getState } from '../../app/state/store';
+import { updateScore } from '../../components/game/updateScore';
 import { createPracticeCard } from '../../components/ui/practice-card/practice-card';
 import { createSidePanel } from '../../components/ui/practice-card/side-panel/side-panel';
 import { getQuestions } from '../../services/api/get-questions';
@@ -18,11 +19,12 @@ export function createPracticeView(): HTMLElement {
       if (questionNum >= questions.length) return;
 
       const roundQuestion = questions[questionNum];
-      const practiceCard = createPracticeCard(roundQuestion);
+      const practiceCard = createPracticeCard(roundQuestion, section);
       section.append(practiceCard);
     })
     .then(() => {
       createSidePanel();
+      updateScore();
     });
   return section;
 }

@@ -2,6 +2,7 @@ import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
 import './practice-card.scss';
+import { checkAnswer } from '../../../shared/check-answer';
 
 type Question = {
   level: string;
@@ -10,10 +11,11 @@ type Question = {
   question: string;
 };
 
-export function createPracticeCard(question: Question) {
+export function createPracticeCard(question: Question, section: HTMLElement) {
   const card = createElement('div', undefined, 'card');
   const cardHeader = createElement('div', undefined, 'card-header');
   const score = createElement('span', undefined, 'score');
+  let groupId: number;
   score.textContent = '0';
   const buttonContainer = createElement('div', undefined, 'button-container');
   const nextTopicButton = createButton(
@@ -43,7 +45,7 @@ export function createPracticeCard(question: Question) {
   question.options.forEach((option) => {
     const label = createElement('label', undefined, 'label');
     const radioInput = createElement('input', undefined, 'answer-button');
-    const groupId = Date.now();
+    groupId = Date.now();
     if (radioInput instanceof HTMLInputElement) {
       radioInput.type = 'radio';
       radioInput.name = String(groupId);
@@ -59,6 +61,14 @@ export function createPracticeCard(question: Question) {
     'check-button-container'
   );
   const checkButton = createButton('Check', undefined, 'check-button');
+  checkButton.addEventListener('click', () => {
+    const selected: HTMLButtonElement | null = document.querySelector(
+      `input[name="${groupId}"]:checked`
+    );
+    const selectedValue = selected?.value;
+    const correctAnswer = question.answer;
+    checkAnswer(selectedValue, correctAnswer, section);
+  });
 
   buttonContainer.append(nextTopicButton, libraryButton);
   cardHeader.append(questionIcon, score, buttonContainer);
