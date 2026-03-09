@@ -1,29 +1,70 @@
 import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
-import { auth } from './services/auth';
 import { setNavigate } from './navigation';
+import * as authService from '../services/authService';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
 import { createLoginView } from '../pages/auth/auth-page';
 import { createLibraryView } from '../pages/library/library';
 import { createPracticeView } from '../pages/practice/practice';
+import { createLogoutView } from '../pages/logout/logout';
 
-export function initApp(mount: HTMLElement): void {
+/**
+ * Initialize authentication state
+ * Attempts to restore session from localStorage and validate token
+ */
+async function initAuth(): Promise<void> {
+  try {
+    const isValid = await authService.validateToken();
+
+    if (isValid) {
+      const user = authService.getCurrentUser();
+      if (user) {
+        console.log('Session restored for user:', user.email);
+      }
+    } else {
+      console.log('No valid session found');
+    }
+  } catch (error) {
+    console.error('Failed to restore session:', error);
+    // Clear invalid session
+    await authService.logout();
+  }
+}
+
+/**
+ * Check if user is authenticated
+ * This function is used by the router for guard checks
+ */
+function isAuthed(): boolean {
+  const user = authService.getCurrentUser();
+  return user !== null;
+}
+
+export async function initApp(mount: HTMLElement): Promise<void> {
+  // Initialize auth state before setting up router
+  await initAuth();
+
   const layout = createLayout();
   mount.replaceChildren(layout.root);
 
   const router = createRouter({
     mount: layout.outlet,
     fallback: ROUTES.Landing,
-    isAuthed: auth.isAuthed,
+    isAuthed,
     routes: {
       [ROUTES.Landing]: { createView: createLandingView },
       [ROUTES.Login]: {
         createView: createLoginView,
         guard: 'guest',
         redirectTo: ROUTES.Dashboard,
+      },
+      [ROUTES.Logout]: {
+        createView: createLogoutView,
+        guard: 'authed',
+        redirectTo: ROUTES.Login,
       },
       [ROUTES.Dashboard]: {
         createView: createDashboardView,

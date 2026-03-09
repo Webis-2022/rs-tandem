@@ -4,6 +4,7 @@ export const ROUTES = {
   Dashboard: '/dashboard',
   Library: '/library',
   Practice: '/practice',
+  Logout: '/logout',
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

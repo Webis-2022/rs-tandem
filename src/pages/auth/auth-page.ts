@@ -1,10 +1,11 @@
 import './auth-page.scss';
-import { ROUTES } from '../../types';
-import { auth } from '../../app/services/auth';
+import { ROUTES, type AuthError } from '../../types';
 import { navigate } from '../../app/navigation';
 import { createEl, createButton, createLink } from '../../shared/dom';
+import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
+import * as authService from '../../services/authService';
 
 type Field = {
   root: HTMLElement;
@@ -205,7 +206,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   passwordField.input.addEventListener('input', onInput);
   confirmField.input.addEventListener('input', onInput);
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const errors = validateAuth(mode, getValues());
@@ -214,11 +215,42 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       return;
     }
 
+    const { email, password } = getValues();
+
     try {
-      auth.login();
+      // Disable form and show loading state
+      submitBtn.disabled = true;
+      emailField.input.disabled = true;
+      passwordField.input.disabled = true;
+      confirmField.input.disabled = true;
+
+      submitBtn.textContent = 'Loading...';
+
+      if (mode === 'register') {
+        await authService.register(email, password);
+      } else {
+        await authService.login(email, password);
+      }
+
+      // Navigate to dashboard on success
       navigate(ROUTES.Dashboard, true);
-    } catch {
-      formError.textContent = 'Something went wrong. Please try again.';
+    } catch (error) {
+      const authError = error as AuthError;
+
+      // Get user-friendly error message from helper
+      formError.textContent = getAuthErrorMessage(authError);
+
+      // Log error for debugging (not in production)
+      if (import.meta.env.DEV) {
+        console.error('Auth error:', authError);
+      }
+    } finally {
+      // Re-enable form
+      submitBtn.disabled = false;
+      emailField.input.disabled = false;
+      passwordField.input.disabled = false;
+      confirmField.input.disabled = false;
+      submitBtn.textContent = mode === 'login' ? 'Sign in' : 'Create account';
     }
   });
 
