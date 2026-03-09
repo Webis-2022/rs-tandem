@@ -7,7 +7,7 @@ import { topicLinks } from '../../../pages/practice/topic-links';
 import { getState } from '../../../app/state/store';
 import { createPopover } from './theory-btn-popover/theory-btn-popover';
 import { goToNextTopic } from '../../game/go-to-next-topic';
-
+import { updateScore } from '../../game/updateScore';
 type Question = {
   level: string;
   answer: string;
@@ -95,6 +95,7 @@ export function createPracticeCard(
     const selectedValue = selected?.value;
     const correctAnswer = question.answer;
     checkAnswer(selectedValue, correctAnswer, section);
+    updateScore();
   });
 
   const theoryBtnContainer = createEl('div', {

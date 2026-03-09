@@ -1,4 +1,9 @@
 export const topicLinks = {
+  0: {
+    'HTML Canvas': 'html5_canvas',
+    'HTML Video': 'html5_video',
+    'HTML Audio': 'html5_audio',
+  },
   1: 'html_basic',
   2: 'html5_semantic_elements',
   3: 'html_forms',

@@ -9,6 +9,7 @@ export function createPopover(topicData: TopicData, baseUrl: string) {
       text: topic,
       className: 'theory-link',
     });
+    link.setAttribute('target', '_blank');
     const value = topicData[topic as keyof TopicData];
     const path = value
       .split('_')[0]

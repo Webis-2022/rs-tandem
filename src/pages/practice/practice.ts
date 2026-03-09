@@ -13,8 +13,8 @@ export function createPracticeView(): HTMLElement {
   const state = getState();
   const questionNum = state.game.round;
   const topicId = state.game.topicId;
-  const difficulty = state.game.difficulty;
-  getQuestions(topicId, difficulty)
+  // const difficulty = state.game.difficulty;
+  getQuestions(topicId, 'easy')
     .then((questions) => {
       if (questionNum >= questions.length) return;
 
