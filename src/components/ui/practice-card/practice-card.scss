@@ -1,0 +1,179 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.card {
+  width: 50%;
+  max-width: 600px;
+
+  border-radius: v.$border-radius;
+  background-color: v.$primary-dark;
+  box-shadow: v.$shadow-default;
+}
+
+.card-header {
+  padding: v.$spacing-md;
+  background-color: v.$primary-color;
+  border-top-left-radius: v.$border-radius;
+  border-top-right-radius: v.$border-radius;
+  color: v.$color-white;
+  @include m.flex(row, center, center);
+  position: relative;
+}
+
+@font-face {
+  font-family: 'Digital7';
+  src: url('/fonts/digital-7.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.question-icon {
+  position: absolute;
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  margin-right: v.$spacing-md;
+  cursor: pointer;
+  filter: invert(1);
+
+  &:hover {
+    animation: scale 0.5s ease-in-out infinite;
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1) translateY(-50%);
+  }
+  50% {
+    transform: scale(1.2) translateY(-50%);
+  }
+  100% {
+    transform: scale(1) translateY(-50%);
+  }
+}
+
+.score {
+  font-family: 'Digital7', monospace;
+  font-size: v.$font-size-xl;
+}
+
+.button-container {
+  @include m.flex(column, center, normal);
+  margin-top: v.$spacing-md;
+  gap: v.$spacing-xs;
+  position: absolute;
+  right: 2%;
+  top: 2%;
+}
+
+.next-topic-btn,
+.library-btn {
+  background-color: transparent;
+  color: v.$color-white;
+  border: v.$border-width-md solid v.$color-white;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-xs v.$spacing-xs;
+  cursor: pointer;
+  transition: all v.$transition-speed ease-in-out;
+  font-size: v.$font-size-sm;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background-color: v.$color-white;
+    color: v.$primary-color;
+  }
+}
+
+.card-body {
+  padding: v.$spacing-md;
+  background-color: v.$secondary-color;
+  color: v.$text-color;
+  font-size: v.$font-size-base;
+  font-weight: bold;
+  text-align: center;
+  @include m.flex(column, center, center);
+}
+
+.question-container {
+  margin-bottom: v.$spacing-lg;
+  font-size: v.$font-size-lg;
+  font-weight: bold;
+  text-align: center;
+  color: v.$text-color;
+  background-color: v.$color-white;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-md;
+}
+
+.answer-container {
+  @include m.flex(column, center, flex-start);
+  gap: v.$spacing-md;
+  width: 100%;
+}
+
+.answer-button {
+  margin-right: v.$spacing-md;
+}
+
+.card-footer {
+  background-color: v.$primary-color;
+  border-bottom-left-radius: v.$border-radius;
+  border-bottom-right-radius: v.$border-radius;
+  color: v.$color-white;
+  @include m.flex(row, center, center);
+}
+
+.check-button-container {
+  width: 100%;
+  @include m.flex(row, center, center);
+  gap: v.$spacing-md;
+}
+
+.check-button {
+  background-color: transparent;
+  color: v.$text-light;
+  border: v.$border-width-md solid v.$color-success;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-xs v.$spacing-md;
+  cursor: pointer;
+  transition: all v.$transition-speed ease-in-out;
+  font-size: v.$font-size-sm;
+  position: relative;
+}
+
+.check-button::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    v.$color-success,
+    transparent
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.check-button:hover::before {
+  opacity: 1;
+  animation: borderRun 1s linear infinite;
+}
+
+@keyframes borderRun {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}

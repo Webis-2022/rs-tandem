@@ -1,6 +1,6 @@
 import './layout.scss';
 import { ROUTES } from '../../types';
-import { createElement, createLink } from '../../shared/dom';
+import { createEl, createLink } from '../../shared/dom';
 
 export type AppLayout = {
   root: HTMLElement;
@@ -8,20 +8,22 @@ export type AppLayout = {
 };
 
 export function createLayout(): AppLayout {
-  const root = createElement('div', undefined, 'app');
+  const root = createEl('div', { className: 'layout' });
 
-  const header = createElement('header', undefined, 'app-header');
-  const nav = createElement('nav', undefined, 'nav');
+  const header = createEl('header', { className: 'header' });
+  const nav = createEl('nav', { className: 'nav' });
 
   nav.append(
-    createLink('Landing', ROUTES.Landing, 'nav__link'),
-    createLink('Login', ROUTES.Login, 'nav__link'),
-    createLink('Dashboard', ROUTES.Dashboard, 'nav__link')
+    createLink('Landing', ROUTES.Landing, 'nav-link'),
+    createLink('Login', ROUTES.Login, 'nav-link'),
+    createLink('Dashboard', ROUTES.Dashboard, 'nav-link'),
+    createLink('Library', ROUTES.Library, 'nav-link'),
+    createLink('Practice', ROUTES.Practice, 'nav-link')
   );
 
   header.append(nav);
 
-  const outlet = createElement('main', undefined, 'app-main');
+  const outlet = createEl('main', { className: 'main' });
 
   root.append(header, outlet);
 

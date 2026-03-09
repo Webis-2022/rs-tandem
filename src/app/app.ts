@@ -7,6 +7,8 @@ import { setNavigate } from './navigation';
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
 import { createLoginView } from '../pages/auth/auth-page';
+import { createLibraryView } from '../pages/library/library';
+import { createPracticeView } from '../pages/practice/practice';
 
 export function initApp(mount: HTMLElement): void {
   const layout = createLayout();
@@ -25,6 +27,16 @@ export function initApp(mount: HTMLElement): void {
       },
       [ROUTES.Dashboard]: {
         createView: createDashboardView,
+        guard: 'authed',
+        redirectTo: ROUTES.Login,
+      },
+      [ROUTES.Library]: {
+        createView: createLibraryView,
+        guard: 'authed',
+        redirectTo: ROUTES.Login,
+      },
+      [ROUTES.Practice]: {
+        createView: createPracticeView,
         guard: 'authed',
         redirectTo: ROUTES.Login,
       },

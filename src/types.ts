@@ -2,6 +2,8 @@ export const ROUTES = {
   Landing: '/landing',
   Login: '/login',
   Dashboard: '/dashboard',
+  Library: '/library',
+  Practice: '/practice',
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
@@ -39,8 +41,12 @@ export type AuthError = {
 // Auth callback types for state change listeners
 export type AuthChangeCallback = (session: AuthSession | null) => void;
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 type GameState = {
-  currentQuestionIndex: number;
+  topicId: number;
+  difficulty: Difficulty | '';
+  round: number;
   score: number;
   usedHints: string[];
   wrongAnswers: number[];
