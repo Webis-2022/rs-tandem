@@ -11,11 +11,33 @@ export type AuthState = {
   login?: string;
 };
 
-type User = {
+// User types for Supabase Auth
+export type User = {
   id: string;
-  name: string;
-  token: string;
+  email: string;
+  created_at: string;
+  // optional profile data
+  name?: string;
+  avatar_url?: string;
 };
+
+// Session types for JWT token management
+export type AuthSession = {
+  access_token: string;
+  refresh_token: string;
+  expires_at: number; // timestamp in seconds
+  user: User;
+};
+
+// Error types for auth operations
+export type AuthError = {
+  code: string;
+  message: string;
+  status?: number;
+};
+
+// Auth callback types for state change listeners
+export type AuthChangeCallback = (session: AuthSession | null) => void;
 
 type GameState = {
   currentQuestionIndex: number;
