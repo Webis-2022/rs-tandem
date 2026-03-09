@@ -63,8 +63,7 @@ export async function initApp(mount: HTMLElement): Promise<void> {
       },
       [ROUTES.Logout]: {
         createView: createLogoutView,
-        guard: 'authed',
-        redirectTo: ROUTES.Login,
+        // No guard - logout should work regardless of auth state
       },
       [ROUTES.Dashboard]: {
         createView: createDashboardView,

@@ -23,7 +23,6 @@ export const createDashboardView = (): HTMLElement => {
     async () => {
       try {
         await authService.logout();
-        debugger;
         navigate(ROUTES.Landing, true);
       } catch (error) {
         console.error('Logout failed:', error);
