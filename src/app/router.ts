@@ -2,13 +2,12 @@ import type { RoutePath } from '../types';
 
 type RouteConfig = {
   createView: () => HTMLElement;
-  guard?: 'authed' | 'guest'; // authed: только для залогиненных, guest: только для гостей
-  redirectTo?: RoutePath; // куда редиректить если guard не прошёл
+  guard?: 'authed' | 'guest';
+  redirectTo?: RoutePath;
 };
 
 type RoutesMap = Partial<Record<RoutePath, RouteConfig>>;
 
-// Опции роута
 type CreateRouterOptions = {
   mount: HTMLElement; // куда "вставлять" текущую страницу
   routes: RoutesMap; // routes: список маршрутов
@@ -55,9 +54,9 @@ export const createRouter = (options: CreateRouterOptions): Router => {
       return;
     }
 
-    // "Отрисовать" текущую страницу:
+    // Рендер текущей страницу:
     mount.replaceChildren(route.createView());
-    window.scrollTo(0, 0); // на всякий случай скроллим вверх при смене страницы
+    window.scrollTo(0, 0); // на всякий случай  - скролл вверх при смене страницы
   };
 
   // Навигация на другой путь
