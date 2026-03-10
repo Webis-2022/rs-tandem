@@ -8,6 +8,8 @@ import { getState } from '../../../app/state/store';
 import { createPopover } from './theory-btn-popover/theory-btn-popover';
 import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
+import { navigate } from '../../../app/navigation';
+import { ROUTES } from '../../../types';
 type Question = {
   level: string;
   answer: string;
@@ -32,6 +34,9 @@ export function createPracticeCard(
   );
   nextTopicButton.addEventListener('click', goToNextTopic);
   const libraryButton = createButton('Library', undefined, 'library-btn', true);
+  libraryButton.addEventListener('click', () => {
+    navigate(ROUTES.Library, true);
+  });
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
   const hintsContainer = createHintsContainer();
@@ -48,7 +53,8 @@ export function createPracticeCard(
   }) as HTMLImageElement;
   theoryBtn.src = './img/question.png';
 
-  theoryBtn.addEventListener('click', () => {
+  theoryBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const state = getState();
     const topicId = state.game.topicId;
     const baseUrl = 'https://www.w3schools.com/';
@@ -66,6 +72,13 @@ export function createPracticeCard(
         createPopover(topicData, baseUrl);
       }
     }
+    document.addEventListener('click', (e) => {
+      const popover = document.querySelector('.theory-btn-popover');
+      const target = e.target as Node;
+      if (!popover?.contains(target)) {
+        popover?.remove();
+      }
+    });
   });
   questionContainer.textContent = question.question;
   const answerContainer = createElement('div', undefined, 'answer-container');

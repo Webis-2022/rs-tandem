@@ -3,7 +3,7 @@ import { type AppState } from '../../types';
 export let state: AppState = {
   user: null,
   game: {
-    topicId: 7,
+    topicId: 0,
     difficulty: '',
     round: 0,
     score: 0,
