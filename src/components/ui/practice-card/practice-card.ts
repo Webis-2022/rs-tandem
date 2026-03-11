@@ -90,6 +90,12 @@ export function createPracticeCard(
       radioInput.type = 'radio';
       radioInput.name = String(groupId);
       radioInput.value = option;
+      radioInput.addEventListener('change', () => {
+        const checkButton: HTMLButtonElement | null =
+          document.querySelector('.check-button');
+        if (!checkButton) return;
+        checkButton.disabled = false;
+      });
     }
     label.append(radioInput, option);
     answerContainer.append(label);
@@ -101,15 +107,20 @@ export function createPracticeCard(
     'check-button-container'
   );
   const checkButton = createButton('Check', undefined, 'check-button');
-  checkButton.addEventListener('click', () => {
-    const selected: HTMLInputElement | null = document.querySelector(
-      `input[name="${groupId}"]:checked`
-    );
-    const selectedValue = selected?.value;
-    const correctAnswer = question.answer;
-    checkAnswer(selectedValue, correctAnswer, section);
-    updateScore();
-  });
+  checkButton.disabled = true;
+  checkButton.addEventListener(
+    'click',
+    () => {
+      const selected: HTMLInputElement | null = document.querySelector(
+        `input[name="${groupId}"]:checked`
+      );
+      const selectedValue = selected?.value;
+      const correctAnswer = question.answer;
+      checkAnswer(selectedValue, correctAnswer, section);
+      updateScore();
+    },
+    { once: true }
+  );
 
   const theoryBtnContainer = createEl('div', {
     className: 'theory-btn-container',

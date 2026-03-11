@@ -5,7 +5,7 @@ export let state: AppState = {
   game: {
     topicId: 0,
     difficulty: '',
-    round: 0,
+    round: 1,
     score: 0,
     usedHints: [],
     wrongAnswers: [],

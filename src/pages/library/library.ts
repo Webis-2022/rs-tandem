@@ -90,7 +90,7 @@ export const createLibraryView = (): HTMLElement => {
             ...state.game,
             topicId: topic.id,
             difficulty,
-            round: 0,
+            round: 1,
             score: 0,
             usedHints: [],
             wrongAnswers: [],

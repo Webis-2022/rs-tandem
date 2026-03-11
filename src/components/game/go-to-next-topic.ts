@@ -8,7 +8,7 @@ export function goToNextTopic() {
     game: {
       ...prev.game,
       topicId: (prev.game.topicId ?? 0) + 1,
-      round: 0,
+      round: 1,
     },
   });
   const pageSection: HTMLElement | null = document.querySelector('.page');

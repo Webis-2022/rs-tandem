@@ -11,7 +11,7 @@ export function createPracticeView(): HTMLElement {
     section.style.flexDirection = 'row';
   }
   const state = getState();
-  const questionNum = state.game.round;
+  const questionNum = state.game.round - 1;
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   getQuestions(topicId, difficulty)
