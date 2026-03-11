@@ -11,6 +11,9 @@ import { createLibraryView } from '../pages/library/library';
 import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 
+import { getActiveGame } from '../services/storageService';
+import { restoreGameState } from './state/store';
+
 /**
  * Initialize authentication state
  * Attempts to restore session from localStorage and validate token
@@ -49,6 +52,13 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   const layout = createLayout();
   mount.replaceChildren(layout.root);
+
+  const activeGame = getActiveGame(); // читаем сохраненную игру из браузера
+
+  //если нашли сохраненную игру в браузере, подставляем ее обратно в store
+  if (activeGame) {
+    restoreGameState(activeGame);
+  }
 
   const router = createRouter({
     mount: layout.outlet,
