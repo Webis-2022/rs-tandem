@@ -9,7 +9,7 @@ export function createHintsContainer(question: Question) {
   const hintButtons = {
     '50/50': () => removeTwoWrongAnswers(question),
     'Call a friend': () => callFriend(question),
-    "I don't know": showSidePanel,
+    "I don't know": (e: MouseEvent) => showSidePanel(question, e),
   };
   const container = createElement('div', undefined, 'hints-container');
   Object.entries(hintButtons).forEach(([buttonKey, buttonHandler]) => {

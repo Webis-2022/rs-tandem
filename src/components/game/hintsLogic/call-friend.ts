@@ -2,7 +2,6 @@ import type { Question } from '../../../types';
 
 export function callFriend(question: Question) {
   const probability = Number(Math.random().toFixed(2));
-  console.log(probability);
   let friendAnswer;
   const correctAnswer = question.answer;
   const wrongAnswers = question.options.filter(
