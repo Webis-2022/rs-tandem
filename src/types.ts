@@ -36,3 +36,10 @@ export type AppState = {
   game: GameState;
   isLoading: boolean;
 };
+
+export type Question = {
+  level: string;
+  answer: string;
+  options: string[];
+  question: string;
+};

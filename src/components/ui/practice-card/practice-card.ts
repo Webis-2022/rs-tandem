@@ -1,14 +1,8 @@
 import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
+import { type Question } from '../../../types';
 import './practice-card.scss';
-
-type Question = {
-  level: string;
-  answer: string;
-  options: string[];
-  question: string;
-};
 
 export function createPracticeCard(question: Question) {
   const card = createElement('div', undefined, 'card');
@@ -25,7 +19,7 @@ export function createPracticeCard(question: Question) {
   const libraryButton = createButton('Library', undefined, 'library-btn', true);
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
-  const hintsContainer = createHintsContainer();
+  const hintsContainer = createHintsContainer(question);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
   const questionContainer = createElement(
