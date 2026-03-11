@@ -115,6 +115,40 @@ function scheduleTokenRefresh(expiresAt: number): void {
 }
 
 /**
+ * Create AuthSession from Supabase session data
+ * Throws if session or user data is invalid
+ */
+function createSessionFromSupabase(supabaseSession: {
+  access_token: string;
+  refresh_token: string;
+  expires_at?: number;
+  user: {
+    id: string;
+    email?: string;
+    created_at: string;
+    user_metadata?: Record<string, unknown>;
+  };
+}): AuthSession {
+  const user = toUser(supabaseSession.user);
+  return {
+    access_token: supabaseSession.access_token,
+    refresh_token: supabaseSession.refresh_token,
+    expires_at: supabaseSession.expires_at || 0,
+    user,
+  };
+}
+
+/**
+ * Persist session to localStorage and state, schedule auto-refresh
+ */
+function persistSession(session: AuthSession): void {
+  saveSession(session);
+  state.user = session.user;
+  notify();
+  scheduleTokenRefresh(session.expires_at);
+}
+
+/**
  * Register a new user with email and password
  */
 export async function register(email: string, password: string): Promise<User> {
@@ -132,24 +166,10 @@ export async function register(email: string, password: string): Promise<User> {
       });
     }
 
-    // Convert to our types
-    const user = toUser(data.user);
-    const session: AuthSession = {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at || 0,
-      user,
-    };
+    const session = createSessionFromSupabase(data.session);
+    persistSession(session);
 
-    // Save to localStorage and state
-    saveSession(session);
-    state.user = user;
-    notify();
-
-    // Schedule auto refresh
-    scheduleTokenRefresh(session.expires_at);
-
-    return user;
+    return session.user;
   } catch (error) {
     throw toAuthError(error);
   }
@@ -173,24 +193,10 @@ export async function login(email: string, password: string): Promise<User> {
       });
     }
 
-    // Convert to our types
-    const user = toUser(data.user);
-    const session: AuthSession = {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at || 0,
-      user,
-    };
+    const session = createSessionFromSupabase(data.session);
+    persistSession(session);
 
-    // Save to localStorage and state
-    saveSession(session);
-    state.user = user;
-    notify();
-
-    // Schedule auto refresh
-    scheduleTokenRefresh(session.expires_at);
-
-    return user;
+    return session.user;
   } catch (error) {
     throw toAuthError(error);
   }
@@ -230,26 +236,12 @@ export async function refreshToken(): Promise<AuthSession | null> {
     if (error) throw toAuthError(error);
     if (!data.session) return null;
 
-    const user = toUser(data.session.user);
-    const session: AuthSession = {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at || 0,
-      user,
-    };
-
-    // Update localStorage and state
-    saveSession(session);
-    state.user = user;
-    notify();
-
-    // Schedule next refresh
-    scheduleTokenRefresh(session.expires_at);
+    const session = createSessionFromSupabase(data.session);
+    persistSession(session);
 
     return session;
   } catch (error) {
     console.error('Token refresh failed:', error);
-    // Clear invalid session
     await logout();
     return null;
   }
@@ -311,29 +303,17 @@ export function onAuthChange(callback: AuthChangeCallback): () => void {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((_event, session) => {
     if (session) {
-      const user = toUser(session.user);
-      const authSession: AuthSession = {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        expires_at: session.expires_at || 0,
-        user,
-      };
-
-      saveSession(authSession);
-      state.user = user;
-      notify();
-
+      const authSession = createSessionFromSupabase(session);
+      persistSession(authSession);
       callback(authSession);
     } else {
       clearSession();
       state.user = null;
       notify();
-
       callback(null);
     }
   });
 
-  // Return unsubscribe function
   return () => {
     subscription.unsubscribe();
   };
