@@ -14,8 +14,9 @@ export function createLayout(): AppLayout {
   const nav = createEl('nav', { className: 'nav' });
 
   nav.append(
-    createLink('Landing', ROUTES.Landing, 'nav-link'),
     createLink('Login', ROUTES.Login, 'nav-link'),
+    createLink('Logout', ROUTES.Logout, 'nav-link'),
+    createLink('Landing', ROUTES.Landing, 'nav-link'),
     createLink('Dashboard', ROUTES.Dashboard, 'nav-link'),
     createLink('Library', ROUTES.Library, 'nav-link'),
     createLink('Practice', ROUTES.Practice, 'nav-link')
