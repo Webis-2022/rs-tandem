@@ -1,7 +1,7 @@
 import './library.scss';
 import { ROUTES, type Difficulty } from '../../types';
 import { navigate } from '../../app/navigation';
-import { getState, setState } from '../../app/state/store';
+import { getState, startNewGame } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import { getQuestions } from '../../services/api/get-questions';
@@ -84,8 +84,6 @@ export const createLibraryView = (): HTMLElement => {
     const startBtn = createButton(
       'Start',
       async () => {
-        const state = getState();
-
         status.textContent = 'Loading questions...';
         status.classList.remove('is-error');
         startBtn.disabled = true;
@@ -102,17 +100,10 @@ export const createLibraryView = (): HTMLElement => {
           status.textContent = '';
           status.classList.remove('is-error');
 
-          setState({
-            ...state,
-            game: {
-              ...state.game,
-              topicId: topic.id,
-              difficulty,
-              round: 0,
-              score: 0,
-              usedHints: [],
-              wrongAnswers: [],
-            },
+          startNewGame({
+            topicId: topic.id,
+            difficulty,
+            questions,
           });
 
           navigate(ROUTES.Practice, true);
