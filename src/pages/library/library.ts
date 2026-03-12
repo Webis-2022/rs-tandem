@@ -4,6 +4,7 @@ import { navigate } from '../../app/navigation';
 import { getState, setState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
+import { getQuestions } from '../../services/api/get-questions';
 
 type Topic = {
   id: number;
@@ -61,10 +62,11 @@ export const createLibraryView = (): HTMLElement => {
   );
 
   const list = createEl('div', { className: 'library-list' });
+  const status = createEl('div', { className: 'library-status' });
 
   const loading = createEl('div', {
     text: 'Loading topics...',
-    className: 'library-status',
+    className: 'library-list-status',
   });
 
   list.append(loading);
@@ -81,23 +83,46 @@ export const createLibraryView = (): HTMLElement => {
 
     const startBtn = createButton(
       'Start',
-      () => {
+      async () => {
         const state = getState();
 
-        setState({
-          ...state,
-          game: {
-            ...state.game,
-            topicId: topic.id,
-            difficulty,
-            round: 0,
-            score: 0,
-            usedHints: [],
-            wrongAnswers: [],
-          },
-        });
+        status.textContent = 'Loading questions...';
+        status.classList.remove('is-error');
+        startBtn.disabled = true;
 
-        navigate(ROUTES.Practice, true);
+        try {
+          const questions = await getQuestions(topic.id, difficulty);
+
+          if (!questions || questions.length === 0) {
+            status.textContent = 'No questions found for this topic.';
+            status.classList.add('is-error');
+            return;
+          }
+
+          status.textContent = '';
+          status.classList.remove('is-error');
+
+          setState({
+            ...state,
+            game: {
+              ...state.game,
+              topicId: topic.id,
+              difficulty,
+              round: 0,
+              score: 0,
+              usedHints: [],
+              wrongAnswers: [],
+            },
+          });
+
+          navigate(ROUTES.Practice, true);
+        } catch (err: unknown) {
+          status.textContent =
+            err instanceof Error ? err.message : 'Failed to load questions.';
+          status.classList.add('is-error');
+        } finally {
+          startBtn.disabled = false;
+        }
       },
       'btn'
     );
@@ -116,7 +141,7 @@ export const createLibraryView = (): HTMLElement => {
         list.append(
           createEl('div', {
             text: 'No topics found.',
-            className: 'library-status',
+            className: 'library-list-status',
           })
         );
         return;
@@ -133,11 +158,11 @@ export const createLibraryView = (): HTMLElement => {
       list.replaceChildren(
         createEl('div', {
           text: message,
-          className: 'library-status is-error',
+          className: 'library-list-status is-error',
         })
       );
     });
 
-  section.append(title, subtitle, difficultyRow, list);
+  section.append(title, subtitle, difficultyRow, status, list);
   return section;
 };
