@@ -27,7 +27,7 @@ type GameState = {
   round: number;
   score: number;
   usedHints: string[];
-  wrongAnswers: number[];
+  wrongAnswers: Question[];
   questions: string[];
 };
 
@@ -35,4 +35,11 @@ export type AppState = {
   user: User | null;
   game: GameState;
   isLoading: boolean;
+};
+
+export type Question = {
+  level: string;
+  answer: string;
+  options: string[];
+  question: string;
 };

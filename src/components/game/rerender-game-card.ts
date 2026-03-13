@@ -1,6 +1,8 @@
 import { createPracticeView } from '../../pages/practice/practice';
 
-export function rerenderGameCard(section: HTMLElement | null) {
+export async function rerenderGameCard(
+  section: HTMLElement | null
+): Promise<void> {
   section?.remove();
   const practiceView = createPracticeView();
   const mainSection = document.querySelector('.main');
