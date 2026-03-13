@@ -25,7 +25,9 @@ export function askQuestion(question: Question) {
       const selectedValue = selected?.value;
       const correctAnswer = question.answer;
       const isCorrect = checkAnswerSuperGame(selectedValue, correctAnswer);
-      resolve(isCorrect);
+      setTimeout(() => {
+        resolve(isCorrect);
+      }, 700);
     });
   });
 }
