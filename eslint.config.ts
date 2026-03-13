@@ -10,6 +10,9 @@ export default defineConfig([
     plugins: { js },
     extends: ['js/recommended'],
     languageOptions: { globals: globals.browser },
+    rules: {
+      'no-debugger': 'off', // Allow debugger statements for development
+    },
   },
   tseslint.configs.recommended,
   prettier,

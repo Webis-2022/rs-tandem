@@ -1,4 +1,5 @@
 import { type AppState } from '../../types';
+import { saveActiveGame } from '../../services/storageService';
 
 export let state: AppState = {
   user: null,
@@ -29,5 +30,13 @@ export function getState() {
 }
 export function setState(newState: AppState) {
   state = newState;
+  saveActiveGame(state.game); // после любого изменения игры ее актуальная версия автоматически сохраняется в localStorage
   notify();
+}
+
+export function restoreGameState(game: AppState['game']) {
+  state = {
+    ...state, // берем текущий state и копируем из него все поля
+    game, // но поле game заменяем на новое значение
+  };
 }

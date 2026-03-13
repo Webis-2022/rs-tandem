@@ -1,6 +1,7 @@
 import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
+import { type Question } from '../../../types';
 import './practice-card.scss';
 import { checkAnswer } from '../../../shared/check-answer';
 import { topicLinks } from '../../../pages/practice/topic-links';
@@ -39,7 +40,7 @@ export function createPracticeCard(
   });
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
-  const hintsContainer = createHintsContainer();
+  const hintsContainer = createHintsContainer(question);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
   const questionContainer = createElement(

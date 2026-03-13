@@ -12,7 +12,7 @@ type CreateRouterOptions = {
   mount: HTMLElement; // куда "вставлять" текущую страницу
   routes: RoutesMap; // routes: список маршрутов
   fallback: RoutePath; // что показывать, если путь неизвестный
-  isAuthed: () => boolean; // функция проверки авторизации (роутер не знает, где хранится токен/флаг)
+  isAuthed: () => boolean | Promise<boolean>; // функция проверки авторизации (может быть async)
 };
 
 export type Router = {
@@ -32,7 +32,7 @@ export const createRouter = (options: CreateRouterOptions): Router => {
   };
 
   // Рендер текущего URL (посмотреть на текущий URL и отрисовать нужную страницу)
-  const render = (): void => {
+  const render = async (): Promise<void> => {
     const rawPath = window.location.pathname; // текущий путь из адресной строки
 
     // если путь неизвестен — заменяем URL на fallback (без записи в историю)
@@ -44,12 +44,15 @@ export const createRouter = (options: CreateRouterOptions): Router => {
     const path = rawPath as RoutePath; // приводим тип к RoutePath
     const route = resolve(path); // получаем настройки (конфигурацию) текущего маршрута ({ createView, guard, redirectTo })
 
-    if (route.guard === 'authed' && !isAuthed()) {
+    // Guard check: support both sync and async isAuthed
+    const authed = await Promise.resolve(isAuthed());
+
+    if (route.guard === 'authed' && !authed) {
       go(route.redirectTo ?? fallback, true);
       return;
     }
 
-    if (route.guard === 'guest' && isAuthed()) {
+    if (route.guard === 'guest' && authed) {
       go(route.redirectTo ?? fallback, true);
       return;
     }
