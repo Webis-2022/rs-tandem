@@ -61,7 +61,11 @@ export type AppState = {
 };
 
 export type Question = {
+<<<<<<< feature/libraryGameFlow
   level: Difficulty;
+=======
+  level: string;
+>>>>>>> develop
   answer: string;
   options: string[];
   question: string;

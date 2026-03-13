@@ -1,12 +1,15 @@
 import { createElement, createButton } from '../../../../shared/dom';
 import { showSidePanel } from '../../../../shared/show-side-panel';
+import { removeTwoWrongAnswers } from '../../../game/hintsLogic/remove-two-wrong-answers';
 import './hints-container.scss';
+import { type Question } from '../../../../types';
+import { callFriend } from '../../../game/hintsLogic/call-friend';
 
-export function createHintsContainer() {
+export function createHintsContainer(question: Question) {
   const hintButtons = {
-    '50/50': () => console.log('50/50'),
-    'Call a friend': () => console.log('Call a friend'),
-    "I don't know": showSidePanel,
+    '50/50': () => removeTwoWrongAnswers(question),
+    'Call a friend': () => callFriend(question),
+    "I don't know": (e: MouseEvent) => showSidePanel(question, e),
   };
   const container = createElement('div', undefined, 'hints-container');
   Object.entries(hintButtons).forEach(([buttonKey, buttonHandler]) => {
