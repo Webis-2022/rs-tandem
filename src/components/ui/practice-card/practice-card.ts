@@ -73,13 +73,17 @@ export function createPracticeCard(
         createPopover(topicData, baseUrl);
       }
     }
-    document.addEventListener('click', (e) => {
-      const popover = document.querySelector('.theory-btn-popover');
-      const target = e.target as Node;
-      if (!popover?.contains(target)) {
-        popover?.remove();
-      }
-    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        const popover = document.querySelector('.theory-btn-popover');
+        const target = e.target as Node;
+        if (!popover?.contains(target)) {
+          popover?.remove();
+        }
+      },
+      { once: true }
+    );
   });
   questionContainer.textContent = question.question;
   const answerContainer = createElement('div', undefined, 'answer-container');

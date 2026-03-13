@@ -20,10 +20,12 @@ export function createPracticeView(): HTMLElement {
       const roundQuestion = questions[questionNum];
       const practiceCard = createPracticeCard(roundQuestion, section);
       section.append(practiceCard);
-    })
-    .then(() => {
+
       createSidePanel();
       updateScore();
+    })
+    .catch((error: Error) => {
+      throw new Error(error.message);
     });
   return section;
 }

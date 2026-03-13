@@ -1,9 +1,6 @@
-import { calculateScore, increaseRound } from '../app/state/actions';
+import { calculateScore } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import { highLightAnswer } from '../components/game/high-light-answer';
-import { toggleButtonsStatement } from '../components/game/toggle-buttons-statement';
-import { playSound } from '../components/game/play-sound';
-import { rerenderGameCard } from '../components/game/rerender-game-card';
+import { handleAnswerResult } from '../utils/handle-answer-result';
 
 export function checkAnswer(
   answer: string | undefined,
@@ -15,29 +12,23 @@ export function checkAnswer(
   const isCorrect = answer?.toLowerCase() === correctAnswer?.toLowerCase();
   let roundScore: number = 0;
   if (isCorrect) {
-    highLightAnswer(answer, '#57fa2e');
-    playSound('./sound/correct.mp3');
     roundScore = 1;
-    increaseRound();
-    if (round < 3) {
-      setTimeout(() => {
-        rerenderGameCard(section);
-      }, 1000);
-    } else {
-      toggleButtonsStatement();
-    }
+    handleAnswerResult(
+      answer,
+      '#57fa2e',
+      './sound/correct.mp3',
+      round,
+      section
+    );
   } else {
-    highLightAnswer(answer, '#fa2525');
-    playSound('./sound/incorrect.mp3');
     roundScore = -1;
-    increaseRound();
-    if (round < 3) {
-      setTimeout(() => {
-        rerenderGameCard(section);
-      }, 1000);
-    } else {
-      toggleButtonsStatement();
-    }
+    handleAnswerResult(
+      answer,
+      '#fa2525',
+      './sound/incorrect.mp3',
+      round,
+      section
+    );
   }
   calculateScore(roundScore);
 }
