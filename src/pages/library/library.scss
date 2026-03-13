@@ -61,12 +61,22 @@
   @include m.flex(row, flex-end, center);
 }
 
-.library-status {
+.library-list-status {
   color: v.$text-light;
 }
 
-.library-status.is-error {
+.library-list-status.is-error {
   color: v.$color-error;
+}
+
+.library-status {
+  color: v.$text-light;
+  font-size: v.$font-size-base;
+
+  &.is-error {
+    color: v.$color-error;
+    font-weight: 500;
+  }
 }
 
 @include m.respond-to(mobile) {
