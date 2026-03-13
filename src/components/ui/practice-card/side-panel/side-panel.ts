@@ -19,7 +19,8 @@ export function createSidePanel() {
   const title = createEl('h1', { className: 'side-panel-title' });
   title.textContent = 'Explanation';
   const divider = createDivider();
-  sidePanel.append(closeButton, title, divider);
+  const textContainer = createEl('div', { className: 'text-container' });
+  sidePanel.append(closeButton, title, divider, textContainer);
   sidePanel.classList.add('side-panel');
   const sectionPage = document.querySelector('.page');
   const card: HTMLDivElement | null = document.querySelector('.card');
