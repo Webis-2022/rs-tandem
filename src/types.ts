@@ -51,7 +51,7 @@ type GameState = {
   score: number;
   usedHints: string[];
   wrongAnswers: number[];
-  questions: string[];
+  questions: Question[];
 };
 
 export type AppState = {
@@ -61,7 +61,7 @@ export type AppState = {
 };
 
 export type Question = {
-  level: string;
+  level: Difficulty;
   answer: string;
   options: string[];
   question: string;
