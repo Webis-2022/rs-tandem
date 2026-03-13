@@ -11,12 +11,6 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
-type Question = {
-  level: string;
-  answer: string;
-  options: string[];
-  question: string;
-};
 
 export function createPracticeCard(
   question: Question,

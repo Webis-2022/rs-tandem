@@ -16,7 +16,7 @@ export function checkAnswer(
     handleAnswerResult(
       answer,
       '#57fa2e',
-      './sound/correct.mp3',
+      '../sound/correct.mp3',
       round,
       section
     );
@@ -25,7 +25,7 @@ export function checkAnswer(
     handleAnswerResult(
       answer,
       '#fa2525',
-      './sound/incorrect.mp3',
+      '../sound/incorrect.mp3',
       round,
       section
     );
