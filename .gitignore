@@ -27,6 +27,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# GitHub workflows and prompts
-.github
 
