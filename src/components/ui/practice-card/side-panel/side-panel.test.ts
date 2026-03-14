@@ -1,6 +1,5 @@
 import { createSidePanel } from './side-panel';
 import { screen } from '@testing-library/dom';
-import userEvent from '@testing-library/user-event';
 import { createEl } from '../../../../shared/dom';
 import { showSidePanel } from '../../../../shared/show-side-panel';
 
@@ -34,7 +33,7 @@ describe('createSidePanel', () => {
     button.addEventListener('click', showSidePanel);
     const btn = screen.getByText("I don't know");
 
-    await userEvent.click(btn);
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(sidePanel).toHaveClass('opened');
   });
