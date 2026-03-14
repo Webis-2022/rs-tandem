@@ -30,7 +30,7 @@ describe('createSidePanel', () => {
     });
     document.body.append(button);
 
-    button.addEventListener('click', (e) => showSidePanel(e));
+    button.addEventListener('click', (e) => showSidePanel(e as MouseEvent));
     const btn = screen.getByText("I don't know");
 
     btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
