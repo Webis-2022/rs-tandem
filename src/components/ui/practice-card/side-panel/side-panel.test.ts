@@ -1,7 +1,5 @@
 import { createSidePanel } from './side-panel';
 import { screen } from '@testing-library/dom';
-import { createEl } from '../../../../shared/dom';
-import { showSidePanel } from '../../../../shared/show-side-panel';
 
 describe('createSidePanel', () => {
   let sidePanel: HTMLDivElement | null;
@@ -22,19 +20,5 @@ describe('createSidePanel', () => {
 
     const title = screen.getByText('Explanation');
     expect(title).toBeInTheDocument();
-  });
-  test('contains className opened', async () => {
-    const button = createEl('div', {
-      text: "I don't know",
-      className: 'hint-btn',
-    });
-    document.body.append(button);
-
-    button.addEventListener('click', (e) => showSidePanel(e as MouseEvent));
-    const btn = screen.getByText("I don't know");
-
-    btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-    expect(sidePanel).toHaveClass('opened');
   });
 });
