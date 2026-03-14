@@ -11,3 +11,16 @@ export function increaseRound() {
     },
   });
 }
+
+export function calculateScore(roundScore: number) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      score:
+        prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
+    },
+  });
+}
