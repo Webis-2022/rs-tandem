@@ -1,7 +1,7 @@
 import {
   closeSidePanel,
   initSidePanelClose,
-} from '../../../../shared/close-side-panel';
+} from '../../../game/hintsLogic/close-side-panel';
 import { createEl } from '../../../../shared/dom';
 import { createDivider } from '../divider/divider';
 import './side-panel.scss';

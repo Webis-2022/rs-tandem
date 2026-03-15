@@ -1,6 +1,6 @@
 import { calculateScore } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import { handleAnswerResult } from '../utils/handle-answer-result';
+import { handleAnswerResult } from './handle-answer-result';
 
 export function checkAnswer(
   answer: string | undefined,
