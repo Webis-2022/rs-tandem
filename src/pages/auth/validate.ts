@@ -1,3 +1,5 @@
+import { isValidEmail } from '../../shared/helpers';
+
 export type Mode = 'login' | 'register';
 
 export type AuthValues = {
@@ -7,11 +9,6 @@ export type AuthValues = {
 };
 
 export type AuthErrors = Partial<Record<keyof AuthValues, string>>;
-
-export function isValidEmail(value: string): boolean {
-  // intentionally simple for UI stage
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
 
 export function validateAuth(mode: Mode, values: AuthValues): AuthErrors {
   const errors: AuthErrors = {};

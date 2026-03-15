@@ -11,4 +11,7 @@ function getOrCreateMount(): HTMLElement {
   return root;
 }
 
-initApp(getOrCreateMount());
+// Initialize app with async auth restoration
+(async () => {
+  await initApp(getOrCreateMount());
+})();

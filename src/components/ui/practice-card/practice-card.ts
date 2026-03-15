@@ -1,6 +1,7 @@
 import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
+import { type Question } from '../../../types';
 import './practice-card.scss';
 import { checkAnswer } from '../../../shared/check-answer';
 import { topicLinks } from '../../../pages/practice/topic-links';
@@ -10,8 +11,6 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
-import { type Question } from '../../../types';
-import { createAnswers } from './answers/answers';
 
 export function createPracticeCard(
   question: Question,
@@ -35,7 +34,7 @@ export function createPracticeCard(
   });
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
-  const hintsContainer = createHintsContainer();
+  const hintsContainer = createHintsContainer(question);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
   const questionContainer = createElement(
@@ -68,13 +67,17 @@ export function createPracticeCard(
         createPopover(topicData, baseUrl);
       }
     }
-    document.addEventListener('click', (e) => {
-      const popover = document.querySelector('.theory-btn-popover');
-      const target = e.target as Node;
-      if (!popover?.contains(target)) {
-        popover?.remove();
-      }
-    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        const popover = document.querySelector('.theory-btn-popover');
+        const target = e.target as Node;
+        if (!popover?.contains(target)) {
+          popover?.remove();
+        }
+      },
+      { once: true }
+    );
   });
   questionContainer.textContent = question.question;
   const answerContainer: HTMLDivElement | null = createElement(

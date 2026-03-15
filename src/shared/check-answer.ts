@@ -1,14 +1,6 @@
-import {
-  calculateScore,
-  increaseRound,
-  saveWrongAnswers,
-} from '../app/state/actions';
+import { calculateScore } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import { toggleButtonsStatement } from '../components/game/toggle-buttons-statement';
-import { rerenderGameCard } from '../components/game/rerender-game-card';
-import { type Question } from '../types';
-import { playSuperGame } from '../components/game/play-super-game';
-import { showAnswerFeedback } from '../components/game/answer-feedback/show-answer-feedback';
+import { handleAnswerResult } from '../utils/handle-answer-result';
 
 export async function checkAnswer(
   answer: string | undefined,
@@ -27,46 +19,23 @@ export async function checkAnswer(
   const isCorrect = answer?.toLowerCase() === correctAnswer?.toLowerCase();
   let roundScore: number = 0;
   if (isCorrect) {
-    showAnswerFeedback(answer, '#57fa2e', './sound/correct.mp3');
     roundScore = 1;
-    increaseRound();
-    wrongAnswersLength = getState().game.wrongAnswers.length;
-    if (round < 3) {
-      setTimeout(() => {
-        rerenderGameCard(section);
-      }, 1000);
-    } else if (round >= 3 && wrongAnswersLength > 0) {
-      setTimeout(() => {
-        if (confirm(text)) {
-          playSuperGame();
-        } else {
-          toggleButtonsStatement();
-        }
-      }, 500);
-    } else {
-      toggleButtonsStatement();
-    }
+    handleAnswerResult(
+      answer,
+      '#57fa2e',
+      '../sound/correct.mp3',
+      round,
+      section
+    );
   } else {
-    showAnswerFeedback(answer, '#fa2525', './sound/incorrect.mp3');
     roundScore = -1;
-    increaseRound();
-    saveWrongAnswers(question);
-    wrongAnswersLength = getState().game.wrongAnswers.length;
-    if (round < 3) {
-      setTimeout(() => {
-        rerenderGameCard(section);
-      }, 1000);
-    } else if (round >= 3 && wrongAnswersLength > 0) {
-      setTimeout(() => {
-        if (confirm(text)) {
-          playSuperGame();
-        } else {
-          toggleButtonsStatement();
-        }
-      }, 500);
-    } else {
-      toggleButtonsStatement();
-    }
+    handleAnswerResult(
+      answer,
+      '#fa2525',
+      '../sound/incorrect.mp3',
+      round,
+      section
+    );
   }
   calculateScore(roundScore);
 }

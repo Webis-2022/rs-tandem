@@ -1,4 +1,5 @@
-import { type AppState } from '../../types';
+import { type AppState, type Difficulty, type Question } from '../../types';
+import { saveActiveGame } from '../../services/storageService';
 
 export let state: AppState = {
   user: null,
@@ -27,7 +28,42 @@ export function notify() {
 export function getState() {
   return state;
 }
+
 export function setState(newState: AppState) {
   state = newState;
+  saveActiveGame(state.game); // после каждого обновления state текущая игра синхронизируется с localStorage
   notify();
+}
+
+const initialGameState: AppState['game'] = {
+  topicId: 0,
+  difficulty: '',
+  round: 1,
+  score: 0,
+  usedHints: [],
+  wrongAnswers: [],
+  questions: [],
+};
+
+export function startNewGame(params: {
+  topicId: number;
+  difficulty: Difficulty;
+  questions: Question[];
+}) {
+  setState({
+    ...state,
+    game: {
+      ...initialGameState,
+      topicId: params.topicId,
+      difficulty: params.difficulty,
+      questions: params.questions,
+    },
+  });
+}
+
+export function restoreGameState(game: AppState['game']) {
+  setState({
+    ...state,
+    game,
+  });
 }
