@@ -1,12 +1,14 @@
-import { calculateScore } from '../app/state/actions';
+import { calculateScore, saveWrongAnswers } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import { handleAnswerResult } from './handle-answer-result';
+import type { Question } from '../types';
+import { handleAnswerResult } from '../utils/handle-answer-result';
 
-export function checkAnswer(
+export async function checkAnswer(
   answer: string | undefined,
-  correctAnswer: string | undefined,
+  question: Question,
   section: HTMLElement | null
 ) {
+  const correctAnswer = question.answer;
   const state = getState();
   const round = state.game.round;
   const isCorrect = answer?.toLowerCase() === correctAnswer?.toLowerCase();
@@ -22,6 +24,7 @@ export function checkAnswer(
     );
   } else {
     roundScore = -1;
+    saveWrongAnswers(question);
     handleAnswerResult(
       answer,
       '#fa2525',

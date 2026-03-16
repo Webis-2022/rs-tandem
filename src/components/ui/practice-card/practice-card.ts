@@ -110,8 +110,7 @@ export function createPracticeCard(
         `input[name="${groupId}"]:checked`
       );
       const selectedValue = selected?.value;
-      const correctAnswer = question.answer;
-      checkAnswer(selectedValue, correctAnswer, section);
+      checkAnswer(selectedValue, question, section);
       updateScore();
     },
     { once: true }
