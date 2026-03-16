@@ -1,6 +1,8 @@
+import type { Question } from '../../types';
 import { getState, setState } from './store';
+import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
-export function increaseRound() {
+export async function increaseRound() {
   const prev = getState();
 
   setState({
@@ -10,8 +12,13 @@ export function increaseRound() {
       round: (prev.game.round ?? 0) + 1,
     },
   });
-}
 
+  try {
+    await syncActiveGameToServer();
+  } catch (error) {
+    console.error('Failed to sync active game:', error);
+  }
+}
 export function calculateScore(roundScore: number) {
   const prev = getState();
 
@@ -21,6 +28,18 @@ export function calculateScore(roundScore: number) {
       ...prev.game,
       score:
         prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
+    },
+  });
+}
+
+export function saveWrongAnswers(question: Question) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      wrongAnswers: [...prev.game.wrongAnswers, question],
     },
   });
 }

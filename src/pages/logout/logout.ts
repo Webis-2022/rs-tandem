@@ -1,13 +1,14 @@
 import { navigate } from '../../app/navigation';
 import { ROUTES } from '../../types';
 import * as authService from '../../services/authService';
+import { createEl } from '../../shared/dom';
 
 /**
  * Logout page component
  * Performs logout and redirects to landing page
  */
 export const createLogoutView = (): HTMLElement => {
-  const div = document.createElement('div');
+  const div = createEl('div');
   div.textContent = 'Logging out...';
 
   // Perform logout immediately

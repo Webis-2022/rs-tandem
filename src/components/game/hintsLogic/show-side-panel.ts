@@ -1,4 +1,4 @@
-import { type Question } from '../types';
+import { type Question } from '../../../types';
 
 export function showSidePanel(question: Question, e: MouseEvent) {
   e.stopPropagation();
