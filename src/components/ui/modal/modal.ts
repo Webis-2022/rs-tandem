@@ -3,18 +3,21 @@ import { createEl, createButton } from '../../../shared/dom';
 import type { ModalOptions, ModalResult } from '../../../types';
 
 let activeModal: HTMLElement | null = null;
-
-interface OverlayWithHandler extends HTMLElement {
-  _escapeHandler?: (e: KeyboardEvent) => void;
-}
+let activeEscapeHandler: ((e: KeyboardEvent) => void) | null = null;
+let activeResolve: ((result: ModalResult) => void) | null = null;
 
 /**
  * Shows a modal dialog with customizable content and buttons.
  * Returns a promise that resolves when user clicks a button or closes the modal.
  */
 export function showModal(options: ModalOptions): Promise<ModalResult> {
-  // Close any existing modal first
+  // Close any existing modal first and resolve its promise
   if (activeModal) {
+    // Resolve pending promise with cancelled result
+    if (activeResolve) {
+      activeResolve({ confirmed: false });
+      activeResolve = null;
+    }
     closeModal(activeModal);
   }
 
@@ -27,6 +30,8 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
   } = options;
 
   return new Promise((resolve) => {
+    // Store resolve function for cleanup
+    activeResolve = resolve;
     // Create modal structure
     const overlay = createEl('div', { className: 'modal-overlay' });
     const modal = createEl('div', { className: 'modal' });
@@ -51,6 +56,7 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
     const handleResult = (confirmed: boolean) => {
       closeModal(overlay);
       resolve({ confirmed });
+      activeResolve = null;
     };
 
     if (showConfirm) {
@@ -96,8 +102,7 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
     document.addEventListener('keydown', handleEscape);
 
     // Store reference for cleanup
-    overlay.dataset.escapeHandler = 'true';
-    (overlay as OverlayWithHandler)._escapeHandler = handleEscape;
+    activeEscapeHandler = handleEscape;
 
     // Add to DOM
     document.body.append(overlay);
@@ -114,9 +119,9 @@ function closeModal(overlay: HTMLElement): void {
   overlay.classList.remove('is-visible');
 
   // Remove ESC listener
-  const handler = (overlay as OverlayWithHandler)._escapeHandler;
-  if (handler) {
-    document.removeEventListener('keydown', handler);
+  if (activeEscapeHandler) {
+    document.removeEventListener('keydown', activeEscapeHandler);
+    activeEscapeHandler = null;
   }
 
   // Wait for animation before removing from DOM

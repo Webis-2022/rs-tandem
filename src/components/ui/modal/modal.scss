@@ -8,9 +8,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  z-index: v.$modal-overlay-z-index;
+  background: rgba(0, 0, 0, v.$modal-overlay-opacity);
+  backdrop-filter: blur(v.$modal-backdrop-blur);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
   background: v.$color-white;
   border: 1px solid v.$border-color;
   border-radius: v.$border-radius;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, v.$modal-shadow-opacity);
   padding: v.$spacing-lg;
   display: flex;
   flex-direction: column;
