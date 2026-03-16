@@ -110,6 +110,7 @@ export function createPracticeCard(
     undefined,
     'check-button-container'
   );
+
   const checkButton = createButton('Check', undefined, 'check-button');
   checkButton.disabled = true;
   checkButton.addEventListener(
