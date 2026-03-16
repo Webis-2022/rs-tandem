@@ -1,0 +1,126 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$spacing-md;
+  opacity: 0;
+  transition: opacity v.$transition-speed ease-in-out;
+
+  &.is-visible {
+    opacity: 1;
+
+    .modal {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+.modal {
+  width: 100%;
+  max-width: 440px;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all v.$transition-speed ease-in-out;
+}
+
+.modal-card {
+  background: v.$color-white;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: v.$spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: v.$font-size-lg;
+  color: v.$text-color;
+  text-align: center;
+}
+
+.modal-message {
+  margin: 0;
+  color: v.$text-light;
+  font-size: v.$font-size-base;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: v.$spacing-sm;
+  margin-top: v.$spacing-sm;
+
+  .modal-btn {
+    flex: 1;
+    padding: v.$spacing-sm v.$spacing-md;
+    border-radius: v.$border-radius;
+    cursor: pointer;
+    transition: v.$transition-speed;
+    font-size: v.$font-size-base;
+    font-weight: 500;
+  }
+
+  .modal-btn-cancel {
+    background: v.$secondary-color;
+    color: v.$text-color;
+    border: 1px solid v.$border-color;
+
+    &:hover:not(:disabled) {
+      background: darken(v.$secondary-color, 5%);
+    }
+  }
+
+  .modal-btn-confirm {
+    background: v.$primary-color;
+    color: v.$color-white;
+    border: 1px solid v.$primary-color;
+
+    &:hover:not(:disabled) {
+      background: darken(v.$primary-color, 10%);
+    }
+  }
+
+  .modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Mobile responsive
+@media (max-width: 480px) {
+  .modal-card {
+    padding: v.$spacing-md;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-message {
+    font-size: 14px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+
+    .modal-btn {
+      width: 100%;
+    }
+  }
+}
