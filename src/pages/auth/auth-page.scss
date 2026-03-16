@@ -131,6 +131,28 @@
   display: none;
 }
 
+.auth-demo {
+  display: flex;
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+  margin: v.$spacing-sm 0;
+
+  .btn-link {
+    padding: v.$spacing-xs v.$spacing-sm;
+    font-size: v.$font-size-sm;
+    color: v.$primary-color;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: v.$transition-speed;
+
+    &:hover {
+      color: v.$primary-dark;
+    }
+  }
+}
+
 @include m.respond-to(mobile) {
   .auth-card {
     padding: v.$spacing-md;

@@ -31,3 +31,9 @@ $border-width-md: 2px;
 // Other global variables
 $transition-speed: 0.3s;
 $shadow-default: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+// Modal-specific variables
+$modal-overlay-opacity: 0.5;
+$modal-overlay-z-index: 9999;
+$modal-backdrop-blur: 8px;
+$modal-shadow-opacity: 0.2;
