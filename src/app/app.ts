@@ -13,6 +13,7 @@ import { createLogoutView } from '../pages/logout/logout';
 
 import { getActiveGame } from '../services/storageService';
 import { restoreGameState } from './state/store';
+import { getActiveGameByUser } from '../services/api/active-games';
 
 /**
  * Initialize authentication state
@@ -46,19 +47,43 @@ function isAuthed(): boolean {
   return user !== null;
 }
 
+/**
+ * Restore active game
+ * Priority:
+ * 1. localStorage (for authenticated users)
+ * 2. Supabase fallback
+ */
+
+async function restoreActiveGame(): Promise<void> {
+  const localGame = getActiveGame();
+
+  if (localGame) {
+    restoreGameState(localGame);
+    return;
+  }
+
+  const user = authService.getCurrentUser();
+
+  if (!user) return;
+
+  try {
+    const serverGame = await getActiveGameByUser(user.id);
+
+    if (serverGame) {
+      restoreGameState(serverGame);
+    }
+  } catch (error) {
+    console.error('Failed to restore active game from Supabase:', error);
+  }
+}
+
 export async function initApp(mount: HTMLElement): Promise<void> {
   // Initialize auth state before setting up router
   await initAuth();
+  await restoreActiveGame();
 
   const layout = createLayout();
   mount.replaceChildren(layout.root);
-
-  const activeGame = getActiveGame(); // читаем сохраненную игру из браузера
-
-  //если нашли сохраненную игру в браузере, подставляем ее обратно в store
-  if (activeGame) {
-    restoreGameState(activeGame);
-  }
 
   const router = createRouter({
     mount: layout.outlet,
