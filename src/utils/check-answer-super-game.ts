@@ -1,4 +1,5 @@
-import { showAnswerFeedback } from '../components/game/answer-feedback/show-answer-feedback';
+import { playSound } from '../components/game/play-sound';
+import { highLightAnswer } from '../components/game/high-light-answer';
 
 export function checkAnswerSuperGame(
   selectedValue: string | undefined,
@@ -6,9 +7,11 @@ export function checkAnswerSuperGame(
 ) {
   const isCorrect = selectedValue === correctAnswer;
   if (isCorrect) {
-    showAnswerFeedback(correctAnswer, '#57fa2e', './sound/correct.mp3');
+    playSound('./sound/correct.mp3');
+    highLightAnswer(correctAnswer, '#57fa2e');
   } else {
-    showAnswerFeedback(correctAnswer, '#fa2525', './sound/incorrect.mp3');
+    playSound('./sound/incorrect.mp3');
+    highLightAnswer(correctAnswer, '#fa2525');
   }
 
   return isCorrect;

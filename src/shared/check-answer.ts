@@ -1,5 +1,6 @@
-import { calculateScore } from '../app/state/actions';
+import { calculateScore, saveWrongAnswers } from '../app/state/actions';
 import { getState } from '../app/state/store';
+import type { Question } from '../types';
 import { handleAnswerResult } from '../utils/handle-answer-result';
 
 export async function checkAnswer(
@@ -9,12 +10,6 @@ export async function checkAnswer(
 ) {
   const correctAnswer = question.answer;
   const state = getState();
-  let wrongAnswersLength;
-  const text = `Would you like to play super game?
-        Rules:
-        You will be asked questions you haven't answered in this topic.
-        If you answer all questions correctly, you will receive one point for each question.
-        If you make even one mistake, an amount equal to the number of unanswered questions will be deducted from your score.`;
   const round = state.game.round;
   const isCorrect = answer?.toLowerCase() === correctAnswer?.toLowerCase();
   let roundScore: number = 0;
@@ -29,6 +24,7 @@ export async function checkAnswer(
     );
   } else {
     roundScore = -1;
+    saveWrongAnswers(question);
     handleAnswerResult(
       answer,
       '#fa2525',

@@ -11,6 +11,7 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
+import { createAnswers } from './answers/answers';
 
 export function createPracticeCard(
   question: Question,
