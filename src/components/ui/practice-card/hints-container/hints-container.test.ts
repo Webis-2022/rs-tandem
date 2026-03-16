@@ -1,10 +1,20 @@
+import type { Question } from '../../../../types';
 import { createHintsContainer } from './hints-container';
 
 describe('createHintsContainer', () => {
   let container: HTMLElement;
   let hintButtons: NodeListOf<HTMLButtonElement>;
+
+  const mockQuestion: Question = {
+    level: 'easy',
+    answer: 'HyperText Markup Language',
+    options: ['HTML', 'CSS', 'JS', 'TS'],
+    question: 'What does HTML stand for?',
+    explanation: 'HTML stands for HyperText Markup Language.',
+  };
+
   beforeEach(() => {
-    container = createHintsContainer();
+    container = createHintsContainer(mockQuestion);
     hintButtons = container.querySelectorAll('.hint-btn');
   });
 
