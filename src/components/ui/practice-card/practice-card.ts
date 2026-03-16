@@ -11,6 +11,7 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
+import { createAnswers } from './answers/answers';
 
 export function createPracticeCard(
   question: Question,
@@ -80,31 +81,21 @@ export function createPracticeCard(
     );
   });
   questionContainer.textContent = question.question;
-  const answerContainer = createElement('div', undefined, 'answer-container');
+  const answerContainer: HTMLDivElement | null = createElement(
+    'div',
+    undefined,
+    'answer-container'
+  ) as HTMLDivElement;
   const groupId = Date.now();
-  question.options.forEach((option) => {
-    const label = createElement('label', undefined, 'label');
-    const radioInput = createElement('input', undefined, 'answer-button');
-    if (radioInput instanceof HTMLInputElement) {
-      radioInput.type = 'radio';
-      radioInput.name = String(groupId);
-      radioInput.value = option;
-      radioInput.addEventListener('change', () => {
-        const checkButton: HTMLButtonElement | null =
-          document.querySelector('.check-button');
-        if (!checkButton) return;
-        checkButton.disabled = false;
-      });
-    }
-    label.append(radioInput, option);
-    answerContainer.append(label);
-  });
+
+  createAnswers(question, groupId, answerContainer);
 
   const checkButtonContainer = createElement(
     'div',
     undefined,
     'check-button-container'
   );
+
   const checkButton = createButton('Check', undefined, 'check-button');
   checkButton.disabled = true;
   checkButton.addEventListener(
@@ -114,8 +105,7 @@ export function createPracticeCard(
         `input[name="${groupId}"]:checked`
       );
       const selectedValue = selected?.value;
-      const correctAnswer = question.answer;
-      checkAnswer(selectedValue, correctAnswer, section);
+      checkAnswer(selectedValue, question, section);
       updateScore();
     },
     { once: true }

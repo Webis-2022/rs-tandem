@@ -50,7 +50,7 @@ type GameState = {
   round: number;
   score: number;
   usedHints: string[];
-  wrongAnswers: number[];
+  wrongAnswers: Question[];
   questions: Question[];
 };
 
