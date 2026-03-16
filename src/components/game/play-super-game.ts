@@ -1,7 +1,6 @@
-import { calculateScore, saveWrongAnswers } from '../../app/state/actions';
+import { calculateScore } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
-import { handleAnswerResult } from '../../utils/handle-answer-result';
-// import { checkAnswer } from '../../utils/check-answer';
+import { checkAnswerSuperGame } from '../../utils/check-answer-super-game';
 import { askQuestion } from './ask-question';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 import { updateScore } from './updateScore';
@@ -31,27 +30,21 @@ export async function playSuperGame(gameMode: string) {
     toggleButtonsStatement();
   } else if (gameMode === 'game') {
     questions = getState().game.questions;
-    console.log(questions);
     for (let i = 0; i < questions.length; i += 1) {
       console.log(i);
-      const state = getState();
-      const round = state.game.round;
       let roundScore: number = 0;
       const question = questions[i];
       console.log('q', question);
       const isCorrect = await askQuestion(question, gameMode);
+      console.log(isCorrect);
+      const groupId = Date.now();
       if (isCorrect) {
+        console.log('called150');
         roundScore = 1;
-        handleAnswerResult(question, '#57fa2e', '../sound/correct.mp3', round);
+        checkAnswerSuperGame(question.answer, isCorrect, question, groupId);
       } else {
         roundScore = -1;
-        saveWrongAnswers(question);
-        handleAnswerResult(
-          question,
-          '#fa2525',
-          '../sound/incorrect.mp3',
-          round
-        );
+        checkAnswerSuperGame(question.answer, isCorrect, question, groupId);
       }
       calculateScore(roundScore);
     }

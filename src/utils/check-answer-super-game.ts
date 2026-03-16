@@ -2,6 +2,7 @@ import { playSound } from '../components/game/play-sound';
 import { highLightAnswer } from '../components/game/high-light-answer';
 import type { Question } from '../types';
 import { showNextQuestion } from '../components/game/ask-question';
+// import { getState } from '../app/state/store';
 
 export function checkAnswerSuperGame(
   correctAnswer: string,
@@ -10,6 +11,7 @@ export function checkAnswerSuperGame(
   groupId: number
 ) {
   console.log('called15');
+  // const round = getState().game.round;
   if (isCorrect) {
     playSound('./sound/correct.mp3');
     highLightAnswer(correctAnswer, '#57fa2e');

@@ -25,6 +25,7 @@ export function handleAnswerResult(
   if (round < questionsPerRound) {
     setTimeout(async () => {
       playSuperGame('game');
+      console.log('called100');
     }, 1000);
   } else if (round >= questionsPerRound && wrongAnswersLength > 0) {
     setTimeout(async () => {
