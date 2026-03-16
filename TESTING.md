@@ -23,14 +23,13 @@ PR с тестами: https://github.com/Webis-2022/rs-tandem/pull/66
 
 #### @github-Urazof
 
-Что тестирую:
+Что тестирую: компонент Modal
 
 | Файл | Описание |
 | ---- | -------- |
-| ``   |          |
-| ``   |          |
+| `src/components/ui/modal/modal.test.ts`   |   Базовый рендеринг, режим с одной кнопкой, режим подтверждения, закрытие (overlay, ESC), singleton и анимация  |
 
-PR с тестами:
+PR с тестами: https://github.com/Webis-2022/rs-tandem/pull/70
 
 #### @github-AleksPanda
 
