@@ -100,7 +100,7 @@ export const createLibraryView = (): HTMLElement => {
           status.textContent = '';
           status.classList.remove('is-error');
 
-          startNewGame({
+          await startNewGame({
             topicId: topic.id,
             difficulty,
             questions,

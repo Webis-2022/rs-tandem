@@ -1,12 +1,13 @@
 import { type AppState, type Difficulty, type Question } from '../../types';
 import { saveActiveGame } from '../../services/storageService';
+import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
 export let state: AppState = {
   user: null,
   game: {
     topicId: 0,
     difficulty: '',
-    round: 0,
+    round: 1,
     score: 0,
     usedHints: [],
     wrongAnswers: [],
@@ -38,20 +39,22 @@ export function setState(newState: AppState) {
 const initialGameState: AppState['game'] = {
   topicId: 0,
   difficulty: '',
-  round: 0,
+  round: 1,
   score: 0,
   usedHints: [],
   wrongAnswers: [],
   questions: [],
 };
 
-export function startNewGame(params: {
+export async function startNewGame(params: {
   topicId: number;
   difficulty: Difficulty;
   questions: Question[];
 }) {
+  const prev = getState();
+
   setState({
-    ...state,
+    ...prev,
     game: {
       ...initialGameState,
       topicId: params.topicId,
@@ -59,6 +62,12 @@ export function startNewGame(params: {
       questions: params.questions,
     },
   });
+
+  try {
+    await syncActiveGameToServer();
+  } catch (error) {
+    console.error('Failed to save active game to Supabase:', error);
+  }
 }
 
 export function restoreGameState(game: AppState['game']) {

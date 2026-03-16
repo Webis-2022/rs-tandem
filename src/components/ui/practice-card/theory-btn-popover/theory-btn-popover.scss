@@ -1,0 +1,17 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.theory-btn-popover {
+  position: absolute;
+  top: 35px;
+  left: 20px;
+  background: v.$color-white;
+  border: 1px solid v.$color-divider;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-sm 0;
+  box-shadow: v.$shadow-default;
+  min-width: 150px;
+  z-index: 1000;
+  @include m.flex(column, center, center);
+  gap: v.$spacing-sm;
+}

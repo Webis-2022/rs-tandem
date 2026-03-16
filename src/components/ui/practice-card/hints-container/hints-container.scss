@@ -17,7 +17,12 @@
   cursor: pointer;
   transition: v.$transition-speed;
 
-  &:hover {
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
     background-color: v.$primary-dark;
     color: v.$color-white;
   }
