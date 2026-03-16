@@ -1,7 +1,7 @@
 import { createButton, createEl, createElement } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
-import { type Question } from '../../../types';
+// import { type Question } from '../../../types';
 import './practice-card.scss';
 import { checkAnswer } from '../../../shared/check-answer';
 import { topicLinks } from '../../../pages/practice/topic-links';
@@ -13,9 +13,14 @@ import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
 
 export function createPracticeCard(
-  question: Question,
+  // questions: Question[],
   section: HTMLElement | null
 ) {
+  const topicQuestions = localStorage.getItem('topicQuestions');
+  const parsedTopicQuestions = JSON.parse(topicQuestions || '');
+  const state = getState();
+  const questionNum = state.game.round - 1;
+  const roundQuestion = parsedTopicQuestions[questionNum];
   const card = createElement('div', undefined, 'card');
   const cardHeader = createElement('div', undefined, 'card-header');
   const score = createElement('span', undefined, 'score');
@@ -34,7 +39,7 @@ export function createPracticeCard(
   });
   const cardBody = createElement('div', undefined, 'card-body');
   const cardFooter = createElement('div', undefined, 'card-footer');
-  const hintsContainer = createHintsContainer(question);
+  const hintsContainer = createHintsContainer(roundQuestion);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
   const questionContainer = createElement(
@@ -79,10 +84,10 @@ export function createPracticeCard(
       { once: true }
     );
   });
-  questionContainer.textContent = question.question;
+  questionContainer.textContent = roundQuestion.question;
   const answerContainer = createElement('div', undefined, 'answer-container');
   const groupId = Date.now();
-  question.options.forEach((option) => {
+  roundQuestion.options.forEach((option) => {
     const label = createElement('label', undefined, 'label');
     const radioInput = createElement('input', undefined, 'answer-button');
     if (radioInput instanceof HTMLInputElement) {
@@ -114,7 +119,7 @@ export function createPracticeCard(
         `input[name="${groupId}"]:checked`
       );
       const selectedValue = selected?.value;
-      const correctAnswer = question.answer;
+      const correctAnswer = roundQuestion.answer;
       checkAnswer(selectedValue, correctAnswer, section);
       updateScore();
     },

@@ -17,8 +17,9 @@ export function createPracticeView(): HTMLElement {
   getQuestions(topicId, difficulty)
     .then((questions) => {
       if (questionNum >= questions.length) return;
-      const roundQuestion = questions[questionNum];
-      const practiceCard = createPracticeCard(roundQuestion, section);
+      // const roundQuestion = questions[questionNum];
+      localStorage.setItem('topicQuestions', JSON.stringify(questions));
+      const practiceCard = createPracticeCard(section);
       section.append(practiceCard);
 
       createSidePanel();

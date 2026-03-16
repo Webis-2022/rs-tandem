@@ -1,8 +1,8 @@
 import { highLightAnswer } from '../components/game/high-light-answer';
 import { toggleButtonsStatement } from '../components/game/toggle-buttons-statement';
 import { playSound } from '../components/game/play-sound';
-import { rerenderGameCard } from '../components/game/rerender-game-card';
 import { increaseRound } from '../app/state/actions';
+import { createPracticeCard } from '../components/ui/practice-card/practice-card';
 export function handleAnswerResult(
   answer: string | undefined,
   color: string,
@@ -16,7 +16,8 @@ export function handleAnswerResult(
   increaseRound();
   if (round < questionsPerRound) {
     setTimeout(() => {
-      rerenderGameCard(section);
+      section?.remove();
+      createPracticeCard(section);
     }, 1000);
   } else {
     toggleButtonsStatement();
