@@ -1,9 +1,9 @@
-import { createButton, createEl, createElement } from '../../../shared/dom';
+import { createButton, createEl } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
 import { type Question } from '../../../types';
 import './practice-card.scss';
-import { checkAnswer } from '../../../shared/check-answer';
+import { checkAnswer } from '../../../utils/check-answer';
 import { topicLinks } from '../../../pages/practice/topic-links';
 import { getState } from '../../../app/state/store';
 import { createPopover } from './theory-btn-popover/theory-btn-popover';
@@ -11,17 +11,16 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
-import { createAnswers } from './answers/answers';
 
 export function createPracticeCard(
   question: Question,
   section: HTMLElement | null
 ) {
-  const card = createElement('div', undefined, 'card');
-  const cardHeader = createElement('div', undefined, 'card-header');
-  const score = createElement('span', undefined, 'score');
+  const card = createEl('div', { className: 'card' });
+  const cardHeader = createEl('div', { className: 'card-header' });
+  const score = createEl('span', { className: 'score' });
   score.textContent = '0';
-  const buttonContainer = createElement('div', undefined, 'button-container');
+  const buttonContainer = createEl('div', { className: 'button-container' });
   const nextTopicButton = createButton(
     'Next topic',
     undefined,
@@ -33,16 +32,14 @@ export function createPracticeCard(
   libraryButton.addEventListener('click', () => {
     navigate(ROUTES.Library, true);
   });
-  const cardBody = createElement('div', undefined, 'card-body');
-  const cardFooter = createElement('div', undefined, 'card-footer');
+  const cardBody = createEl('div', { className: 'card-body' });
+  const cardFooter = createEl('div', { className: 'card-footer' });
   const hintsContainer = createHintsContainer(question);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
-  const questionContainer = createElement(
-    'div',
-    undefined,
-    'question-container'
-  );
+  const questionContainer = createEl('div', {
+    className: 'question-container',
+  });
   const theoryBtn = createEl('img', {
     text: '',
     className: 'theory-btn',
@@ -81,21 +78,29 @@ export function createPracticeCard(
     );
   });
   questionContainer.textContent = question.question;
-  const answerContainer: HTMLDivElement | null = createElement(
-    'div',
-    undefined,
-    'answer-container'
-  ) as HTMLDivElement;
+  const answerContainer = createEl('div', { className: 'answer-container' });
   const groupId = Date.now();
+  question.options.forEach((option) => {
+    const label = createEl('label', { className: 'label' });
+    const radioInput = createEl('input', { className: 'answer-button' });
+    if (radioInput instanceof HTMLInputElement) {
+      radioInput.type = 'radio';
+      radioInput.name = String(groupId);
+      radioInput.value = option;
+      radioInput.addEventListener('change', () => {
+        const checkButton: HTMLButtonElement | null =
+          document.querySelector('.check-button');
+        if (!checkButton) return;
+        checkButton.disabled = false;
+      });
+    }
+    label.append(radioInput, option);
+    answerContainer.append(label);
+  });
 
-  createAnswers(question, groupId, answerContainer);
-
-  const checkButtonContainer = createElement(
-    'div',
-    undefined,
-    'check-button-container'
-  );
-
+  const checkButtonContainer = createEl('div', {
+    className: 'check-button-container',
+  });
   const checkButton = createButton('Check', undefined, 'check-button');
   checkButton.disabled = true;
   checkButton.addEventListener(

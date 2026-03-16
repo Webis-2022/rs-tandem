@@ -3,10 +3,10 @@ import { updateScore } from '../../components/game/updateScore';
 import { createPracticeCard } from '../../components/ui/practice-card/practice-card';
 import { createSidePanel } from '../../components/ui/practice-card/side-panel/side-panel';
 import { getQuestions } from '../../services/api/get-questions';
-import { createElement } from '../../shared/dom';
+import { createEl } from '../../shared/dom';
 
 export function createPracticeView(): HTMLElement {
-  const section = createElement('section', undefined, 'page');
+  const section = createEl('section', { className: 'page' });
   if (window.location.pathname === '/practice') {
     section.style.flexDirection = 'row';
   }
