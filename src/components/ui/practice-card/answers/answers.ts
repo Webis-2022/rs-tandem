@@ -1,4 +1,4 @@
-import { createElement } from '../../../../shared/dom';
+import { createEl } from '../../../../shared/dom';
 import type { Question } from '../../../../types';
 
 export function createAnswers(
@@ -7,8 +7,8 @@ export function createAnswers(
   answerContainer: HTMLDivElement | null
 ) {
   question.options.forEach((option) => {
-    const label = createElement('label', undefined, 'label');
-    const radioInput = createElement('input', undefined, 'answer-button');
+    const label = createEl('label', { className: 'label' });
+    const radioInput = createEl('input', { className: 'answer-button' });
     if (radioInput instanceof HTMLInputElement) {
       radioInput.type = 'radio';
       radioInput.name = String(groupId);
