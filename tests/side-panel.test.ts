@@ -1,4 +1,4 @@
-import { createSidePanel } from './side-panel';
+import { createSidePanel } from '../src/components/ui/practice-card/side-panel/side-panel';
 import { screen } from '@testing-library/dom';
 
 describe('createSidePanel', () => {

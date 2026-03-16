@@ -1,5 +1,6 @@
 @use '../../../styles/variables' as v;
 @use '../../../styles/mixins' as m;
+@use 'sass:color';
 
 .modal-overlay {
   position: fixed;
@@ -82,7 +83,7 @@
     border: 1px solid v.$border-color;
 
     &:hover:not(:disabled) {
-      background: darken(v.$secondary-color, 5%);
+      background: color.scale(v.$secondary-color, $lightness: -5%);
     }
   }
 
@@ -92,7 +93,7 @@
     border: 1px solid v.$primary-color;
 
     &:hover:not(:disabled) {
-      background: darken(v.$primary-color, 10%);
+      background: color.scale(v.$primary-color, $lightness: -10%);
     }
   }
 

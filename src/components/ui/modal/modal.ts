@@ -1,17 +1,6 @@
 import './modal.scss';
 import { createEl, createButton } from '../../../shared/dom';
-
-export type ModalOptions = {
-  title?: string;
-  message: string;
-  showConfirm?: boolean; // if true, show both Confirm and Cancel buttons
-  confirmText?: string;
-  cancelText?: string;
-};
-
-type ModalResult = {
-  confirmed: boolean;
-};
+import type { ModalOptions, ModalResult } from '../../../types';
 
 let activeModal: HTMLElement | null = null;
 

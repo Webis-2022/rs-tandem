@@ -1,5 +1,5 @@
-import type { Difficulty } from '../../../../types';
-import { createHintsContainer } from './hints-container';
+import type { Difficulty } from '../src/types';
+import { createHintsContainer } from '../src/components/ui/practice-card/hints-container/hints-container';
 
 describe('createHintsContainer', () => {
   let container: HTMLElement;
