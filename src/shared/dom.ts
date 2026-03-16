@@ -1,21 +1,3 @@
-export function createElement(
-  tag: string,
-  text?: string,
-  className?: string
-): HTMLElement {
-  const element = document.createElement(tag);
-
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-
-  if (className) {
-    element.className = className;
-  }
-
-  return element;
-}
-
 type CreateElOptions = {
   text?: string;
   className?: string;
@@ -44,10 +26,9 @@ export function createButton(
   className?: string,
   disabled: boolean = false
 ): HTMLButtonElement {
-  const button = document.createElement('button');
+  const button = createEl('button', { text: text }) as HTMLButtonElement;
 
   button.type = 'button';
-  button.textContent = text;
   button.disabled = disabled;
 
   if (className) button.className = className;
@@ -61,7 +42,7 @@ export function createLink(
   href: string,
   className?: string
 ): HTMLAnchorElement {
-  const link = document.createElement('a');
+  const link = createEl('a') as HTMLAnchorElement;
 
   link.textContent = text;
   link.href = href;

@@ -1,3 +1,4 @@
+import { createEl } from '../shared/dom';
 import type { RoutePath } from '../types';
 
 type RouteConfig = {
@@ -26,8 +27,7 @@ export const createRouter = (options: CreateRouterOptions): Router => {
   // Получить конфиг маршрута по path:
   const resolve = (path: RoutePath): RouteConfig => {
     return (
-      routes[path] ??
-      routes[fallback] ?? { createView: () => document.createElement('div') }
+      routes[path] ?? routes[fallback] ?? { createView: () => createEl('div') }
     );
   };
 

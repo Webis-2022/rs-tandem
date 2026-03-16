@@ -100,7 +100,7 @@
   padding: v.$spacing-md;
 }
 
-.answer-container {
+.answers {
   @include m.flex(column, center, flex-start);
   gap: v.$spacing-md;
   width: 100%;

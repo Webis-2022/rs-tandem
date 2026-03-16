@@ -1,25 +1,23 @@
+import { saveTopicQuestions } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
 import { updateScore } from '../../components/game/updateScore';
 import { createPracticeCard } from '../../components/ui/practice-card/practice-card';
 import { createSidePanel } from '../../components/ui/practice-card/side-panel/side-panel';
 import { getQuestions } from '../../services/api/get-questions';
-import { createElement } from '../../shared/dom';
+import { createEl } from '../../shared/dom';
 
 export function createPracticeView(): HTMLElement {
-  const section = createElement('section', undefined, 'page');
+  const section = createEl('section', { className: 'page' });
   if (window.location.pathname === '/practice') {
     section.style.flexDirection = 'row';
   }
   const state = getState();
-  const questionNum = state.game.round - 1;
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   getQuestions(topicId, difficulty)
     .then((questions) => {
-      if (questionNum >= questions.length) return;
-      // const roundQuestion = questions[questionNum];
-      localStorage.setItem('topicQuestions', JSON.stringify(questions));
-      const practiceCard = createPracticeCard(section);
+      saveTopicQuestions(questions);
+      const practiceCard = createPracticeCard();
       section.append(practiceCard);
 
       createSidePanel();

@@ -19,6 +19,17 @@ export async function increaseRound() {
     console.error('Failed to sync active game:', error);
   }
 }
+
+export function saveTopicQuestions(questions: Question[]) {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      questions: questions,
+    },
+  });
+}
 export function calculateScore(roundScore: number) {
   const prev = getState();
 

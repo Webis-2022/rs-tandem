@@ -1,31 +1,29 @@
-import { createButton, createEl, createElement } from '../../../shared/dom';
+import { createButton, createEl } from '../../../shared/dom';
 import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
 // import { type Question } from '../../../types';
 import './practice-card.scss';
-import { checkAnswer } from '../../../shared/check-answer';
+// import { checkAnswer } from '../../../utils/check-answer';
 import { topicLinks } from '../../../pages/practice/topic-links';
 import { getState } from '../../../app/state/store';
 import { createPopover } from './theory-btn-popover/theory-btn-popover';
 import { goToNextTopic } from '../../game/go-to-next-topic';
-import { updateScore } from '../../game/updateScore';
+// import { updateScore } from '../../game/updateScore';
 import { navigate } from '../../../app/navigation';
 import { ROUTES } from '../../../types';
+import { checkAnswer } from '../../../utils/check-answer';
+// import { playSuperGame } from '../../game/play-super-game';
 
-export function createPracticeCard(
-  // questions: Question[],
-  section: HTMLElement | null
-) {
-  const topicQuestions = localStorage.getItem('topicQuestions');
-  const parsedTopicQuestions = JSON.parse(topicQuestions || '');
+export function createPracticeCard() {
   const state = getState();
+  const questions = getState().game.questions;
   const questionNum = state.game.round - 1;
-  const roundQuestion = parsedTopicQuestions[questionNum];
-  const card = createElement('div', undefined, 'card');
-  const cardHeader = createElement('div', undefined, 'card-header');
-  const score = createElement('span', undefined, 'score');
+  const question = questions[questionNum];
+  const card = createEl('div', { className: 'card' });
+  const cardHeader = createEl('div', { className: 'card-header' });
+  const score = createEl('span', { className: 'score' });
   score.textContent = '0';
-  const buttonContainer = createElement('div', undefined, 'button-container');
+  const buttonContainer = createEl('div', { className: 'button-container' });
   const nextTopicButton = createButton(
     'Next topic',
     undefined,
@@ -37,16 +35,14 @@ export function createPracticeCard(
   libraryButton.addEventListener('click', () => {
     navigate(ROUTES.Library, true);
   });
-  const cardBody = createElement('div', undefined, 'card-body');
-  const cardFooter = createElement('div', undefined, 'card-footer');
-  const hintsContainer = createHintsContainer(roundQuestion);
+  const cardBody = createEl('div', { className: 'card-body' });
+  const cardFooter = createEl('div', { className: 'card-footer' });
+  const hintsContainer = createHintsContainer(question);
   const topDivider = createDivider();
   const bottomDivider = createDivider();
-  const questionContainer = createElement(
-    'div',
-    undefined,
-    'question-container'
-  );
+  const questionContainer = createEl('div', {
+    className: 'question-container',
+  });
   const theoryBtn = createEl('img', {
     text: '',
     className: 'theory-btn',
@@ -84,12 +80,13 @@ export function createPracticeCard(
       { once: true }
     );
   });
-  questionContainer.textContent = roundQuestion.question;
-  const answerContainer = createElement('div', undefined, 'answer-container');
+  questionContainer.textContent = question.question;
+  const answerContainer = createEl('div', { className: 'answer-container' });
+  const answers = createEl('div', { className: 'answers' });
   const groupId = Date.now();
-  roundQuestion.options.forEach((option) => {
-    const label = createElement('label', undefined, 'label');
-    const radioInput = createElement('input', undefined, 'answer-button');
+  question.options.forEach((option) => {
+    const label = createEl('label', { className: 'label' });
+    const radioInput = createEl('input', { className: 'answer-button' });
     if (radioInput instanceof HTMLInputElement) {
       radioInput.type = 'radio';
       radioInput.name = String(groupId);
@@ -102,17 +99,16 @@ export function createPracticeCard(
       });
     }
     label.append(radioInput, option);
-    answerContainer.append(label);
+    answers.append(label);
+    answerContainer.append(answers);
   });
 
-  const checkButtonContainer = createElement(
-    'div',
-    undefined,
-    'check-button-container'
-  );
-
+  const checkButtonContainer = createEl('div', {
+    className: 'check-button-container',
+  });
   const checkButton = createButton('Check', undefined, 'check-button');
   checkButton.disabled = true;
+
   checkButton.addEventListener(
     'click',
     () => {
@@ -120,11 +116,13 @@ export function createPracticeCard(
         `input[name="${groupId}"]:checked`
       );
       const selectedValue = selected?.value;
-      const correctAnswer = roundQuestion.answer;
-      checkAnswer(selectedValue, correctAnswer, section);
-      updateScore();
+      const correctAnswer = question.answer;
+      const isCorrect: boolean = selectedValue === correctAnswer;
+      checkAnswer(correctAnswer, question, isCorrect);
     },
-    { once: true }
+    {
+      once: true,
+    }
   );
 
   const theoryBtnContainer = createEl('div', {
