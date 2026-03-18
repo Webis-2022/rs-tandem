@@ -16,7 +16,6 @@ export async function chickAnswer(gameMode: string) {
   const state = getState();
   let questions;
   let currentQuestion;
-  console.log(gameMode);
   if (gameMode === 'game') {
     questions = state.game.questions;
     const questionNum = state.game.round - 1;
@@ -56,8 +55,6 @@ export async function chickAnswer(gameMode: string) {
     const selectedValue = selected?.value;
     const correctAnswer = currentQuestion.answer;
     const isCorrect = selectedValue === correctAnswer;
-    console.log('gL', questions.length);
-    console.log('qN', questionNum + 1);
     if (isCorrect) {
       increaseRound();
       playSound('./sound/correct.mp3');

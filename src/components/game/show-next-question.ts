@@ -1,5 +1,6 @@
 import { changeGameMode, resetRound } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
+import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 // import { playSuperGame } from './play-super-game';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
@@ -17,25 +18,35 @@ export function showNextQuestion() {
   const questionNum = state.game.round - 1;
   let question = questions[questionNum];
   if (questionNum + 1 > questions.length && wrongAnswers.length > 0) {
-    if (confirm(text)) {
+    showModal({
+      title: undefined,
+      message: text,
+      showConfirm: true,
+      confirmText: 'Confirm',
+      cancelText: 'Cancel',
+    });
+    const confirmButton = document.querySelector('.modal-btn-confirm');
+    const cancelButton = document.querySelector('.modal-btn-cancel');
+
+    confirmButton?.addEventListener('click', () => {
       changeGameMode('super-game');
       resetRound();
       showNextQuestion();
-    } else {
+    });
+
+    cancelButton?.addEventListener('click', () => {
       toggleButtonsStatement();
-    }
+    });
   }
   const questionContainer = document.querySelector('.question-container');
   if (!questionContainer) return;
   const gameMode = getState().game.gameMode;
   if (gameMode === 'game') {
-    // Проверяем, не вышли ли мы за пределы массива questions
     if (questionNum < questions.length) {
       questionContainer.textContent = questions[questionNum].question;
       createAnswers(question);
     }
   } else {
-    // Для super-game используем wrongAnswers
     if (questionNum < wrongAnswers.length) {
       question = wrongAnswers[questionNum];
       questionContainer.textContent = question.question;
