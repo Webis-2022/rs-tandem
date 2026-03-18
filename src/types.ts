@@ -5,6 +5,7 @@ export const ROUTES = {
   Library: '/library',
   Practice: '/practice',
   Logout: '/logout',
+  NotFound: '/404',
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
