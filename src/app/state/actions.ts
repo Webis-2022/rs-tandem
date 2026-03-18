@@ -20,6 +20,17 @@ export async function increaseRound() {
   }
 }
 
+export function changeGameMode(gameMode: string) {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      gameMode,
+    },
+  });
+}
+
 export function saveTopicQuestions(questions: Question[]) {
   const prev = getState();
   setState({
@@ -39,6 +50,28 @@ export function calculateScore(roundScore: number) {
       ...prev.game,
       score:
         prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
+    },
+  });
+}
+
+export function resetRound() {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      round: 1,
+    },
+  });
+}
+
+export function resetTopicId() {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      topicId: (prev.game.topicId ?? 0) + 1,
     },
   });
 }

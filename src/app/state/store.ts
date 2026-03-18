@@ -12,6 +12,7 @@ export let state: AppState = {
     usedHints: [],
     wrongAnswers: [],
     questions: [],
+    gameMode: 'game',
   },
   isLoading: false,
 };
@@ -44,6 +45,7 @@ const initialGameState: AppState['game'] = {
   usedHints: [],
   wrongAnswers: [],
   questions: [],
+  gameMode: 'game',
 };
 
 export async function startNewGame(params: {

@@ -100,10 +100,14 @@
   padding: v.$spacing-md;
 }
 
+.answer-container {
+  width: 100%;
+}
+
 .answers {
   @include m.flex(column, center, flex-start);
   gap: v.$spacing-md;
-  width: 100%;
+  margin-bottom: v.$spacing-md;
 }
 
 .answer-button {
