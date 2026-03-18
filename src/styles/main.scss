@@ -7,7 +7,7 @@
 @import '_button.scss';
 
 body {
-  font-family: v.$font-family-base;
+  font-family: $font-family-base;
   overflow-x: hidden;
 }
 
@@ -17,5 +17,5 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: v.$font-family-heading;
+  font-family: $font-family-heading;
 }
