@@ -1,0 +1,41 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.not-found {
+  min-height: calc(100vh - 40px);
+  padding: v.$spacing-xl v.$spacing-md;
+  text-align: center;
+
+  @include m.flex(column, center, center);
+}
+
+.not-found-code {
+  margin: 0;
+  font-size: v.$font-size-xxl;
+  font-weight: 700;
+  line-height: 1;
+  color: v.$primary-color;
+}
+
+.not-found-title {
+  margin: 0;
+  color: v.$text-color;
+}
+
+.not-found-text {
+  max-width: 440px;
+  margin: 0;
+  color: v.$text-light;
+}
+
+.not-found-actions {
+  @include m.flex(row, center, center);
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+}
+
+@include m.respond-to(mobile) {
+  .not-found {
+    padding: v.$spacing-lg v.$spacing-md;
+  }
+}

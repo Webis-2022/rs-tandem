@@ -5,6 +5,7 @@ export const ROUTES = {
   Library: '/library',
   Practice: '/practice',
   Logout: '/logout',
+  NotFound: '/404',
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
@@ -67,4 +68,17 @@ export type Question = {
   options: string[];
   question: string;
   explanation: string;
+};
+
+// Modal types
+export type ModalOptions = {
+  title?: string;
+  message: string;
+  showConfirm?: boolean; // if true, show both Confirm and Cancel buttons
+  confirmText?: string;
+  cancelText?: string;
+};
+
+export type ModalResult = {
+  confirmed: boolean;
 };

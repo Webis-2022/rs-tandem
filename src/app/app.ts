@@ -10,6 +10,7 @@ import { createLoginView } from '../pages/auth/auth-page';
 import { createLibraryView } from '../pages/library/library';
 import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
+import { createNotFoundView } from '../pages/not-found/not-found';
 
 import { getActiveGame } from '../services/storageService';
 import { restoreGameState } from './state/store';
@@ -87,10 +88,11 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   const router = createRouter({
     mount: layout.outlet,
-    fallback: ROUTES.Landing,
+    fallback: ROUTES.NotFound,
     isAuthed,
     routes: {
       [ROUTES.Landing]: { createView: createLandingView },
+      [ROUTES.NotFound]: { createView: createNotFoundView },
       [ROUTES.Login]: {
         createView: createLoginView,
         guard: 'guest',
