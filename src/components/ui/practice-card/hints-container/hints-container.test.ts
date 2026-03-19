@@ -1,8 +1,3 @@
-import { vi } from 'vitest';
-vi.mock('@/services/supabaseClient', () => ({
-  supabase: {},
-}));
-
 import { createHintsContainer } from './hints-container';
 
 describe('createHintsContainer', () => {
