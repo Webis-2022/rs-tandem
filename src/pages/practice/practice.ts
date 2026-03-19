@@ -1,4 +1,6 @@
+import { saveTopicQuestions } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
+import { showNextQuestion } from '../../components/game/show-next-question';
 import { updateScore } from '../../components/game/updateScore';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createPracticeCard } from '../../components/ui/practice-card/practice-card';
@@ -13,14 +15,12 @@ export function createPracticeView(): HTMLElement {
   }
   section.append(createLoadingView('Loading questions...'));
   const state = getState();
-  const questionNum = state.game.round - 1;
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   getQuestions(topicId, difficulty)
     .then((questions) => {
-      if (questionNum >= questions.length) return;
-      const roundQuestion = questions[questionNum];
-      const practiceCard = createPracticeCard(roundQuestion, section);
+      saveTopicQuestions(questions);
+      const practiceCard = createPracticeCard();
       section.append(practiceCard);
 
       section.replaceChildren(practiceCard);
@@ -28,15 +28,10 @@ export function createPracticeView(): HTMLElement {
       updateScore();
     })
     .catch((error: Error) => {
-      const message =
-        error instanceof Error ? error.message : 'Failed to load questions.';
-
-      section.replaceChildren(
-        createEl('div', {
-          text: message,
-          className: 'library-status is-error',
-        })
-      );
+      throw new Error(error.message);
+    })
+    .finally(() => {
+      showNextQuestion();
     });
   return section;
 }

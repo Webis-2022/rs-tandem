@@ -53,6 +53,7 @@ type GameState = {
   usedHints: string[];
   wrongAnswers: Question[];
   questions: Question[];
+  gameMode: string;
 };
 
 export type AppState = {

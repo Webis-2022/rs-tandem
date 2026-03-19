@@ -19,6 +19,28 @@ export async function increaseRound() {
     console.error('Failed to sync active game:', error);
   }
 }
+
+export function changeGameMode(gameMode: 'game' | 'super-game') {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      gameMode,
+    },
+  });
+}
+
+export function saveTopicQuestions(questions: Question[]) {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      questions,
+    },
+  });
+}
 export function calculateScore(roundScore: number) {
   const prev = getState();
 
@@ -28,6 +50,31 @@ export function calculateScore(roundScore: number) {
       ...prev.game,
       score:
         prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
+    },
+  });
+}
+
+export function resetRound() {
+  const initialRound = 1;
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      round: initialRound,
+    },
+  });
+}
+
+export function increaseTopicId() {
+  const prev = getState();
+  const nextId = (prev.game.topicId ?? 0) + 1;
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      topicId: nextId,
     },
   });
 }
