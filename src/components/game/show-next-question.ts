@@ -5,7 +5,7 @@ import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 
-export function showNextQuestion() {
+export async function showNextQuestion() {
   const title = 'Would you like to play super game?';
   const text = `You will be asked questions you haven't answered in this topic.
                 If you answer all questions correctly, you will receive one point for each question.
@@ -18,25 +18,21 @@ export function showNextQuestion() {
   const questionNum = questionMeta.questionNum;
   let question = questions[questionMeta.questionNum];
   if (round > questions.length && wrongAnswers.length > 0) {
-    showModal({
+    const result = await showModal({
       title,
       message: text,
       showConfirm: true,
       confirmText: 'Confirm',
       cancelText: 'Cancel',
     });
-    const confirmButton = document.querySelector('.modal-btn-confirm');
-    const cancelButton = document.querySelector('.modal-btn-cancel');
 
-    confirmButton?.addEventListener('click', () => {
+    if (result.confirmed) {
       changeGameMode('super-game');
       resetRound();
       showNextQuestion();
-    });
-
-    cancelButton?.addEventListener('click', () => {
+    } else {
       toggleButtonsStatement();
-    });
+    }
   }
   const questionContainer = document.querySelector('.question-container');
   if (!questionContainer) return;

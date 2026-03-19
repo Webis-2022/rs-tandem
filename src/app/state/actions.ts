@@ -20,7 +20,7 @@ export async function increaseRound() {
   }
 }
 
-export function changeGameMode(gameMode: string) {
+export function changeGameMode(gameMode: 'game' | 'super-game') {
   const prev = getState();
   setState({
     ...prev,
@@ -37,7 +37,7 @@ export function saveTopicQuestions(questions: Question[]) {
     ...prev,
     game: {
       ...prev.game,
-      questions: questions,
+      questions,
     },
   });
 }
@@ -55,12 +55,13 @@ export function calculateScore(roundScore: number) {
 }
 
 export function resetRound() {
+  const initialRound = 1;
   const prev = getState();
   setState({
     ...prev,
     game: {
       ...prev.game,
-      round: 1,
+      round: initialRound,
     },
   });
 }

@@ -12,10 +12,5 @@ export default defineConfig(() => ({
     setupFiles: './setupTests.ts',
     css: true,
   },
-  define: {
-    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(
-      'https://dummy.supabase.co'
-    ),
-    'import.meta.env.VITE_PUBLISHABLE_API_KEY': JSON.stringify('dummy-key'),
-  },
+  define: {},
 }));
