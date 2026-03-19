@@ -8,8 +8,8 @@ import { getState } from '../../../../app/state/store';
 export function createHintsContainer() {
   const state = getState();
   const questions = state.game.questions;
-  const round = state.game.round - 1;
-  const currentQuestion = questions[round];
+  const questionNum = state.game.round - 1;
+  const currentQuestion = questions[questionNum];
   const hintButtons = {
     '50/50': () => removeTwoWrongAnswers(currentQuestion),
     'Call a friend': () => callFriend(currentQuestion),
