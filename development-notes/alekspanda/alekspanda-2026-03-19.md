@@ -4,7 +4,7 @@
 
 - Добавила страницу 404 (Not Found) и настроила fallback route [PR #79](https://github.com/Webis-2022/rs-tandem/pull/79)
 - Добавила состояния загрузки для основных пользовательских сценариев [PR #85](https://github.com/Webis-2022/rs-tandem/pull/85)
-- По ходу разработки был произведен небольшой рефакторинг в компонентах `variables.scss` и `main.scss`, а так же в `router.ts`
+- В процессе разработки был произведен небольшой рефакторинг в компонентах `variables.scss` и `main.scss`, а так же в `router.ts`
 
 **Проблемы:**
 
