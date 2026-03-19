@@ -1,24 +1,10 @@
-import type { Difficulty } from '../../../../types';
 import { createHintsContainer } from './hints-container';
 
 describe('createHintsContainer', () => {
   let container: HTMLElement;
   let hintButtons: NodeListOf<HTMLButtonElement>;
-  const question = {
-    level: 'easy' as Difficulty,
-    answer: 'HyperText Markup Language',
-    options: [
-      'HyperText Preprocessor',
-      'HyperText Markup Language',
-      'Home Tool Markup Language',
-      'Hyperlinks and Text Markup Language',
-    ],
-    question: 'What does HTML stand for?',
-    explanation:
-      '<p><strong>HyperText Markup Language</strong> is the correct expansion of HTML.</p><p><code>HTML</code> is used to structure content on web pages with elements like <code>&lt;h1&gt;</code> and <code>&lt;p&gt;</code>.</p><ul><li>It defines headings, paragraphs, links, and more.</li></ul>',
-  };
   beforeEach(() => {
-    container = createHintsContainer(question);
+    container = createHintsContainer();
     hintButtons = container.querySelectorAll('.hint-btn');
   });
 

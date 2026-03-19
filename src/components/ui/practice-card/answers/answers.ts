@@ -1,11 +1,11 @@
 import { createEl } from '../../../../shared/dom';
 import type { Question } from '../../../../types';
 
-export function createAnswers(
-  question: Question,
-  groupId: number,
-  answerContainer: HTMLDivElement | null
-) {
+export function createAnswers(question: Question) {
+  const answers = document.querySelector('.answers') as HTMLDivElement;
+  const answerContainer = document.querySelector('.answer-container');
+  const groupId = Date.now();
+  answers?.replaceChildren();
   question.options.forEach((option) => {
     const label = createEl('label', { className: 'label' });
     const radioInput = createEl('input', { className: 'answer-button' });
@@ -20,7 +20,9 @@ export function createAnswers(
         checkButton.disabled = false;
       });
     }
+
     label.append(radioInput, option);
-    answerContainer?.append(label);
+    answers?.append(label);
+    answerContainer?.prepend(answers);
   });
 }

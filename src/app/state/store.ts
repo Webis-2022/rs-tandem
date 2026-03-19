@@ -5,13 +5,14 @@ import { syncActiveGameToServer } from '../../services/syncActiveGame';
 export let state: AppState = {
   user: null,
   game: {
-    topicId: 0,
+    topicId: 1,
     difficulty: '',
     round: 1,
     score: 0,
     usedHints: [],
     wrongAnswers: [],
     questions: [],
+    gameMode: 'game',
   },
   isLoading: false,
 };
@@ -37,13 +38,14 @@ export function setState(newState: AppState) {
 }
 
 const initialGameState: AppState['game'] = {
-  topicId: 0,
+  topicId: 1,
   difficulty: '',
   round: 1,
   score: 0,
   usedHints: [],
   wrongAnswers: [],
   questions: [],
+  gameMode: 'game',
 };
 
 export async function startNewGame(params: {
