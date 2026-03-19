@@ -1,25 +1,25 @@
 import { changeGameMode, resetRound } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
+import { getQuestionMeta } from '../../utils/get-question-meta';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
-// import { playSuperGame } from './play-super-game';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
-// import { toggleButtonsStatement } from './toggle-buttons-statement';
 
 export function showNextQuestion() {
-  const text = `Would you like to play super game?
-        Rules:
-        You will be asked questions you haven't answered in this topic.
-        If you answer all questions correctly, you will receive one point for each question.
-        If you make even one mistake, an amount equal to the number of unanswered questions will be deducted from your score.`;
-  const state = getState();
-  const questions = state.game.questions;
-  const wrongAnswers = state.game.wrongAnswers;
-  const questionNum = state.game.round - 1;
-  let question = questions[questionNum];
-  if (questionNum + 1 > questions.length && wrongAnswers.length > 0) {
+  const title = 'Would you like to play super game?';
+  const text = `You will be asked questions you haven't answered in this topic.
+                If you answer all questions correctly, you will receive one point for each question.
+                If you make even one mistake, an amount equal to the number of unanswered questions will be deducted from your score.`;
+  const questionMeta = getQuestionMeta('questions');
+  const wrongAnswerMeta = getQuestionMeta('wrongAnswers');
+  const questions = questionMeta.questions;
+  const wrongAnswers = wrongAnswerMeta.questions;
+  const round = questionMeta.round;
+  const questionNum = questionMeta.questionNum;
+  let question = questions[questionMeta.questionNum];
+  if (round > questions.length && wrongAnswers.length > 0) {
     showModal({
-      title: undefined,
+      title,
       message: text,
       showConfirm: true,
       confirmText: 'Confirm',

@@ -1,9 +1,14 @@
-import { resetRound, resetTopicId } from '../../app/state/actions';
+import {
+  changeGameMode,
+  increaseTopicId,
+  resetRound,
+} from '../../app/state/actions';
 import { rerenderGameCard } from './rerender-game-card';
 
 export function goToNextTopic() {
   resetRound();
-  resetTopicId();
+  increaseTopicId();
+  changeGameMode('game');
   const pageSection: HTMLElement | null = document.querySelector('.page');
   rerenderGameCard(pageSection);
 }

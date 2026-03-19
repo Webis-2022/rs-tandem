@@ -65,13 +65,15 @@ export function resetRound() {
   });
 }
 
-export function resetTopicId() {
+export function increaseTopicId() {
   const prev = getState();
+  const nextId = (prev.game.topicId ?? 0) + 1;
+
   setState({
     ...prev,
     game: {
       ...prev.game,
-      topicId: (prev.game.topicId ?? 0) + 1,
+      topicId: nextId,
     },
   });
 }
