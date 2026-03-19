@@ -1,5 +1,6 @@
 import { getState } from '../../app/state/store';
 import { updateScore } from '../../components/game/updateScore';
+import { createLoadingView } from '../../components/ui/loading/loading';
 import { createPracticeCard } from '../../components/ui/practice-card/practice-card';
 import { createSidePanel } from '../../components/ui/practice-card/side-panel/side-panel';
 import { getQuestions } from '../../services/api/get-questions';
@@ -10,6 +11,7 @@ export function createPracticeView(): HTMLElement {
   if (window.location.pathname === '/practice') {
     section.style.flexDirection = 'row';
   }
+  section.append(createLoadingView('Loading questions...'));
   const state = getState();
   const questionNum = state.game.round - 1;
   const topicId = state.game.topicId;
@@ -21,11 +23,20 @@ export function createPracticeView(): HTMLElement {
       const practiceCard = createPracticeCard(roundQuestion, section);
       section.append(practiceCard);
 
+      section.replaceChildren(practiceCard);
       createSidePanel();
       updateScore();
     })
     .catch((error: Error) => {
-      throw new Error(error.message);
+      const message =
+        error instanceof Error ? error.message : 'Failed to load questions.';
+
+      section.replaceChildren(
+        createEl('div', {
+          text: message,
+          className: 'library-status is-error',
+        })
+      );
     });
   return section;
 }

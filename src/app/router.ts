@@ -1,3 +1,4 @@
+import { createLoadingView } from '../components/ui/loading/loading';
 import { createEl } from '../shared/dom';
 import type { RoutePath } from '../types';
 
@@ -10,14 +11,14 @@ type RouteConfig = {
 type RoutesMap = Partial<Record<RoutePath, RouteConfig>>;
 
 type CreateRouterOptions = {
-  mount: HTMLElement; // куда "вставлять" текущую страницу
+  mount: HTMLElement; // куда рендерить текущую страницу
   routes: RoutesMap; // routes: список маршрутов
-  fallback: RoutePath; // что показывать, если путь неизвестный
+  fallback: RoutePath;
   isAuthed: () => boolean | Promise<boolean>; // функция проверки авторизации (может быть async)
 };
 
 export type Router = {
-  start: () => void; // запуск слушателей + первый рендер
+  start: () => void;
   go: (to: RoutePath, replace?: boolean) => void;
 };
 
@@ -33,6 +34,8 @@ export const createRouter = (options: CreateRouterOptions): Router => {
 
   // Рендер текущего URL (посмотреть на текущий URL и отрисовать нужную страницу)
   const render = async (): Promise<void> => {
+    mount.replaceChildren(createLoadingView());
+
     const rawPath = window.location.pathname; // текущий путь из адресной строки
 
     // если путь неизвестен — заменяем URL на fallback (без записи в историю)

@@ -5,6 +5,7 @@ import { getState, startNewGame } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import { getQuestions } from '../../services/api/get-questions';
+import { createLoadingView } from '../../components/ui/loading/loading';
 
 type Topic = {
   id: number;
@@ -64,12 +65,7 @@ export const createLibraryView = (): HTMLElement => {
   const list = createEl('div', { className: 'library-list' });
   const status = createEl('div', { className: 'library-status' });
 
-  const loading = createEl('div', {
-    text: 'Loading topics...',
-    className: 'library-list-status',
-  });
-
-  list.append(loading);
+  list.append(createLoadingView('Loading topics...'));
 
   const renderTopicCard = (topic: Topic): HTMLElement => {
     const card = createEl('div', { className: 'library-card' });
