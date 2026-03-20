@@ -10,7 +10,7 @@ npm test
 
 ### Участники
 
-#### @github-Webis-2022
+#### @github @Webis-2022 https://github.com/Webis-2022
 
 Что тестирую: UI-компоненты practice-card
 
@@ -21,17 +21,17 @@ npm test
 
 PR с тестами: https://github.com/Webis-2022/rs-tandem/pull/66
 
-#### @github-Urazof
+#### @github @Urazof https://github.com/Urazof
 
 Что тестирую: компонент Modal
 
-| Файл | Описание |
-| ---- | -------- |
-| `src/components/ui/modal/modal.test.ts`   |   Базовый рендеринг, режим с одной кнопкой, режим подтверждения, закрытие (overlay, ESC), singleton и анимация  |
+| Файл                                    | Описание                                                                                                     |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `src/components/ui/modal/modal.test.ts` | Базовый рендеринг, режим с одной кнопкой, режим подтверждения, закрытие (overlay, ESC), singleton и анимация |
 
 PR с тестами: https://github.com/Webis-2022/rs-tandem/pull/70
 
-#### @github-AleksPanda
+#### @github @AleksPanda https://github.com/AleksPanda
 
 Что тестирую: компонент Library, dom-helpers
 
