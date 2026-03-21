@@ -1,20 +1,19 @@
+import { getState } from '../../app/state/store';
 import { supabase } from '../supabaseClient';
 import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 
-type SaveProgressParams = {
-  userId: string;
-  topic: string;
-  time: number;
-  score: number;
-};
-
-export async function saveProgress(params: SaveProgressParams) {
+export async function saveProgress() {
   return withApiErrorHandling(async () => {
+    const state = getState();
+    if (!state.user) return;
     const { error } = await supabase.from('game_results').insert({
-      user_id: params.userId,
-      topic: params.topic,
-      time: params.time,
-      score: params.score,
+      game_id: state.game.gameId,
+      user_id: state.user?.id,
+      topic: state.topics[state.game.topicId - 1]?.name ?? '',
+      difficulty: state.game.difficulty,
+      topic_id: state.game.topicId,
+      used_hints: JSON.stringify(state.game.usedHints),
+      wrong_answers_count: state.game.wrongAnswersCounter,
     });
 
     if (error) {

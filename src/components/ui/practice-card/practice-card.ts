@@ -9,6 +9,7 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { navigate } from '../../../app/navigation';
 import { ROUTES, type AppState } from '../../../types';
 import { checkAnswer } from '../../game/check-answer';
+import { resetWrongAnswersCounter } from '../../../app/state/actions';
 
 let unsubscribeTopic: () => void;
 let unsubscribeDifficulty: () => void;
@@ -27,7 +28,10 @@ export function createPracticeCard() {
     'next-topic-btn',
     true
   );
-  nextTopicButton.addEventListener('click', goToNextTopic);
+  nextTopicButton.addEventListener('click', () => {
+    goToNextTopic();
+    resetWrongAnswersCounter();
+  });
   const libraryButton = createButton('Library', undefined, 'library-btn', true);
   libraryButton.addEventListener('click', () => {
     navigate(ROUTES.Library, true);
@@ -43,8 +47,10 @@ export function createPracticeCard() {
     className: 'question-container',
   });
 
-  const renderTopic = (state: AppState) =>
-    (topic.textContent = state.topics[state.game.topicId - 1]?.name ?? '');
+  const renderTopic = (state: AppState) => {
+    topic.textContent = state.topics[state.game.topicId - 1]?.name ?? '';
+  };
+
   unsubscribeTopic = subscribe(renderTopic);
   renderTopic(getState());
 
