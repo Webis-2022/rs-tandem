@@ -1,4 +1,9 @@
-import { calculateScore, saveWrongAnswers } from '../../app/state/actions';
+import {
+  calculateScore,
+  countWrongAnswers,
+  markAsCorrected,
+  saveWrongAnswers,
+} from '../../app/state/actions';
 import { highLightAnswer } from './high-light-answer';
 import { playSound } from './play-sound';
 import { updateScore } from './updateScore';
@@ -9,21 +14,31 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
+import { toggleButtonsStatement } from './toggle-buttons-statement';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
+  let isLast;
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
     const currentQuestion = questionMeta.questions[questionMeta.questionNum];
+    questionsLength = questionMeta.questions.length;
     const [correctAnswer, selectedValue, isCorrect] =
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
+    isLast = isLastQuestion('questions');
+
+    if (isCorrect && isLast) {
+      toggleButtonsStatement();
+    }
 
     if (isCorrect) {
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
+      countWrongAnswers();
     } else {
       saveWrongAnswers(currentQuestion);
       handleAnswerFeedback(selectedValue, './sound/incorrect.mp3', '#fa2525');
+      countWrongAnswers();
     }
 
     calculateScore(roundScore);
@@ -37,9 +52,10 @@ export async function checkAnswer(gameMode: string) {
       'Congratulation! You have answered all the questions of super game!';
     const lossText = 'This is not correct answer. You are lost super game';
     if (isCorrect) {
-      const isLast = isLastQuestion('wrongAnswers');
+      isLast = isLastQuestion('wrongAnswers');
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
+      markAsCorrected(currentQuestion);
       if (isLast) {
         showModal({
           title: undefined,
@@ -48,6 +64,7 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
+        countWrongAnswers();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -61,6 +78,7 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
+      countWrongAnswers();
       return;
     }
   }

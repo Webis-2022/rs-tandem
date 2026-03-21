@@ -1,4 +1,4 @@
-import type { Question } from '../../types';
+import type { HintCounter, Question, User } from '../../types';
 import { getState, setState } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
@@ -86,7 +86,71 @@ export function saveWrongAnswers(question: Question) {
     ...prev,
     game: {
       ...prev.game,
-      wrongAnswers: [...prev.game.wrongAnswers, question],
+      wrongAnswers: [
+        ...prev.game.wrongAnswers,
+        { ...question, isCorrected: false },
+      ],
     },
+  });
+}
+
+export function markAsCorrected(question: Question) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      wrongAnswers: prev.game.wrongAnswers.map((q) =>
+        q.question === question.question ? { ...q, isCorrected: true } : q
+      ),
+    },
+  });
+}
+
+export function countWrongAnswers() {
+  const prev = getState();
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      wrongAnswersCounter: prev.game.wrongAnswers.filter(
+        (q) => q.isCorrected !== true
+      ).length,
+    },
+  });
+}
+
+export function saveUsedHint(hintName: keyof HintCounter) {
+  const prev = getState();
+  if (!prev.game.usedHints) return;
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      usedHints: {
+        ...prev.game.usedHints,
+        [hintName]: prev.game.usedHints[hintName] + 1,
+      },
+    },
+  });
+}
+
+export function saveUserData(user: User) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    user,
+  });
+}
+
+export function removeUserData() {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    user: null,
   });
 }

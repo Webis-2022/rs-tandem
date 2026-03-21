@@ -1,3 +1,4 @@
+import { saveUsedHint } from '../../../app/state/actions';
 import { type Question } from '../../../types';
 
 export function removeTwoWrongAnswers(question: Question) {
@@ -23,4 +24,8 @@ export function removeTwoWrongAnswers(question: Question) {
       }
     }
   });
+  const countClicks = () => {
+    saveUsedHint('50/50');
+  };
+  countClicks();
 }
