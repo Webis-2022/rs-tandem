@@ -15,6 +15,7 @@ import { createNotFoundView } from '../pages/not-found/not-found';
 import { getActiveGame } from '../services/storageService';
 import { getActiveGameByUser } from '../services/api/active-games';
 import { restoreGameState } from './state/actions';
+import { createLoadingView } from '../components/ui/loading/loading';
 
 /**
  * Initialize authentication state
@@ -78,13 +79,23 @@ async function restoreActiveGame(): Promise<void> {
   }
 }
 
+function waitForPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
+}
+
 export async function initApp(mount: HTMLElement): Promise<void> {
+  const layout = createLayout();
+  mount.replaceChildren(layout.root);
+
+  layout.outlet.replaceChildren(createLoadingView('Loading app...'));
+
+  await waitForPaint();
+
   // Initialize auth state before setting up router
   await initAuth();
   await restoreActiveGame();
-
-  const layout = createLayout();
-  mount.replaceChildren(layout.root);
 
   const router = createRouter({
     mount: layout.outlet,
