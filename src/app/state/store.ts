@@ -1,4 +1,4 @@
-import { type AppState, type Difficulty, type Question } from '../../types';
+import { type AppState, type Difficulty } from '../../types';
 import { saveActiveGame } from '../../services/storageService';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
@@ -51,7 +51,6 @@ const initialGameState: AppState['game'] = {
 export async function startNewGame(params: {
   topicId: number;
   difficulty: Difficulty;
-  questions: Question[];
 }) {
   const prev = getState();
 
@@ -61,7 +60,6 @@ export async function startNewGame(params: {
       ...initialGameState,
       topicId: params.topicId,
       difficulty: params.difficulty,
-      questions: params.questions,
     },
   });
 
