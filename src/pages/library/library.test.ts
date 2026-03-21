@@ -22,6 +22,9 @@ vi.mock('../../app/navigation', () => ({
 
 vi.mock('../../app/state/store', () => ({
   getState: mocks.getState,
+}));
+
+vi.mock('../../app/state/actions', () => ({
   startNewGame: mocks.startNewGame,
 }));
 

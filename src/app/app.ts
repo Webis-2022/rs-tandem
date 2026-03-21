@@ -13,8 +13,8 @@ import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
 import { getActiveGame } from '../services/storageService';
-import { restoreGameState } from './state/store';
 import { getActiveGameByUser } from '../services/api/active-games';
+import { restoreGameState } from './state/actions';
 
 /**
  * Initialize authentication state

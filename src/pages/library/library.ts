@@ -1,9 +1,10 @@
 import './library.scss';
 import { ROUTES, type Difficulty } from '../../types';
 import { navigate } from '../../app/navigation';
-import { getState, startNewGame } from '../../app/state/store';
+import { getState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
+import { startNewGame } from '../../app/state/actions';
 
 type Topic = {
   id: number;
