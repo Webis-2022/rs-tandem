@@ -1,3 +1,4 @@
+import { createLoadingView } from '../components/ui/loading/loading';
 import { createEl } from '../shared/dom';
 import type { RoutePath } from '../types';
 
@@ -10,41 +11,43 @@ type RouteConfig = {
 type RoutesMap = Partial<Record<RoutePath, RouteConfig>>;
 
 type CreateRouterOptions = {
-  mount: HTMLElement; // куда "вставлять" текущую страницу
-  routes: RoutesMap; // routes: список маршрутов
-  fallback: RoutePath; // что показывать, если путь неизвестный
-  isAuthed: () => boolean | Promise<boolean>; // функция проверки авторизации (может быть async)
+  mount: HTMLElement;
+  routes: RoutesMap;
+  fallback: RoutePath;
+  isAuthed: () => boolean | Promise<boolean>;
 };
 
 export type Router = {
-  start: () => void; // запуск слушателей + первый рендер
+  start: () => void;
   go: (to: RoutePath, replace?: boolean) => void;
 };
 
 export const createRouter = (options: CreateRouterOptions): Router => {
   const { mount, routes, fallback, isAuthed } = options;
 
-  // Получить конфиг маршрута по path:
+  // Возвращает конфиг маршрута для текущего пути или fallback-маршрута
   const resolve = (path: RoutePath): RouteConfig => {
     return (
       routes[path] ?? routes[fallback] ?? { createView: () => createEl('div') }
     );
   };
 
-  // Рендер текущего URL (посмотреть на текущий URL и отрисовать нужную страницу)
   const render = async (): Promise<void> => {
-    const rawPath = window.location.pathname; // текущий путь из адресной строки
+    // Показываем loading state до проверки guard-ов и рендера страницы
+    mount.replaceChildren(createLoadingView());
 
-    // если путь неизвестен — заменяем URL на fallback (без записи в историю)
+    const rawPath = window.location.pathname;
+
+    // Если путь не найден, перенаправляем на fallback без добавления записи в историю
     if (!(rawPath in routes)) {
       go(fallback, true);
       return;
     }
 
-    const path = rawPath as RoutePath; // приводим тип к RoutePath
-    const route = resolve(path); // получаем настройки (конфигурацию) текущего маршрута ({ createView, guard, redirectTo })
+    const path = rawPath as RoutePath;
+    const route = resolve(path);
 
-    // Guard check: support both sync and async isAuthed
+    // Поддерживает и синхронную, и асинхронную проверку авторизации
     const authed = await Promise.resolve(isAuthed());
 
     if (route.guard === 'authed' && !authed) {
@@ -57,22 +60,23 @@ export const createRouter = (options: CreateRouterOptions): Router => {
       return;
     }
 
-    // Рендер текущей страницу:
     mount.replaceChildren(route.createView());
-    window.scrollTo(0, 0); // на всякий случай  - скролл вверх при смене страницы
+    window.scrollTo(0, 0);
   };
 
-  // Навигация на другой путь
   const go = (to: RoutePath, replace = false): void => {
     if (replace) history.replaceState(null, '', to);
     else history.pushState(null, '', to);
+
     render();
   };
 
   const start = (): void => {
+    // Перехватываем клики по внутренним ссылкам и обрабатываем их через роутер
     document.addEventListener('click', (event) => {
-      const target = event.target instanceof Element ? event.target : null; // по типам TS это может быть не Element (напр, Text узел) -> приводим к Element | null.
-      const link = target?.closest<HTMLAnchorElement>('a[data-link]') ?? null; // нашли link через closest
+      const target = event.target instanceof Element ? event.target : null;
+      const link = target?.closest<HTMLAnchorElement>('a[data-link]') ?? null;
+
       if (!link) return;
 
       const href = link.getAttribute('href') as RoutePath | null;
@@ -82,7 +86,7 @@ export const createRouter = (options: CreateRouterOptions): Router => {
       go(href);
     });
 
-    window.addEventListener('popstate', render); // пользователь нажал Back / Forward
+    window.addEventListener('popstate', render);
     render();
   };
 

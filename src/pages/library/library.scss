@@ -61,9 +61,9 @@
   @include m.flex(row, flex-end, center);
 }
 
-.library-list-status {
-  color: v.$text-light;
-}
+// .library-list-status {
+//   color: v.$text-light;
+// }
 
 .library-list-status.is-error {
   color: v.$color-error;

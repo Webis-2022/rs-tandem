@@ -1,0 +1,8 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.loading-view {
+  width: 100%;
+  color: v.$text-light;
+  font-size: v.$font-size-base;
+}
