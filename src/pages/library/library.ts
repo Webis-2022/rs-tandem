@@ -1,10 +1,11 @@
 import './library.scss';
 import { ROUTES, type Difficulty } from '../../types';
 import { navigate } from '../../app/navigation';
-import { getState, startNewGame } from '../../app/state/store';
+import { getState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
-import { getQuestions } from '../../services/api/get-questions';
+import { startNewGame } from '../../app/state/actions';
+import { createLoadingView } from '../../components/ui/loading/loading';
 
 type Topic = {
   id: number;
@@ -64,12 +65,7 @@ export const createLibraryView = (): HTMLElement => {
   const list = createEl('div', { className: 'library-list' });
   const status = createEl('div', { className: 'library-status' });
 
-  const loading = createEl('div', {
-    text: 'Loading topics...',
-    className: 'library-list-status',
-  });
-
-  list.append(loading);
+  list.append(createLoadingView('Loading topics...'));
 
   const renderTopicCard = (topic: Topic): HTMLElement => {
     const card = createEl('div', { className: 'library-card' });
@@ -84,32 +80,21 @@ export const createLibraryView = (): HTMLElement => {
     const startBtn = createButton(
       'Start',
       async () => {
-        status.textContent = 'Loading questions...';
+        status.textContent = 'Starting practice...';
         status.classList.remove('is-error');
         startBtn.disabled = true;
 
         try {
-          const questions = await getQuestions(topic.id, difficulty);
-
-          if (!questions || questions.length === 0) {
-            status.textContent = 'No questions found for this topic.';
-            status.classList.add('is-error');
-            return;
-          }
-
-          status.textContent = '';
-          status.classList.remove('is-error');
-
           await startNewGame({
             topicId: topic.id,
             difficulty,
-            questions,
           });
 
+          status.textContent = '';
           navigate(ROUTES.Practice, true);
         } catch (err: unknown) {
           status.textContent =
-            err instanceof Error ? err.message : 'Failed to load questions.';
+            err instanceof Error ? err.message : 'Failed to start game.';
           status.classList.add('is-error');
         } finally {
           startBtn.disabled = false;
