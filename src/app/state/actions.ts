@@ -1,5 +1,5 @@
-import type { Question } from '../../types';
-import { getState, setState } from './store';
+import type { AppState, Difficulty, Question } from '../../types';
+import { getState, initialGameState, setState, state } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
 export async function increaseRound() {
@@ -88,5 +88,34 @@ export function saveWrongAnswers(question: Question) {
       ...prev.game,
       wrongAnswers: [...prev.game.wrongAnswers, question],
     },
+  });
+}
+
+export async function startNewGame(params: {
+  topicId: number;
+  difficulty: Difficulty;
+}) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...initialGameState,
+      topicId: params.topicId,
+      difficulty: params.difficulty,
+    },
+  });
+
+  try {
+    await syncActiveGameToServer();
+  } catch (error) {
+    console.error('Failed to save active game to Supabase:', error);
+  }
+}
+
+export function restoreGameState(game: AppState['game']) {
+  setState({
+    ...state,
+    game,
   });
 }

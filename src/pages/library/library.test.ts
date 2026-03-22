@@ -1,15 +1,3 @@
-// Инструменты тестирования (from 'vitest'):
-// beforeEach - код, который запускается перед каждым тестом
-// describe - группирует тесты в один блок
-// expect - проверка ожидания ("ожидаю, что элемент с текстом Library есть в документе.")
-// test(or it) - один отдельный тест-кейс
-// vi - объект Vitest с методами (vi.fn(), vi.mock(), vi.clearAllMocks(), vi.hoisted())
-
-// Инструменты для работы с DOM (from '@testing-library/dom'):
-// fireEvent- позволяет имитировать действия пользователя (напр клик)
-// screen - способ искать элементы в DOM (вместо, напр, document.body.querySelector(...))
-// waitFor - для асинхронных изменений ( await, Promise, .then(...)), waitFor ждет, пока условие не станет истинным.
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
 
@@ -18,7 +6,6 @@ import { fireEvent, screen, waitFor } from '@testing-library/dom';
 // vi.hoisted() подготавливает эти моки заранее, до обработки vi.mock(...)
 const mocks = vi.hoisted(() => ({
   getTopics: vi.fn(),
-  getQuestions: vi.fn(),
   navigate: vi.fn(),
   startNewGame: vi.fn(),
   getState: vi.fn(),
@@ -29,16 +16,15 @@ vi.mock('../../services/api/get-topics', () => ({
   getTopics: mocks.getTopics,
 }));
 
-vi.mock('../../services/api/get-questions', () => ({
-  getQuestions: mocks.getQuestions,
-}));
-
 vi.mock('../../app/navigation', () => ({
   navigate: mocks.navigate,
 }));
 
 vi.mock('../../app/state/store', () => ({
   getState: mocks.getState,
+}));
+
+vi.mock('../../app/state/actions', () => ({
   startNewGame: mocks.startNewGame,
 }));
 
@@ -133,14 +119,7 @@ describe('createLibraryView', () => {
 
   test('starts new game and navigates to practice after clicking Start', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
-    mocks.getQuestions.mockResolvedValue([
-      {
-        question: 'What does HTML stand for?',
-        answer: 'HyperText Markup Language',
-        options: ['A', 'B', 'C', 'D'],
-        level: 'easy',
-      },
-    ]);
+    mocks.startNewGame.mockResolvedValue(undefined);
 
     const view = createLibraryView();
     document.body.append(view);
@@ -149,18 +128,9 @@ describe('createLibraryView', () => {
     fireEvent.click(startBtn);
 
     await waitFor(() => {
-      expect(mocks.getQuestions).toHaveBeenCalledWith(1, 'easy'); // toHaveBeenCalledWith(...) - проверить, что мок вызвали с конкретными аргументами
       expect(mocks.startNewGame).toHaveBeenCalledWith({
         topicId: 1,
         difficulty: 'easy',
-        questions: [
-          {
-            question: 'What does HTML stand for?',
-            answer: 'HyperText Markup Language',
-            options: ['A', 'B', 'C', 'D'],
-            level: 'easy',
-          },
-        ],
       });
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
