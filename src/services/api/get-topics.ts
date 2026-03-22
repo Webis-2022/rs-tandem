@@ -1,5 +1,5 @@
 import { supabase } from '../supabaseClient';
-import { withApiErrorHandling } from './api-error';
+import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 
 export async function getTopics() {
   return withApiErrorHandling(async () => {
