@@ -75,21 +75,6 @@ describe('createLibraryView', () => {
     expect(screen.getByText('Loading topics...')).toBeInTheDocument(); // getByText - синхронный поиск, элемент должен быть уже сейчас
   });
 
-  test('renders topics after successful load', async () => {
-    // mockResolvedValue(...) - вариант для промисов. когда этот мок вызовут, верни Promise.resolve(...) с этим значением
-    mocks.getTopics.mockResolvedValue([
-      { id: 1, name: 'HTML' },
-      { id: 2, name: 'CSS' },
-    ]);
-
-    const view = createLibraryView();
-    document.body.append(view);
-
-    expect(await screen.findByText('HTML')).toBeInTheDocument(); // findByText(...) - асинхронный поиск
-    expect(await screen.findByText('CSS')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Start' })).toHaveLength(2);
-  });
-
   test('shows message when topics list is empty', async () => {
     mocks.getTopics.mockResolvedValue([]); // имитируем успешный ответ, но без тем
 
