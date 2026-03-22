@@ -102,7 +102,11 @@ export async function initApp(mount: HTMLElement): Promise<void> {
     fallback: ROUTES.NotFound,
     isAuthed,
     routes: {
-      [ROUTES.Landing]: { createView: createLandingView },
+      [ROUTES.Landing]: {
+        createView: createLandingView,
+        guard: 'guest',
+        redirectTo: ROUTES.Dashboard,
+      },
       [ROUTES.NotFound]: { createView: createNotFoundView },
       [ROUTES.Login]: {
         createView: createLoginView,
