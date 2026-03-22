@@ -17,32 +17,31 @@ type FaqItem = {
 
 const FEATURES: Feature[] = [
   {
-    title: 'Практика по уровням',
-    text: 'Выбирайте сложность и проходите вопросы от базовых до продвинутых.',
+    title: 'Practice by Levels',
+    text: 'Choose a difficulty and move through questions from basic to advanced.',
   },
   {
-    title: 'Подсказки в процессе',
-    text: 'Используйте игровые подсказки, когда нужно сохранить темп и концентрацию.',
+    title: 'Hints During the Round',
+    text: 'Use in-game hints when you need to keep your pace and focus.',
   },
   {
-    title: 'Прозрачный прогресс',
-    text: 'Продолжайте с того же места: текущая игра сохраняется локально и синхронизируется.',
+    title: 'Transparent Progress',
+    text: 'Continue from where you stopped: the current game is saved locally and synced.',
   },
 ];
 
 const FAQ: FaqItem[] = [
   {
-    question: 'Нужно ли регистрироваться?',
-    answer:
-      'Да, для сохранения прогресса и доступа к библиотеке Вам нужен аккаунт.',
+    question: 'Do I need to sign up?',
+    answer: 'Yes, you need an account to save progress and access the library.',
   },
   {
-    question: 'Сколько длится одна сессия?',
-    answer: 'Обычно 5-15 минут. Вы можете остановиться и вернуться позже.',
+    question: 'How long is one session?',
+    answer: 'Usually 5-15 minutes. You can pause and continue later.',
   },
   {
-    question: 'Можно ли начать сразу?',
-    answer: 'Да. Достаточно авторизоваться и выбрать тему для первой практики.',
+    question: 'Can I start right away?',
+    answer: 'Yes. Just sign in and pick a topic for your first practice round.',
   },
 ];
 
@@ -76,9 +75,9 @@ function createFaqItem(item: FaqItem): HTMLElement {
 
 async function openQuickGuide(): Promise<void> {
   await showModal({
-    title: 'Как начать за 1 минуту',
+    title: 'How to Start in 1 Minute',
     message:
-      '1) Войдите в аккаунт. 2) Откройте Library и выберите тему. 3) Перейдите в Practice и отвечайте на вопросы. Если нужно - используйте подсказки, а после раунда переходите к следующей теме.',
+      '1) Sign in to your account. 2) Open Library and choose a topic. 3) Go to Practice and answer questions. If needed, use hints and move to the next topic after each round.',
   });
 }
 
@@ -93,24 +92,24 @@ export const createLandingView = (): HTMLElement => {
     className: 'landing-hero__badge',
   });
   const title = createEl('h1', {
-    text: 'Интерактивный тренажер для практики и закрепления знаний',
+    text: 'Interactive trainer for practice and knowledge reinforcement',
     className: 'landing-hero__title',
   });
   const subtitle = createEl('p', {
-    text: 'Тренируйтесь в удобном темпе, отслеживайте прогресс и системно прокачивайте результат.',
+    text: 'Train at your own pace, track progress, and improve results systematically.',
     className: 'landing-hero__subtitle',
   });
 
   const heroActions = createEl('div', { className: 'landing-actions' });
   const primaryCta = createButton(
-    isAuthed ? 'Перейти в Dashboard' : 'Начать с Login',
+    isAuthed ? 'Go to Dashboard' : 'Start from Login',
     () => navigate(isAuthed ? ROUTES.Dashboard : ROUTES.Login),
     'btn landing-actions__primary'
   );
   const secondaryCta = createButton(
-    'Быстрый обзор',
+    'Quick Guide',
     () => {
-      void openQuickGuide();
+      void openQuickGuide().catch(console.error);
     },
     'btn landing-actions__secondary'
   );
@@ -118,12 +117,12 @@ export const createLandingView = (): HTMLElement => {
 
   const supportLinks = createEl('div', { className: 'landing-links' });
   const libraryLink = createLink(
-    'Смотреть темы в Library',
+    'Browse topics in Library',
     ROUTES.Library,
     'landing-links__link'
   );
   const practiceLink = createLink(
-    'Открыть Practice',
+    'Open Practice',
     ROUTES.Practice,
     'landing-links__link'
   );
@@ -133,7 +132,7 @@ export const createLandingView = (): HTMLElement => {
 
   const featuresSection = createEl('section', { className: 'landing-section' });
   const featuresTitle = createEl('h2', {
-    text: 'Почему это удобно',
+    text: 'Why it works well',
     className: 'landing-section__title',
   });
   const featuresGrid = createEl('div', { className: 'landing-features-grid' });
@@ -142,14 +141,14 @@ export const createLandingView = (): HTMLElement => {
 
   const flowSection = createEl('section', { className: 'landing-section' });
   const flowTitle = createEl('h2', {
-    text: 'Как проходит обучение',
+    text: 'How learning flow works',
     className: 'landing-section__title',
   });
   const flowList = createEl('ol', { className: 'landing-flow' });
   [
-    'Выберите тему и уровень сложности.',
-    'Ответьте на вопросы и применяйте подсказки.',
-    'Переходите к следующим раундам, не теряя прогресс.',
+    'Choose a topic and difficulty level.',
+    'Answer questions and use hints when needed.',
+    'Move to the next rounds without losing progress.',
   ].forEach((step) => {
     const item = createEl('li', {
       text: step,
@@ -171,12 +170,12 @@ export const createLandingView = (): HTMLElement => {
   const finalCta = createEl('section', { className: 'landing-final' });
   const finalText = createEl('p', {
     text: isAuthed
-      ? 'Вы уже в системе - можно продолжать тренировку прямо сейчас.'
-      : 'Создайте аккаунт и начните первую практическую сессию.',
+      ? 'You are already signed in - continue your training now.'
+      : 'Create an account and start your first practice session.',
     className: 'landing-final__text',
   });
   const finalButton = createButton(
-    isAuthed ? 'Продолжить практику' : 'Войти и начать',
+    isAuthed ? 'Continue Practice' : 'Sign in and Start',
     () => navigate(isAuthed ? ROUTES.Practice : ROUTES.Login),
     'btn landing-final__btn'
   );
