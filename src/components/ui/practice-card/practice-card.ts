@@ -3,11 +3,11 @@ import { createHintsContainer } from './hints-container/hints-container';
 import { createDivider } from './divider/divider';
 import './practice-card.scss';
 import { topicLinks } from '../../../pages/practice/topic-links';
-import { getState } from '../../../app/state/store';
+import { getState, subscribe } from '../../../app/state/store';
 import { createPopover } from './theory-btn-popover/theory-btn-popover';
 import { goToNextTopic } from '../../game/go-to-next-topic';
 import { navigate } from '../../../app/navigation';
-import { ROUTES } from '../../../types';
+import { ROUTES, type AppState } from '../../../types';
 import { checkAnswer } from '../../game/check-answer';
 
 export function createPracticeCard() {
@@ -30,11 +30,26 @@ export function createPracticeCard() {
   const cardBody = createEl('div', { className: 'card-body' });
   const cardFooter = createEl('div', { className: 'card-footer' });
   const hintsContainer = createHintsContainer();
+  const topic = createEl('h2', { className: 'topic' });
   const topDivider = createDivider();
+  const difficulty = createEl('div', { className: 'difficulty' });
   const bottomDivider = createDivider();
   const questionContainer = createEl('div', {
     className: 'question-container',
   });
+
+  const renderTopic = (state: AppState) =>
+    ((topic.textContent as string | undefined) =
+      state.topics[state.game.topicId - 1].name);
+  subscribe(renderTopic);
+  renderTopic(getState());
+
+  const renderDifficulty = (state: AppState) =>
+    ((difficulty.textContent as string | undefined) =
+      `Difficulty: ${state.game.difficulty}`);
+  subscribe(renderDifficulty);
+  renderDifficulty(getState());
+
   const theoryBtn = createEl('img', {
     text: '',
     className: 'theory-btn',
@@ -97,6 +112,8 @@ export function createPracticeCard() {
   checkButtonContainer.append(checkButton);
   answerContainer.append(checkButtonContainer);
   cardBody.append(
+    topic,
+    difficulty,
     topDivider,
     questionContainer,
     bottomDivider,
