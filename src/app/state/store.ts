@@ -14,6 +14,7 @@ export let state: AppState = {
     gameMode: 'game',
   },
   isLoading: false,
+  topics: [],
 };
 
 const listeners: ((state: AppState) => void)[] = [];

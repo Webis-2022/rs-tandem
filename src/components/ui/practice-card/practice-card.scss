@@ -89,6 +89,18 @@
   @include m.flex(column, center, center);
 }
 
+.topic,
+.difficulty {
+  color: v.$color-white;
+  letter-spacing: 0.1em;
+  font-family: v.$font-family-heading;
+  -webkit-text-stroke: 0.5px black;
+}
+
+.difficulty {
+  margin-bottom: v.$spacing-sm;
+}
+
 .question-container {
   margin-bottom: v.$spacing-lg;
   font-size: v.$font-size-lg;
