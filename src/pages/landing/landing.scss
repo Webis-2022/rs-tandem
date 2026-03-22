@@ -30,7 +30,7 @@ $landing-card-hover-shadow-opacity: 0.14;
   gap: v.$spacing-md;
 }
 
-.landing-hero__badge {
+.landing-hero-badge {
   margin: 0;
   font-size: v.$font-size-sm;
   color: v.$text-light;
@@ -38,14 +38,14 @@ $landing-card-hover-shadow-opacity: 0.14;
   letter-spacing: 1px;
 }
 
-.landing-hero__title {
+.landing-hero-title {
   margin: 0;
   font-size: 28px;
   line-height: 1.25;
   color: v.$text-color;
 }
 
-.landing-hero__subtitle {
+.landing-hero-subtitle {
   margin: 0;
   color: v.$text-light;
   line-height: 1.6;
@@ -57,13 +57,13 @@ $landing-card-hover-shadow-opacity: 0.14;
   gap: v.$spacing-sm;
 }
 
-.landing-actions__primary,
-.landing-actions__secondary,
-.landing-final__btn {
+.landing-actions-primary,
+.landing-actions-secondary,
+.landing-final-btn {
   width: 100%;
 }
 
-.landing-actions__secondary {
+.landing-actions-secondary {
   background: color.scale(v.$secondary-color, $lightness: 2%);
   color: v.$text-color;
   border: 1px solid v.$border-color;
@@ -75,7 +75,7 @@ $landing-card-hover-shadow-opacity: 0.14;
   gap: v.$spacing-xs;
 }
 
-.landing-links__link {
+.landing-links-link {
   color: v.$primary-color;
   text-decoration: none;
   width: fit-content;
@@ -91,7 +91,7 @@ $landing-card-hover-shadow-opacity: 0.14;
   gap: v.$spacing-md;
 }
 
-.landing-section__title {
+.landing-section-title {
   margin: 0;
   color: v.$text-color;
   font-size: 22px;
@@ -116,14 +116,14 @@ $landing-card-hover-shadow-opacity: 0.14;
   }
 }
 
-.landing-feature__title,
-.landing-faq-item__question {
+.landing-feature-title,
+.landing-faq-item-question {
   margin: 0 0 v.$spacing-xs;
   color: v.$text-color;
 }
 
-.landing-feature__text,
-.landing-faq-item__answer {
+.landing-feature-text,
+.landing-faq-item-answer {
   margin: 0;
   color: v.$text-light;
   line-height: 1.5;
@@ -137,7 +137,7 @@ $landing-card-hover-shadow-opacity: 0.14;
   gap: v.$spacing-sm;
 }
 
-.landing-flow__item {
+.landing-flow-item {
   color: v.$text-color;
   line-height: 1.5;
 }
@@ -154,7 +154,7 @@ $landing-card-hover-shadow-opacity: 0.14;
   align-items: flex-start;
 }
 
-.landing-final__text {
+.landing-final-text {
   margin: 0;
   color: v.$text-color;
   line-height: 1.5;
@@ -171,7 +171,7 @@ $landing-card-hover-shadow-opacity: 0.14;
     padding: v.$spacing-xl;
   }
 
-  .landing-hero__title {
+  .landing-hero-title {
     font-size: 36px;
     max-width: 700px;
   }
@@ -181,8 +181,8 @@ $landing-card-hover-shadow-opacity: 0.14;
     align-items: center;
   }
 
-  .landing-actions__primary,
-  .landing-actions__secondary {
+  .landing-actions-primary,
+  .landing-actions-secondary {
     width: auto;
     min-width: 210px;
   }
@@ -201,11 +201,11 @@ $landing-card-hover-shadow-opacity: 0.14;
     align-items: center;
   }
 
-  .landing-final__text {
+  .landing-final-text {
     max-width: 620px;
   }
 
-  .landing-final__btn {
+  .landing-final-btn {
     width: auto;
     min-width: 220px;
   }

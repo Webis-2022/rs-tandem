@@ -49,11 +49,11 @@ function createFeatureCard(item: Feature): HTMLElement {
   const card = createEl('article', { className: 'landing-feature' });
   const title = createEl('h3', {
     text: item.title,
-    className: 'landing-feature__title',
+    className: 'landing-feature-title',
   });
   const text = createEl('p', {
     text: item.text,
-    className: 'landing-feature__text',
+    className: 'landing-feature-text',
   });
   card.append(title, text);
   return card;
@@ -63,11 +63,11 @@ function createFaqItem(item: FaqItem): HTMLElement {
   const entry = createEl('article', { className: 'landing-faq-item' });
   const question = createEl('h3', {
     text: item.question,
-    className: 'landing-faq-item__question',
+    className: 'landing-faq-item-question',
   });
   const answer = createEl('p', {
     text: item.answer,
-    className: 'landing-faq-item__answer',
+    className: 'landing-faq-item-answer',
   });
   entry.append(question, answer);
   return entry;
@@ -89,29 +89,29 @@ export const createLandingView = (): HTMLElement => {
   const hero = createEl('header', { className: 'landing-hero' });
   const badge = createEl('p', {
     text: 'RS Tandem',
-    className: 'landing-hero__badge',
+    className: 'landing-hero-badge',
   });
   const title = createEl('h1', {
     text: 'Interactive trainer for practice and knowledge reinforcement',
-    className: 'landing-hero__title',
+    className: 'landing-hero-title',
   });
   const subtitle = createEl('p', {
     text: 'Train at your own pace, track progress, and improve results systematically.',
-    className: 'landing-hero__subtitle',
+    className: 'landing-hero-subtitle',
   });
 
   const heroActions = createEl('div', { className: 'landing-actions' });
   const primaryCta = createButton(
     isAuthed ? 'Go to Dashboard' : 'Start from Login',
     () => navigate(isAuthed ? ROUTES.Dashboard : ROUTES.Login),
-    'btn landing-actions__primary'
+    'btn landing-actions-primary'
   );
   const secondaryCta = createButton(
     'Quick Guide',
     () => {
       void openQuickGuide().catch(console.error);
     },
-    'btn landing-actions__secondary'
+    'btn landing-actions-secondary'
   );
   heroActions.append(primaryCta, secondaryCta);
 
@@ -119,12 +119,12 @@ export const createLandingView = (): HTMLElement => {
   const libraryLink = createLink(
     'Browse topics in Library',
     ROUTES.Library,
-    'landing-links__link'
+    'landing-links-link'
   );
   const practiceLink = createLink(
     'Open Practice',
     ROUTES.Practice,
-    'landing-links__link'
+    'landing-links-link'
   );
   supportLinks.append(libraryLink, practiceLink);
 
@@ -133,7 +133,7 @@ export const createLandingView = (): HTMLElement => {
   const featuresSection = createEl('section', { className: 'landing-section' });
   const featuresTitle = createEl('h2', {
     text: 'Why it works well',
-    className: 'landing-section__title',
+    className: 'landing-section-title',
   });
   const featuresGrid = createEl('div', { className: 'landing-features-grid' });
   FEATURES.map(createFeatureCard).forEach((card) => featuresGrid.append(card));
@@ -142,7 +142,7 @@ export const createLandingView = (): HTMLElement => {
   const flowSection = createEl('section', { className: 'landing-section' });
   const flowTitle = createEl('h2', {
     text: 'How learning flow works',
-    className: 'landing-section__title',
+    className: 'landing-section-title',
   });
   const flowList = createEl('ol', { className: 'landing-flow' });
   [
@@ -152,7 +152,7 @@ export const createLandingView = (): HTMLElement => {
   ].forEach((step) => {
     const item = createEl('li', {
       text: step,
-      className: 'landing-flow__item',
+      className: 'landing-flow-item',
     });
     flowList.append(item);
   });
@@ -161,7 +161,7 @@ export const createLandingView = (): HTMLElement => {
   const faqSection = createEl('section', { className: 'landing-section' });
   const faqTitle = createEl('h2', {
     text: 'FAQ',
-    className: 'landing-section__title',
+    className: 'landing-section-title',
   });
   const faqList = createEl('div', { className: 'landing-faq' });
   FAQ.map(createFaqItem).forEach((item) => faqList.append(item));
@@ -172,12 +172,12 @@ export const createLandingView = (): HTMLElement => {
     text: isAuthed
       ? 'You are already signed in - continue your training now.'
       : 'Create an account and start your first practice session.',
-    className: 'landing-final__text',
+    className: 'landing-final-text',
   });
   const finalButton = createButton(
     isAuthed ? 'Continue Practice' : 'Sign in and Start',
     () => navigate(isAuthed ? ROUTES.Practice : ROUTES.Login),
-    'btn landing-final__btn'
+    'btn landing-final-btn'
   );
   finalCta.append(finalText, finalButton);
 
