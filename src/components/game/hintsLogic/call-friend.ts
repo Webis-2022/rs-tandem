@@ -1,6 +1,8 @@
-import type { Question } from '../../../types';
+import { getQuestionMeta } from '../../../utils/get-question-meta';
 
-export function callFriend(question: Question) {
+export function callFriend() {
+  const { questions, questionNum } = getQuestionMeta('questions');
+  const question = questions[questionNum];
   const probability = Number(Math.random().toFixed(2));
   let friendAnswer;
   const correctAnswer = question.answer;

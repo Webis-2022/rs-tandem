@@ -1,7 +1,9 @@
-import { type Question } from '../../../types';
+import { getQuestionMeta } from '../../../utils/get-question-meta';
 
-export function showSidePanel(question: Question, e: MouseEvent) {
+export function showSidePanel(e: MouseEvent) {
   e.stopPropagation();
+  const { questions, questionNum } = getQuestionMeta('questions');
+  const question = questions[questionNum];
   const sidePanel: HTMLDivElement | null =
     document.querySelector('.side-panel');
   const textContainer = sidePanel?.querySelector('.text-container');
