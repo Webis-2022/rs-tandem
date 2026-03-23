@@ -85,3 +85,8 @@ Not responsible for:
 
 - Deciding when to generate vs reuse cached questions
   (this must be handled inside Edge Functions)
+
+## Video Demo
+
+- https://youtu.be/HWwnsfwI7CI
+- Video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
