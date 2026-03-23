@@ -31,7 +31,7 @@ export async function showNextQuestion() {
       resetRound();
       showNextQuestion();
     } else {
-      toggleButtonsStatement();
+      toggleButtonsStatement('allButtons');
     }
   }
   const questionContainer = document.querySelector('.question-container');

@@ -1,4 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
+import { toggleButtonsStatement } from '../toggle-buttons-statement';
 
 export function showSidePanel(e: MouseEvent) {
   e.stopPropagation();
@@ -12,4 +13,5 @@ export function showSidePanel(e: MouseEvent) {
   if (!sidePanel) return;
   sidePanel.classList.remove('closed');
   sidePanel.classList.add('opened');
+  toggleButtonsStatement('oneButton', '.i-dont-know', true);
 }

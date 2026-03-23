@@ -1,4 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
+import { toggleButtonsStatement } from '../toggle-buttons-statement';
 
 export function removeTwoWrongAnswers() {
   const { questions, questionNum } = getQuestionMeta('questions');
@@ -25,4 +26,5 @@ export function removeTwoWrongAnswers() {
       }
     }
   });
+  toggleButtonsStatement('oneButton', '.fifty-fifty', true);
 }

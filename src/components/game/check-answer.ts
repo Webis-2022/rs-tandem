@@ -12,15 +12,19 @@ import { handleRoundEnd } from './handle-round-end';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
+  let isLast;
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
     const currentQuestion = questionMeta.questions[questionMeta.questionNum];
     const [correctAnswer, selectedValue, isCorrect] =
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
+    isLast = isLastQuestion('questions');
+    questionsLength = getQuestionMeta('questions').questions.length;
 
     if (isCorrect) {
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
+      if (isLast) handleRoundEnd(questionsLength);
     } else {
       saveWrongAnswers(currentQuestion);
       handleAnswerFeedback(selectedValue, './sound/incorrect.mp3', '#fa2525');
@@ -37,7 +41,7 @@ export async function checkAnswer(gameMode: string) {
       'Congratulation! You have answered all the questions of super game!';
     const lossText = 'This is not correct answer. You are lost super game';
     if (isCorrect) {
-      const isLast = isLastQuestion('wrongAnswers');
+      isLast = isLastQuestion('wrongAnswers');
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
       if (isLast) {

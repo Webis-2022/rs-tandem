@@ -1,4 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
+import { toggleButtonsStatement } from '../toggle-buttons-statement';
 
 export function callFriend() {
   const { questions, questionNum } = getQuestionMeta('questions');
@@ -21,4 +22,5 @@ export function callFriend() {
   alert(
     `Your friend isn't sure, but he thinks the correct answer is ${friendAnswer}`
   );
+  toggleButtonsStatement('oneButton', '.friend', true);
 }
