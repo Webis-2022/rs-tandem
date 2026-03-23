@@ -3,9 +3,22 @@ import { navigate } from '../../app/navigation';
 import { ROUTES } from '../../types';
 import { createEl, createButton } from '../../shared/dom';
 import * as authService from '../../services/authService';
+import { createErrorMessage } from '../../components/ui/error-message/error-message';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
+
+  const status = createEl('div', { className: 'dashboard-status' });
+
+  const updateConnectionStatus = () => {
+    if (!navigator.onLine) {
+      status.replaceChildren(createErrorMessage('No internet connection.'));
+    } else {
+      status.replaceChildren();
+    }
+  };
+
+  updateConnectionStatus();
 
   const user = authService.getCurrentUser();
   const userEmail = user?.email || 'Unknown user';
@@ -33,6 +46,6 @@ export const createDashboardView = (): HTMLElement => {
     'btn'
   );
 
-  section.append(title, subtitle, btn);
+  section.append(status, title, subtitle, btn);
   return section;
 };

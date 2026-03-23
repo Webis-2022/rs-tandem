@@ -1,13 +1,17 @@
 import { supabase } from '../supabaseClient';
+import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
+
 export async function getStats(userId: string) {
-  const { data, error } = await supabase
-    .from('game_results')
-    .select('*')
-    .eq('user_id', userId);
+  return withApiErrorHandling(async () => {
+    const { data, error } = await supabase
+      .from('game_results')
+      .select('*')
+      .eq('user_id', userId);
 
-  if (error) {
-    throw new Error(error.message);
-  }
+    if (error) {
+      throw error;
+    }
 
-  return data;
+    return data;
+  }, 'Failed to load stats.');
 }

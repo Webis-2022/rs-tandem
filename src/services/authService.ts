@@ -20,6 +20,14 @@ let refreshTimer: number | null = null;
  * Convert Supabase auth error to our AuthError type
  */
 function toAuthError(error: unknown): AuthError {
+  if (!navigator.onLine) {
+    return {
+      code: 'network_error',
+      message: 'No internet connection.',
+      status: 0,
+    };
+  }
+
   if (error && typeof error === 'object' && 'code' in error) {
     return {
       code: (error as { code: string }).code,
@@ -27,9 +35,11 @@ function toAuthError(error: unknown): AuthError {
       status: (error as { status?: number }).status,
     };
   }
+
   return {
     code: 'unknown_error',
     message: error instanceof Error ? error.message : 'Unknown error',
+    status: 0,
   };
 }
 

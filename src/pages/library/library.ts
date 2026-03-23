@@ -6,6 +6,7 @@ import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import { saveTopics, startNewGame } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
+import { createErrorMessage } from '../../components/ui/error-message/error-message';
 
 export const createLibraryView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -127,12 +128,7 @@ export const createLibraryView = (): HTMLElement => {
       const message =
         err instanceof Error ? err.message : 'Failed to load topics.';
 
-      list.replaceChildren(
-        createEl('div', {
-          text: message,
-          className: 'library-list-status is-error',
-        })
-      );
+      list.replaceChildren(createErrorMessage(message));
     });
 
   section.append(title, subtitle, difficultyRow, status, list);
