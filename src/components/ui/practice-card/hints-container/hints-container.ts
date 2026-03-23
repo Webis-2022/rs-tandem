@@ -6,7 +6,7 @@ import { callFriend } from '../../../game/hintsLogic/call-friend';
 
 export function createHintsContainer() {
   const hintButtons = {
-    '50/50': () => removeTwoWrongAnswers(),
+    '50/50': removeTwoWrongAnswers,
     'Call a friend': callFriend,
     "I don't know": (e: MouseEvent) => showSidePanel(e),
   };
