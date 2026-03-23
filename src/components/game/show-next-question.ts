@@ -1,15 +1,18 @@
 import { changeGameMode, resetRound } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
 import { getQuestionMeta } from '../../utils/get-question-meta';
+import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 
 export async function showNextQuestion() {
   const title = 'Would you like to play super game?';
-  const text = `You will be asked questions you haven't answered in this topic.
-                If you answer all questions correctly, you will receive one point for each question.
-                If you make even one mistake, an amount equal to the number of unanswered questions will be deducted from your score.`;
+  const text = buildModalParagraphsHtml([
+    "You will be asked questions you haven't answered in this topic.",
+    'If you answer all questions correctly, you will receive one point for each question.',
+    'If you make even one mistake, an amount equal to the number of unanswered questions will be deducted from your score.',
+  ]);
   const questionMeta = getQuestionMeta('questions');
   const wrongAnswerMeta = getQuestionMeta('wrongAnswers');
   const questions = questionMeta.questions;
@@ -20,7 +23,7 @@ export async function showNextQuestion() {
   if (round > questions.length && wrongAnswers.length > 0) {
     const result = await showModal({
       title,
-      message: text,
+      messageHtml: text,
       showConfirm: true,
       confirmText: 'Confirm',
       cancelText: 'Cancel',
