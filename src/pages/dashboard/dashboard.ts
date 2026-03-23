@@ -20,9 +20,6 @@ export const createDashboardView = (): HTMLElement => {
 
   updateConnectionStatus();
 
-  window.addEventListener('online', updateConnectionStatus);
-  window.addEventListener('offline', updateConnectionStatus);
-
   const user = authService.getCurrentUser();
   const userEmail = user?.email || 'Unknown user';
 

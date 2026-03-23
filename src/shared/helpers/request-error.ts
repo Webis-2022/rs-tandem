@@ -12,7 +12,8 @@ export async function withApiErrorHandling<T>(
 ): Promise<T> {
   try {
     return await request();
-  } catch {
-    throw new Error(getApiErrorMessage(fallback));
+  } catch (err) {
+    console.error(err);
+    throw new Error(getApiErrorMessage(fallback), { cause: err });
   }
 }
