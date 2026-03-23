@@ -10,7 +10,12 @@ import { navigate } from '../../../app/navigation';
 import { ROUTES, type AppState } from '../../../types';
 import { checkAnswer } from '../../game/check-answer';
 
+let unsubscribeTopic: () => void;
+let unsubscribeDifficulty: () => void;
+
 export function createPracticeCard() {
+  if (unsubscribeTopic) unsubscribeTopic();
+  if (unsubscribeDifficulty) unsubscribeDifficulty();
   const card = createEl('div', { className: 'card' });
   const cardHeader = createEl('div', { className: 'card-header' });
   const score = createEl('span', { className: 'score' });
@@ -39,15 +44,13 @@ export function createPracticeCard() {
   });
 
   const renderTopic = (state: AppState) =>
-    ((topic.textContent as string | undefined) =
-      state.topics[state.game.topicId - 1].name);
-  subscribe(renderTopic);
+    (topic.textContent = state.topics[state.game.topicId - 1]?.name ?? '');
+  unsubscribeTopic = subscribe(renderTopic);
   renderTopic(getState());
 
   const renderDifficulty = (state: AppState) =>
-    ((difficulty.textContent as string | undefined) =
-      `Difficulty: ${state.game.difficulty}`);
-  subscribe(renderDifficulty);
+    (difficulty.textContent = `Difficulty: ${state.game.difficulty}`);
+  unsubscribeDifficulty = subscribe(renderDifficulty);
   renderDifficulty(getState());
 
   const theoryBtn = createEl('img', {
