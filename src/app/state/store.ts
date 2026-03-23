@@ -14,12 +14,15 @@ export let state: AppState = {
     gameMode: 'game',
   },
   isLoading: false,
+  topics: [],
 };
 
 const listeners: ((state: AppState) => void)[] = [];
 
 export function subscribe(listener: (state: AppState) => void) {
   listeners.push(listener);
+
+  return () => listeners.filter((l) => l !== listener);
 }
 
 export function notify() {

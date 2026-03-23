@@ -60,6 +60,7 @@ export type AppState = {
   user: User | null;
   game: GameState;
   isLoading: boolean;
+  topics: Topic[];
 };
 
 export type Question = {
@@ -68,6 +69,11 @@ export type Question = {
   options: string[];
   question: string;
   explanation: string;
+};
+
+export type Topic = {
+  id: number;
+  name: string;
 };
 
 // Modal types

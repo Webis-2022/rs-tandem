@@ -1,16 +1,11 @@
 import './library.scss';
-import { ROUTES, type Difficulty } from '../../types';
+import { ROUTES, type Difficulty, type Topic } from '../../types';
 import { navigate } from '../../app/navigation';
 import { getState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
-import { startNewGame } from '../../app/state/actions';
+import { saveTopics, startNewGame } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
-
-type Topic = {
-  id: number;
-  name: string;
-};
 
 export const createLibraryView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -126,6 +121,7 @@ export const createLibraryView = (): HTMLElement => {
       (topics as Topic[]).forEach((topic) => {
         list.append(renderTopicCard(topic));
       });
+      saveTopics(topics);
     })
     .catch((err: unknown) => {
       const message =

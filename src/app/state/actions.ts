@@ -1,4 +1,4 @@
-import type { AppState, Difficulty, Question } from '../../types';
+import type { AppState, Difficulty, Question, Topic } from '../../types';
 import { getState, initialGameState, setState, state } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
@@ -28,6 +28,14 @@ export function changeGameMode(gameMode: 'game' | 'super-game') {
       ...prev.game,
       gameMode,
     },
+  });
+}
+
+export function saveTopics(topics: Topic[]) {
+  const prev = getState();
+  setState({
+    ...prev,
+    topics,
   });
 }
 
