@@ -6,11 +6,13 @@ export function removeTwoWrongAnswers() {
   const question = questions[questionNum];
   const options = question.options;
   const correctAnswer = question.answer;
+  const wrongAnswersCount = 3;
+  const wrongAnswersPair = 2;
 
   const wrongAnswers = options.filter((option) => option !== correctAnswer);
   const twoWrongAnswers = new Set();
-  while (twoWrongAnswers.size < 2) {
-    const index = Math.floor(Math.random() * 3);
+  while (twoWrongAnswers.size < wrongAnswersPair) {
+    const index = Math.floor(Math.random() * wrongAnswersCount);
     const wrongAnswer = wrongAnswers[index];
     twoWrongAnswers.add(wrongAnswer);
   }
