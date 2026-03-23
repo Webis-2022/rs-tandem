@@ -1,6 +1,8 @@
-import { type Question } from '../../../types';
+import { getQuestionMeta } from '../../../utils/get-question-meta';
 
-export function removeTwoWrongAnswers(question: Question) {
+export function removeTwoWrongAnswers() {
+  const { questions, questionNum } = getQuestionMeta('questions');
+  const question = questions[questionNum];
   const options = question.options;
   const correctAnswer = question.answer;
 
