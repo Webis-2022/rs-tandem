@@ -3,6 +3,7 @@ import { highLightAnswer } from './high-light-answer';
 import { playSound } from './play-sound';
 import { updateScore } from './updateScore';
 import { delay } from '../../utils/delay';
+import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { getQuestionMeta } from '../../utils/get-question-meta';
 import { checkIfCorrect } from './check-if-correct';
@@ -43,7 +44,7 @@ export async function checkAnswer(gameMode: string) {
       if (isLast) {
         showModal({
           title: undefined,
-          message: winText,
+          messageHtml: buildModalParagraphsHtml([winText]),
           showConfirm: false,
           confirmText: 'Ok',
         });
@@ -55,7 +56,7 @@ export async function checkAnswer(gameMode: string) {
       await delay(1000);
       showModal({
         title: undefined,
-        message: lossText,
+        messageHtml: buildModalParagraphsHtml([lossText]),
         showConfirm: false,
         confirmText: 'Ok',
       });

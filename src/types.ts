@@ -77,11 +77,22 @@ export type Topic = {
 };
 
 // Modal types
+/**
+ * Options for rendering a modal dialog.
+ */
 export type ModalOptions = {
+  /** Optional title rendered in modal header. */
   title?: string;
-  message: string;
-  showConfirm?: boolean; // if true, show both Confirm and Cancel buttons
+  /**
+   * Trusted HTML content for modal body.
+   * Use buildModalParagraphsHtml([...]) for paragraph-based text.
+   */
+  messageHtml: string;
+  /** If true, render Cancel + Confirm buttons; otherwise render single OK button. */
+  showConfirm?: boolean;
+  /** Confirm button label in confirm mode. */
   confirmText?: string;
+  /** Cancel button label in confirm mode. */
   cancelText?: string;
 };
 

@@ -8,7 +8,12 @@ let activeResolve: ((result: ModalResult) => void) | null = null;
 
 /**
  * Shows a modal dialog with customizable content and buttons.
- * Returns a promise that resolves when user clicks a button or closes the modal.
+ * @param options Modal options:
+ * - title: optional header text
+ * - messageHtml: trusted HTML for body content
+ * - showConfirm: when true shows Cancel + Confirm buttons, otherwise one OK button
+ * - confirmText/cancelText: custom labels for confirm mode buttons
+ * @returns Promise resolved with user decision.
  */
 export function showModal(options: ModalOptions): Promise<ModalResult> {
   // Close any existing modal first and resolve its promise
@@ -23,7 +28,7 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
 
   const {
     title,
-    message,
+    messageHtml,
     showConfirm = false,
     confirmText = 'Confirm',
     cancelText = 'Cancel',
@@ -44,10 +49,11 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
     }
 
     // Message
-    const messageEl = createEl('p', {
-      text: message,
+    const messageEl = createEl('div', {
       className: 'modal-message',
     });
+    // messageHtml is expected to be trusted UI markup from app code.
+    messageEl.innerHTML = messageHtml;
     card.append(messageEl);
 
     // Buttons container
