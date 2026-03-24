@@ -9,6 +9,7 @@ import { goToNextTopic } from '../../game/go-to-next-topic';
 import { navigate } from '../../../app/navigation';
 import { ROUTES, type AppState } from '../../../types';
 import { checkAnswer } from '../../game/check-answer';
+import { saveProgress } from '../../../services/api/save-progress';
 
 let unsubscribeTopic: () => void;
 let unsubscribeDifficulty: () => void;
@@ -27,7 +28,10 @@ export function createPracticeCard() {
     'next-topic-btn',
     true
   );
-  nextTopicButton.addEventListener('click', goToNextTopic);
+  nextTopicButton.addEventListener('click', () => {
+    saveProgress();
+    goToNextTopic();
+  });
   const libraryButton = createButton('Library', undefined, 'library-btn', true);
   libraryButton.addEventListener('click', () => {
     navigate(ROUTES.Library, true);

@@ -50,8 +50,9 @@ type GameState = {
   difficulty: Difficulty | '';
   round: number;
   score: number;
-  usedHints: string[];
+  usedHints: HintCounter | undefined;
   wrongAnswers: Question[];
+  wrongAnswersCounter: number;
   questions: Question[];
   gameMode: string;
 };
@@ -63,12 +64,19 @@ export type AppState = {
   topics: Topic[];
 };
 
+export type HintCounter = {
+  '50/50': number;
+  'call a friend': number;
+  "i don't know": number;
+};
+
 export type Question = {
   level: Difficulty;
   answer: string;
   options: string[];
   question: string;
   explanation: string;
+  isCorrected?: boolean;
 };
 
 export type Topic = {
