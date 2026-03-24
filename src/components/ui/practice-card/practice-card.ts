@@ -47,8 +47,10 @@ export function createPracticeCard() {
     className: 'question-container',
   });
 
-  const renderTopic = (state: AppState) =>
-    (topic.textContent = state.topics[state.game.topicId - 1]?.name ?? '');
+  const renderTopic = (state: AppState) => {
+    topic.textContent = state.topics[state.game.topicId - 1]?.name ?? '';
+  };
+
   unsubscribeTopic = subscribe(renderTopic);
   renderTopic(getState());
 
