@@ -45,13 +45,11 @@ export async function checkAnswer(gameMode: string) {
 
     if (isCorrect) {
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
-      countWrongAnswers();
     } else {
       saveWrongAnswers(currentQuestion);
       handleAnswerFeedback(selectedValue, './sound/incorrect.mp3', '#fa2525');
-      countWrongAnswers();
     }
-
+    countWrongAnswers();
     calculateScore(roundScore);
     updateScore();
   } else if (gameMode === 'super-game') {
@@ -75,7 +73,6 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
-        countWrongAnswers();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -89,8 +86,8 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
-      countWrongAnswers();
       return;
     }
+    countWrongAnswers();
   }
 }

@@ -31,29 +31,28 @@ export const createDashboardView = (): HTMLElement => {
     });
     const gameSelector = createEl('select', { className: 'game-selector' });
     difficultySelector.setAttribute('name', 'difficulty');
-    const placeholder = createEl('option');
-    if (placeholder instanceof HTMLOptionElement) {
-      placeholder.value = '';
-      placeholder.textContent = 'Difficulty';
-      placeholder.disabled = true;
-      placeholder.selected = true;
-      difficultySelector.append(placeholder);
-      optionsText.forEach((text) => {
-        const option = createEl('option');
-        if (option instanceof HTMLOptionElement) {
-          option.value = text;
-          option.textContent = text;
-          difficultySelector.append(option);
-        }
-      });
-
-      placeholder.value = '';
-      placeholder.textContent = 'Select Game';
-      placeholder.disabled = true;
-      placeholder.selected = true;
-      gameSelector.append(placeholder);
-    }
-
+    const createPlaceholder = (text: string) => {
+      const placeholder = createEl('option');
+      if (placeholder instanceof HTMLOptionElement) {
+        placeholder.value = '';
+        placeholder.textContent = text;
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        return placeholder;
+      }
+    };
+    const difficultyPlaceholder = createPlaceholder('Difficulty');
+    const gamePlaceholder = createPlaceholder('Select Game');
+    difficultySelector.append(difficultyPlaceholder as Node);
+    gameSelector.append(gamePlaceholder as Node);
+    optionsText.forEach((text) => {
+      const option = createEl('option');
+      if (option instanceof HTMLOptionElement) {
+        option.value = text;
+        option.textContent = text;
+        difficultySelector.append(option);
+      }
+    });
     topBar.append(difficultySelector, gameSelector);
     return topBar;
   };
