@@ -8,6 +8,7 @@ import { createSidePanel } from '../../components/ui/practice-card/side-panel/si
 import { getQuestions } from '../../services/api/get-questions';
 import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
+import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
 export function createPracticeView(): HTMLElement {
   const section = createEl('section', { className: 'page' });
@@ -19,8 +20,9 @@ export function createPracticeView(): HTMLElement {
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   getQuestions(topicId, difficulty)
-    .then((questions) => {
+    .then(async (questions) => {
       saveTopicQuestions(questions);
+      await syncActiveGameToServer();
       const practiceCard = createPracticeCard();
       section.append(practiceCard);
 
