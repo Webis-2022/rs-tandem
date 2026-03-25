@@ -10,6 +10,7 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
+import { finishCurrentGame } from '../../services/finishCurrentGame';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
@@ -49,6 +50,7 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
+        await finishCurrentGame();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -62,6 +64,7 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
+      await finishCurrentGame();
       return;
     }
   }
