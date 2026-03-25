@@ -16,6 +16,10 @@ import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
+import { isAllTopicsCompleted } from '../../utils/is-all-topics-completed';
+import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
+import { getProgress } from '../../services/api/get-progress';
+import { saveProgress } from '../../services/api/save-progress';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
@@ -30,6 +34,12 @@ export async function checkAnswer(gameMode: string) {
     isLast = isLastQuestion('questions');
 
     if (isCorrect && isLast) {
+      await saveProgress();
+      await markTopicAsCompleted();
+      const isAllCompleted = await isAllTopicsCompleted();
+      if (isAllCompleted) {
+        getProgress();
+      }
       toggleButtonsStatement();
     }
 

@@ -163,6 +163,19 @@ export function resetWrongAnswersCounter() {
   });
 }
 
+export function resetWrongAnswersCounter() {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      wrongAnswersCounter: 0,
+      wrongAnswers: [],
+    },
+  });
+}
+
 export function saveUsedHint(hintName: keyof HintCounter) {
   const prev = getState();
   if (!prev.game.usedHints) return;
