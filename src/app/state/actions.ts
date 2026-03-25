@@ -8,7 +8,6 @@ import type {
 } from '../../types';
 import { getState, initialGameState, setState, state } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
-import { createNewGame } from '../../services/api/create-new-game';
 
 export async function increaseRound() {
   const prev = getState();
@@ -147,7 +146,6 @@ export function countWrongAnswers() {
       ).length,
     },
   });
-  console.log(getState().game.wrongAnswersCounter);
 }
 
 export function resetWrongAnswersCounter() {
@@ -211,8 +209,6 @@ export async function startNewGame(params: {
       difficulty: params.difficulty,
     },
   });
-
-  createNewGame();
 
   try {
     await syncActiveGameToServer();
