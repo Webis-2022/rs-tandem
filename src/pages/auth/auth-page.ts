@@ -6,6 +6,7 @@ import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
+import { saveUserData } from '../../app/state/actions';
 
 type Field = {
   root: HTMLElement;
@@ -229,7 +230,8 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       if (mode === 'register') {
         await authService.register(email, password);
       } else {
-        await authService.login(email, password);
+        const user = await authService.login(email, password);
+        saveUserData(user);
       }
 
       // Navigate to dashboard on success
