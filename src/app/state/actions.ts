@@ -32,11 +32,9 @@ export function saveGameId(gameId: number) {
 
   setState({
     ...prev,
-    game: {
-      ...prev.game,
-      gameId,
-    },
+    gameId,
   });
+  console.log('gIS', getState().gameId);
 }
 
 export function changeGameMode(gameMode: 'game' | 'super-game') {

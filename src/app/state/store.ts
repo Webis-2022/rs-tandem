@@ -3,8 +3,8 @@ import { saveActiveGame } from '../../services/storageService';
 
 export let state: AppState = {
   user: null,
+  gameId: null,
   game: {
-    gameId: null,
     topicId: 1,
     difficulty: '',
     round: 1,
@@ -46,7 +46,6 @@ export function setState(newState: AppState) {
 }
 
 export const initialGameState: AppState['game'] = {
-  gameId: null,
   topicId: 1,
   difficulty: '',
   round: 1,

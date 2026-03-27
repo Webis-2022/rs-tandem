@@ -5,6 +5,8 @@ import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
+import { saveGameResult } from '../../services/api/save-game-result';
+import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
 
 export async function showNextQuestion() {
   const title = 'Would you like to play super game?';
@@ -35,6 +37,8 @@ export async function showNextQuestion() {
       showNextQuestion();
     } else {
       toggleButtonsStatement();
+      await saveGameResult();
+      await markTopicAsCompleted();
     }
   }
   const questionContainer = document.querySelector('.question-container');

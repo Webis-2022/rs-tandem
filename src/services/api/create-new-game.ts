@@ -2,6 +2,7 @@ import { saveGameId } from '../../app/state/actions';
 import { getState } from '../../app/state/store';
 import { supabase } from '../supabaseClient';
 import { PostgrestError } from '@supabase/supabase-js';
+import { type GameData } from '../../types';
 
 export async function createNewGame() {
   const state = getState();
@@ -14,20 +15,6 @@ export async function createNewGame() {
   };
   const totalWrongAnswers = 0;
   const totalScore = 0;
-
-  type GameData = {
-    id: number;
-    created_at: string;
-    user_id: string;
-    difficulty: 'easy' | 'medium' | 'hard';
-    used_hints: {
-      '50/50': number;
-      'call a friend': number;
-      "i don't know": number;
-    };
-    wrong_answers: number;
-    score: number;
-  };
 
   const {
     data: newGame,
@@ -49,5 +36,6 @@ export async function createNewGame() {
   }
 
   const gameId = newGame!.id;
+  console.log('gIM', gameId);
   saveGameId(gameId);
 }
