@@ -46,12 +46,14 @@ export type AuthChangeCallback = (session: AuthSession | null) => void;
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 type GameState = {
+  gameId: number | null;
   topicId: number;
   difficulty: Difficulty | '';
   round: number;
   score: number;
-  usedHints: string[];
+  usedHints: HintCounter | undefined;
   wrongAnswers: Question[];
+  wrongAnswersCounter: number;
   questions: Question[];
   gameMode: string;
 };
@@ -63,12 +65,19 @@ export type AppState = {
   topics: Topic[];
 };
 
+export type HintCounter = {
+  '50/50': number;
+  'call a friend': number;
+  "i don't know": number;
+};
+
 export type Question = {
   level: Difficulty;
   answer: string;
   options: string[];
   question: string;
   explanation: string;
+  isCorrected?: boolean;
 };
 
 export type Topic = {
@@ -77,11 +86,22 @@ export type Topic = {
 };
 
 // Modal types
+/**
+ * Options for rendering a modal dialog.
+ */
 export type ModalOptions = {
+  /** Optional title rendered in modal header. */
   title?: string;
-  message: string;
-  showConfirm?: boolean; // if true, show both Confirm and Cancel buttons
+  /**
+   * Trusted HTML content for modal body.
+   * Use buildModalParagraphsHtml([...]) for paragraph-based text.
+   */
+  messageHtml: string;
+  /** If true, render Cancel + Confirm buttons; otherwise render single OK button. */
+  showConfirm?: boolean;
+  /** Confirm button label in confirm mode. */
   confirmText?: string;
+  /** Cancel button label in confirm mode. */
   cancelText?: string;
 };
 

@@ -19,7 +19,7 @@ describe('Modal Component', () => {
   describe('Basic rendering', () => {
     it('should render modal with message and title', async () => {
       const promise = showModal({
-        message: 'Test message',
+        messageHtml: '<p>Test message</p>',
         title: 'Test Title',
       });
 
@@ -27,11 +27,34 @@ describe('Modal Component', () => {
       const modal = document.querySelector('.modal');
       const title = screen.getByText('Test Title');
       const message = screen.getByText('Test message');
+      const messageContainer = document.querySelector('.modal-message');
 
       expect(overlay).toBeInTheDocument();
       expect(modal).toBeInTheDocument();
       expect(title).toHaveClass('modal-title');
-      expect(message).toHaveClass('modal-message');
+      expect(messageContainer).toHaveClass('modal-message');
+      expect(message).toBeInTheDocument();
+
+      const okBtn = screen.getByRole('button', { name: /ok/i });
+      await user.click(okBtn);
+      await promise;
+    });
+
+    it('should render HTML markup inside message container', async () => {
+      const promise = showModal({
+        messageHtml:
+          '<p>First paragraph</p><p><strong>Second</strong> paragraph</p>',
+      });
+
+      const messageContainer = document.querySelector('.modal-message');
+      const paragraphs = messageContainer?.querySelectorAll('p');
+
+      expect(messageContainer).toBeInTheDocument();
+      expect(paragraphs).toHaveLength(2);
+      expect(screen.getByText('First paragraph')).toBeInTheDocument();
+      expect(
+        screen.getByText('Second', { selector: 'strong' })
+      ).toBeInTheDocument();
 
       const okBtn = screen.getByRole('button', { name: /ok/i });
       await user.click(okBtn);
@@ -39,7 +62,7 @@ describe('Modal Component', () => {
     });
 
     it('should not render title when not provided', async () => {
-      const promise = showModal({ message: 'Message only' });
+      const promise = showModal({ messageHtml: '<p>Message only</p>' });
 
       const title = document.querySelector('.modal-title');
       expect(title).not.toBeInTheDocument();
@@ -52,7 +75,7 @@ describe('Modal Component', () => {
 
   describe('Single button mode', () => {
     it('should show only OK button and resolve with true', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       const buttons = document.querySelectorAll('.modal-btn');
       expect(buttons).toHaveLength(1);
@@ -68,7 +91,7 @@ describe('Modal Component', () => {
   describe('Confirm mode', () => {
     it('should show both buttons with custom texts', async () => {
       const promise = showModal({
-        message: 'Test',
+        messageHtml: '<p>Test</p>',
         showConfirm: true,
         confirmText: 'Yes',
         cancelText: 'No',
@@ -87,7 +110,7 @@ describe('Modal Component', () => {
 
     it('should resolve with false when Cancel clicked', async () => {
       const promise = showModal({
-        message: 'Test',
+        messageHtml: '<p>Test</p>',
         showConfirm: true,
       });
 
@@ -101,7 +124,7 @@ describe('Modal Component', () => {
 
   describe('Closing mechanisms', () => {
     it('should close when clicking on overlay', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       const overlay = document.querySelector('.modal-overlay') as HTMLElement;
       await user.click(overlay);
@@ -120,7 +143,7 @@ describe('Modal Component', () => {
     });
 
     it('should NOT close when clicking modal card', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       const card = document.querySelector('.modal-card') as HTMLElement;
       await user.click(card);
@@ -134,7 +157,7 @@ describe('Modal Component', () => {
     });
 
     it('should close when pressing ESC key', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       await user.keyboard('{Escape}');
 
@@ -145,7 +168,7 @@ describe('Modal Component', () => {
 
   describe('Singleton pattern', () => {
     it('should allow only one modal in DOM at a time', async () => {
-      showModal({ message: 'First' });
+      showModal({ messageHtml: '<p>First</p>' });
 
       // Wait for first modal animation
       await waitFor(() => {
@@ -154,7 +177,7 @@ describe('Modal Component', () => {
       });
 
       // Open second modal - should close first
-      const promise2 = showModal({ message: 'Second' });
+      const promise2 = showModal({ messageHtml: '<p>Second</p>' });
 
       // After animation, only second modal should remain
       await waitFor(
@@ -177,7 +200,7 @@ describe('Modal Component', () => {
 
   describe('Animation', () => {
     it('should add is-visible class and remove after closing', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       await waitFor(() => {
         const overlay = document.querySelector('.modal-overlay');
@@ -207,7 +230,7 @@ describe('Modal Component', () => {
 
   describe('Event listener cleanup', () => {
     it('should remove ESC listener after closing', async () => {
-      const promise = showModal({ message: 'Test' });
+      const promise = showModal({ messageHtml: '<p>Test</p>' });
 
       const okBtn = screen.getByRole('button', { name: /ok/i });
       await user.click(okBtn);

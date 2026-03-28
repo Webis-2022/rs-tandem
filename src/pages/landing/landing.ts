@@ -2,6 +2,7 @@ import './landing.scss';
 import { ROUTES } from '../../types';
 import { navigate } from '../../app/navigation';
 import { createEl, createButton, createLink } from '../../shared/dom';
+import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../../components/ui/modal/modal';
 import * as authService from '../../services/authService';
 
@@ -76,8 +77,12 @@ function createFaqItem(item: FaqItem): HTMLElement {
 async function openQuickGuide(): Promise<void> {
   await showModal({
     title: 'How to Start in 1 Minute',
-    message:
-      '1) Sign in to your account. 2) Open Library and choose a topic. 3) Go to Practice and answer questions. If needed, use hints and move to the next topic after each round.',
+    messageHtml: buildModalParagraphsHtml([
+      '1) Sign in to your account.',
+      '2) Open Library and choose a topic.',
+      '3) Go to Practice and answer questions.',
+      'If needed, use hints and move to the next topic after each round.',
+    ]),
   });
 }
 

@@ -4,12 +4,18 @@ import { saveActiveGame } from '../../services/storageService';
 export let state: AppState = {
   user: null,
   game: {
+    gameId: null,
     topicId: 1,
     difficulty: '',
     round: 1,
     score: 0,
-    usedHints: [],
+    usedHints: {
+      '50/50': 0,
+      'call a friend': 0,
+      "i don't know": 0,
+    },
     wrongAnswers: [],
+    wrongAnswersCounter: 0,
     questions: [],
     gameMode: 'game',
   },
@@ -33,19 +39,32 @@ export function getState() {
   return state;
 }
 
-export function setState(newState: AppState) {
+export function setState(
+  newState: AppState,
+  options?: { saveGameToStorage?: boolean }
+) {
   state = newState;
-  saveActiveGame(state.game); // после каждого обновления state текущая игра синхронизируется с localStorage
+
+  if (options?.saveGameToStorage !== false) {
+    saveActiveGame(state.game);
+  }
+
   notify();
 }
 
 export const initialGameState: AppState['game'] = {
+  gameId: null,
   topicId: 1,
   difficulty: '',
   round: 1,
   score: 0,
-  usedHints: [],
+  usedHints: {
+    '50/50': 0,
+    'call a friend': 0,
+    "i don't know": 0,
+  },
   wrongAnswers: [],
+  wrongAnswersCounter: 0,
   questions: [],
   gameMode: 'game',
 };

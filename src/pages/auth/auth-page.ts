@@ -6,7 +6,7 @@ import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
-import { showModal } from '../../components/ui/modal/modal';
+import { saveUserData } from '../../app/state/actions';
 
 type Field = {
   root: HTMLElement;
@@ -118,51 +118,10 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   const footer = createEl('div', { className: 'auth-footer' });
   const backLink = createLink('Back to landing', ROUTES.Landing, 'auth-link');
 
-  // Demo buttons for testing modal (DEV only)
-  const demoButtons = createEl('div', {
-    className: 'auth-demo',
-  });
-  if (import.meta.env.DEV) {
-    const testSimpleBtn = createButton(
-      'Test Simple Modal',
-      async () => {
-        const result = await showModal({
-          title: 'Information',
-          message: 'This is a simple modal with one button.',
-        });
-        console.log('Simple modal result:', result);
-      },
-      'btn-link'
-    );
-
-    const testConfirmBtn = createButton(
-      'Test Confirm Modal',
-      async () => {
-        const result = await showModal({
-          title: 'Confirmation',
-          message: 'Are you sure you want to proceed with this action?',
-          showConfirm: true,
-          confirmText: 'Yes, proceed',
-          cancelText: 'No, cancel',
-        });
-        console.log('Confirm modal result:', result);
-
-        if (result.confirmed) {
-          await showModal({
-            message: 'Action confirmed!',
-          });
-        }
-      },
-      'btn-link'
-    );
-
-    demoButtons.append(testSimpleBtn, testConfirmBtn);
-  }
-
   const switchText = createEl('div', { text: '', className: 'auth-switch' });
   const switchBtn = createButton('', undefined, 'auth-switch-btn');
 
-  footer.append(backLink, demoButtons, switchText);
+  footer.append(backLink, switchText);
 
   // Compose
   form.append(
@@ -271,7 +230,8 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       if (mode === 'register') {
         await authService.register(email, password);
       } else {
-        await authService.login(email, password);
+        const user = await authService.login(email, password);
+        saveUserData(user);
       }
 
       // Navigate to dashboard on success

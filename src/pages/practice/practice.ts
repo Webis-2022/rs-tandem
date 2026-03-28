@@ -7,6 +7,8 @@ import { createPracticeCard } from '../../components/ui/practice-card/practice-c
 import { createSidePanel } from '../../components/ui/practice-card/side-panel/side-panel';
 import { getQuestions } from '../../services/api/get-questions';
 import { createEl } from '../../shared/dom';
+import { createErrorMessage } from '../../components/ui/error-message/error-message';
+import { syncActiveGameToServer } from '../../services/syncActiveGame';
 
 export function createPracticeView(): HTMLElement {
   const section = createEl('section', { className: 'page' });
@@ -18,8 +20,9 @@ export function createPracticeView(): HTMLElement {
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   getQuestions(topicId, difficulty)
-    .then((questions) => {
+    .then(async (questions) => {
       saveTopicQuestions(questions);
+      await syncActiveGameToServer();
       const practiceCard = createPracticeCard();
       section.append(practiceCard);
 
@@ -27,8 +30,11 @@ export function createPracticeView(): HTMLElement {
       createSidePanel();
       updateScore();
     })
-    .catch((error: Error) => {
-      throw new Error(error.message);
+    .catch((err: unknown) => {
+      const message =
+        err instanceof Error ? err.message : 'Failed to load questions.';
+
+      section.replaceChildren(createErrorMessage(message));
     })
     .finally(() => {
       showNextQuestion();

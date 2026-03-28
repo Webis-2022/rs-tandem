@@ -6,6 +6,7 @@ import type {
   AuthChangeCallback,
 } from '../types';
 import { state, notify } from '../app/state/store';
+import { createNewGame } from './api/create-new-game';
 
 // Storage keys for localStorage persistence
 const STORAGE_KEYS = {
@@ -20,6 +21,14 @@ let refreshTimer: number | null = null;
  * Convert Supabase auth error to our AuthError type
  */
 function toAuthError(error: unknown): AuthError {
+  if (!navigator.onLine) {
+    return {
+      code: 'network_error',
+      message: 'No internet connection.',
+      status: 0,
+    };
+  }
+
   if (error && typeof error === 'object' && 'code' in error) {
     return {
       code: (error as { code: string }).code,
@@ -27,9 +36,11 @@ function toAuthError(error: unknown): AuthError {
       status: (error as { status?: number }).status,
     };
   }
+
   return {
     code: 'unknown_error',
     message: error instanceof Error ? error.message : 'Unknown error',
+    status: 0,
   };
 }
 
@@ -195,6 +206,7 @@ export async function login(email: string, password: string): Promise<User> {
 
     const session = createSessionFromSupabase(data.session);
     persistSession(session);
+    createNewGame();
 
     return session.user;
   } catch (error) {
