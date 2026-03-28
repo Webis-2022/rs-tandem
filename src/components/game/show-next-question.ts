@@ -44,7 +44,6 @@ export async function showNextQuestion() {
     } else {
       toggleButtonsStatement('allButtons');
       await finishCurrentGame();
-      toggleButtonsStatement();
       return;
     }
   }
