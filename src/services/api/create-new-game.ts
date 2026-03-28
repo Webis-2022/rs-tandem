@@ -36,6 +36,5 @@ export async function createNewGame() {
   }
 
   const gameId = newGame!.id;
-  console.log('gIM', gameId);
   saveGameId(gameId);
 }

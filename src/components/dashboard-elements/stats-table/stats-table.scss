@@ -1,0 +1,27 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.stats-table {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.table-cell {
+  border: 1px solid v.$border-color;
+  background-color: v.$secondary-color;
+  color: v.$text-color;
+  padding: v.$spacing-sm;
+  text-align: center;
+  font-size: v.$font-size-base;
+}
+
+.total-cell {
+  border: 1px solid v.$border-color;
+  background-color: v.$primary-color;
+  color: v.$color-white;
+  padding: v.$spacing-md;
+  text-align: center;
+  font-size: v.$font-size-base;
+  border-bottom-left-radius: v.$border-radius;
+  border-bottom-right-radius: v.$border-radius;
+}

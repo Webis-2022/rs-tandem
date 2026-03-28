@@ -1,12 +1,11 @@
 import './dashboard.scss';
-import { navigate } from '../../app/navigation';
-import { ROUTES } from '../../types';
-import { createEl, createButton } from '../../shared/dom';
-import * as authService from '../../services/authService';
+import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { getGames } from '../../services/api/get-games';
 import { type GameData } from '../../types';
 import { getGameResult } from '../../services/api/get-game-result';
+import { gameStatsPanel } from '../../components/dashboard-elements/stats-table/game-stats-panel/game-stats-panel';
+import { createStatsTable } from '../../components/dashboard-elements/stats-table/stats-table';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -22,9 +21,6 @@ export const createDashboardView = (): HTMLElement => {
   };
 
   updateConnectionStatus();
-
-  const user = authService.getCurrentUser();
-  const userEmail = user?.email || 'Unknown user';
 
   const createTopBar = async () => {
     const optionsText = {
@@ -87,7 +83,13 @@ export const createDashboardView = (): HTMLElement => {
         const target = e.target as HTMLOptionElement;
         const gameId = target?.value;
         const gameResult = await getGameResult(Number(gameId));
-        console.log(gameResult);
+        const table = createStatsTable(gameResult);
+        const panelContent: HTMLDivElement | null =
+          document.querySelector('.panel-content');
+        if (!panelContent) return;
+        panelContent.textContent = '';
+        panelContent.style.display = 'block';
+        panelContent?.append(table);
       });
     });
 
@@ -97,30 +99,8 @@ export const createDashboardView = (): HTMLElement => {
     return topBar;
   };
 
-  const title = createEl('h1', {
-    text: `Welcome, ${userEmail}!`,
-  });
-
-  const subtitle = createEl('p', {
-    text: 'Dashboard. Тут у нас будет профиль пользователя :) А еще много классных виджетов!',
-  });
-
-  const btn = createButton(
-    'Logout',
-    async () => {
-      try {
-        await authService.logout();
-        navigate(ROUTES.Landing, true);
-      } catch (error) {
-        console.error('Logout failed:', error);
-        // Still navigate even if logout fails
-        navigate(ROUTES.Landing, true);
-      }
-    },
-    'btn'
-  );
   createTopBar().then((topBar) => {
-    section.append(topBar, status, title, subtitle, btn);
+    section.append(topBar, status, gameStatsPanel());
   });
   return section;
 };

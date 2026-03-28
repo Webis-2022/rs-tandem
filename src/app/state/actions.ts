@@ -34,7 +34,6 @@ export function saveGameId(gameId: number) {
     ...prev,
     gameId,
   });
-  console.log('gIS', getState().gameId);
 }
 
 export function changeGameMode(gameMode: 'game' | 'super-game') {

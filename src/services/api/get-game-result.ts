@@ -20,7 +20,6 @@ export async function getGameResult(gameId?: number) {
     if (error) {
       throw error;
     }
-    console.log(data);
     return data;
   }, 'Failed to load stats.');
 }

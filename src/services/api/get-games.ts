@@ -10,6 +10,5 @@ export async function getGames(difficulty: string) {
   if (error) {
     throw error;
   }
-  console.log(data);
   return data;
 }

@@ -5,15 +5,17 @@ import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 export function saveGameResult() {
   return withApiErrorHandling(async () => {
     const state = getState();
-    console.log('gI', state.gameId);
+    const questionsPerTopic = 10;
+    const score = questionsPerTopic - state.game.wrongAnswersCounter;
     if (!state.user) return;
     const { error } = await supabase.from('game_results').insert({
       game_id: state.gameId,
       user_id: state.user?.id,
+      score,
       topic: state.topics[state.game.topicId - 1]?.name ?? '',
       difficulty: state.game.difficulty,
       topic_id: state.game.topicId,
-      used_hints: JSON.stringify(state.game.usedHints),
+      used_hints: state.game.usedHints,
       wrong_answers_count: state.game.wrongAnswersCounter,
     });
 

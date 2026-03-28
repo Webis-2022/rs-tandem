@@ -84,6 +84,7 @@ export type GameData = {
   id: number;
   created_at: string;
   user_id: string;
+  score: number;
   difficulty: 'easy' | 'medium' | 'hard';
   used_hints: {
     '50/50': number;
@@ -91,7 +92,6 @@ export type GameData = {
     "i don't know": number;
   };
   wrong_answers: number;
-  score: number;
 };
 
 export type Topic = {
