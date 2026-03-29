@@ -13,7 +13,6 @@ export function toggleButtonsStatement(
     nextTopicButton?.removeAttribute('disabled');
     libraryButton?.removeAttribute('disabled');
   } else if (mode === 'oneButton') {
-    console.log('called');
     const button: HTMLButtonElement | null = document.querySelector(
       className as string
     );
