@@ -7,7 +7,9 @@ export function saveGameResult() {
     const state = getState();
     const questionsPerTopic = 10;
     const score = questionsPerTopic - state.game.wrongAnswersCounter;
-    if (!state.user) return;
+    if (!state.user) {
+      throw new Error('Cannot save progress: user not authenticated');
+    }
     const { error } = await supabase.from('game_results').insert({
       game_id: state.gameId,
       user_id: state.user?.id,
@@ -15,7 +17,7 @@ export function saveGameResult() {
       topic: state.topics[state.game.topicId - 1]?.name ?? '',
       difficulty: state.game.difficulty,
       topic_id: state.game.topicId,
-      used_hints: state.game.usedHints,
+      used_hints: JSON.stringify(state.game.usedHints),
       wrong_answers_count: state.game.wrongAnswersCounter,
     });
 

@@ -233,7 +233,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       } else {
         const user = await authService.login(email, password);
         saveUserData(user);
-        createNewGame();
+        await createNewGame(user.id);
       }
 
       // Navigate to dashboard on success

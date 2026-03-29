@@ -18,9 +18,11 @@ import { handleRoundEnd } from './handle-round-end';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
 import { saveGameResult } from '../../services/api/save-game-result';
+import { getState } from '../../app/state/store';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
+  const state = getState();
   let isLast;
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
@@ -30,10 +32,13 @@ export async function checkAnswer(gameMode: string) {
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
     isLast = isLastQuestion('questions');
+    const wrongAnswersCounter = state.game.wrongAnswersCounter;
 
     if (isLast && isCorrect) {
-      await saveGameResult();
-      await markTopicAsCompleted();
+      if (wrongAnswersCounter === 0) {
+        await saveGameResult();
+        await markTopicAsCompleted();
+      }
       toggleButtonsStatement();
     }
 

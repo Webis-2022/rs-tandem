@@ -1,6 +1,6 @@
 import { createEl } from '../../../../shared/dom';
 import { getState } from '../../../../app/state/store';
-import './game-stats.panel.scss';
+import './game-stats-panel.scss';
 
 export function gameStatsPanel() {
   const state = getState();

@@ -174,7 +174,7 @@ export function saveUsedHint(hintName: keyof HintCounter) {
   });
 }
 
-export function saveUserData(user: User) {
+export async function saveUserData(user: User) {
   const prev = getState();
 
   setState({

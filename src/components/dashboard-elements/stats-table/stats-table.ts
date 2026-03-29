@@ -34,8 +34,8 @@ export function createStatsTable(gameResult: GameResult[]) {
     const usedHints = JSON.parse(row.used_hints);
     const values = [
       row.topic,
-      row.wrong_answers_count,
       score,
+      row.wrong_answers_count,
       usedHints['50/50'],
       usedHints['call a friend'],
       usedHints["i don't know"],

@@ -4,11 +4,11 @@ import { supabase } from '../supabaseClient';
 import { PostgrestError } from '@supabase/supabase-js';
 import { type GameData } from '../../types';
 
-export async function createNewGame() {
+export async function createNewGame(userId: string) {
+  if (!userId) throw new Error('userId missing');
   const state = getState();
-  const userId = state.user?.id;
   const difficulty = state.game.difficulty;
-  const totalUsedHints = {
+  const usedHints = {
     '50/50': 0,
     'call a friend': 0,
     "i don't know": 0,
@@ -24,7 +24,7 @@ export async function createNewGame() {
     .insert({
       user_id: userId,
       difficulty,
-      used_hints: JSON.stringify(totalUsedHints),
+      used_hints: JSON.stringify(usedHints),
       wrong_answers: totalWrongAnswers,
       score: totalScore,
     })
@@ -34,7 +34,7 @@ export async function createNewGame() {
   if (error) {
     throw error;
   }
-
-  const gameId = newGame!.id;
+  if (!newGame) return;
+  const gameId = newGame.id;
   saveGameId(gameId);
 }
