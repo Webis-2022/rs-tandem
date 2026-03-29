@@ -15,6 +15,7 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
+import { finishCurrentGame } from '../../services/finishCurrentGame';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
 import { saveGameResult } from '../../services/api/save-game-result';
@@ -74,6 +75,7 @@ export async function checkAnswer(gameMode: string) {
         handleRoundEnd(questionsLength);
         await saveGameResult();
         await markTopicAsCompleted();
+        await finishCurrentGame();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -89,6 +91,7 @@ export async function checkAnswer(gameMode: string) {
       handleRoundEnd(-questionsLength);
       await saveGameResult();
       await markTopicAsCompleted();
+      await finishCurrentGame();
       return;
     }
     countWrongAnswers();

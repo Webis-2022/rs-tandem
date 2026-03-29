@@ -7,6 +7,7 @@ import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
 import { saveGameResult } from '../../services/api/save-game-result';
 import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
+import { finishCurrentGame } from '../../services/finishCurrentGame';
 
 export async function showNextQuestion() {
   const title = 'Would you like to play super game?';
@@ -22,6 +23,13 @@ export async function showNextQuestion() {
   const round = questionMeta.round;
   const questionNum = questionMeta.questionNum;
   let question = questions[questionMeta.questionNum];
+
+  if (round > questions.length && wrongAnswers.length === 0) {
+    await finishCurrentGame();
+    toggleButtonsStatement();
+    return;
+  }
+
   if (round > questions.length && wrongAnswers.length > 0) {
     const result = await showModal({
       title,
@@ -36,9 +44,11 @@ export async function showNextQuestion() {
       resetRound();
       showNextQuestion();
     } else {
+      await finishCurrentGame();
       toggleButtonsStatement();
       await saveGameResult();
       await markTopicAsCompleted();
+      return;
     }
   }
   const questionContainer = document.querySelector('.question-container');
