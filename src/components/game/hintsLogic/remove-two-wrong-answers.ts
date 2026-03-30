@@ -1,16 +1,18 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
-import { saveUsedHint } from '../../../app/state/actions';
+import { countClicks } from './count-clicks';
 
 export function removeTwoWrongAnswers() {
   const { questions, questionNum } = getQuestionMeta('questions');
   const question = questions[questionNum];
   const options = question.options;
   const correctAnswer = question.answer;
+  const wrongAnswersCount = 3;
+  const wrongAnswersPair = 2;
 
   const wrongAnswers = options.filter((option) => option !== correctAnswer);
   const twoWrongAnswers = new Set();
-  while (twoWrongAnswers.size < 2) {
-    const index = Math.floor(Math.random() * 3);
+  while (twoWrongAnswers.size < wrongAnswersPair) {
+    const index = Math.floor(Math.random() * wrongAnswersCount);
     const wrongAnswer = wrongAnswers[index];
     twoWrongAnswers.add(wrongAnswer);
   }
@@ -26,8 +28,6 @@ export function removeTwoWrongAnswers() {
       }
     }
   });
-  const countClicks = () => {
-    saveUsedHint('50/50');
-  };
-  countClicks();
+
+  countClicks('oneButton', '.fifty-fifty', true, '50/50');
 }

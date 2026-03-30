@@ -2,7 +2,7 @@ import { supabase } from '../supabaseClient';
 import type { AppState } from '../../types';
 import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 
-// Получает активную незавершённую игру конкретного пользователя из Supabase.
+// Получает активную незавершенную игру конкретного пользователя из Supabase.
 // Если записи нет, возвращает null.
 export async function getActiveGameByUser(
   userId: string
@@ -23,7 +23,7 @@ export async function getActiveGameByUser(
 }
 
 // Создает или обновляет активную игру пользователя в Supabase.
-// Используется для сохранения прогресса незавершённой игры между сессиями и устройствами.
+// Используется для сохранения прогресса незавершенной игры между сессиями и устройствами.
 export async function upsertActiveGame(
   userId: string,
   game: AppState['game']

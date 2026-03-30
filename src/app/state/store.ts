@@ -39,9 +39,16 @@ export function getState() {
   return state;
 }
 
-export function setState(newState: AppState) {
+export function setState(
+  newState: AppState,
+  options?: { saveGameToStorage?: boolean }
+) {
   state = newState;
-  saveActiveGame(state.game); // после каждого обновления state текущая игра синхронизируется с localStorage
+
+  if (options?.saveGameToStorage !== false) {
+    saveActiveGame(state.game);
+  }
+
   notify();
 }
 

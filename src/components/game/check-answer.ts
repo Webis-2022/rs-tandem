@@ -15,7 +15,6 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
-import { toggleButtonsStatement } from './toggle-buttons-statement';
 import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
 import { saveGameResult } from '../../services/api/save-game-result';
 import { getState } from '../../app/state/store';
@@ -39,7 +38,6 @@ export async function checkAnswer(gameMode: string) {
         await saveGameResult();
         await markTopicAsCompleted();
       }
-      toggleButtonsStatement();
     }
 
     if (isCorrect) {
@@ -61,7 +59,7 @@ export async function checkAnswer(gameMode: string) {
     const lossText = 'This is not correct answer. You are lost super game';
     if (isCorrect) {
       isLast = isLastQuestion('wrongAnswers');
-      questionsLength = getQuestionMeta('wrongAnswers').questions.length;
+      questionsLength = questionMeta.questions.length;
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
       markAsCorrected(currentQuestion);
       if (isLast) {
