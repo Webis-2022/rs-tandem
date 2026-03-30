@@ -1,5 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
-import { toggleButtonsStatement } from '../toggle-buttons-statement';
+import { countClicks } from './count-clicks';
 
 export function showSidePanel(e: MouseEvent) {
   e.stopPropagation();
@@ -13,5 +13,5 @@ export function showSidePanel(e: MouseEvent) {
   if (!sidePanel) return;
   sidePanel.classList.remove('closed');
   sidePanel.classList.add('opened');
-  toggleButtonsStatement('oneButton', '.i-dont-know', true);
+  countClicks('oneButton', '.i-dont-know', true, "i don't know");
 }

@@ -1,6 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
-import { toggleButtonsStatement } from '../toggle-buttons-statement';
-import { saveUsedHint } from '../../../app/state/actions';
+import { countClicks } from './count-clicks';
 
 export function removeTwoWrongAnswers() {
   const { questions, questionNum } = getQuestionMeta('questions');
@@ -30,9 +29,5 @@ export function removeTwoWrongAnswers() {
     }
   });
 
-  const countClicks = () => {
-    toggleButtonsStatement('oneButton', '.fifty-fifty', true);
-    saveUsedHint('50/50');
-  };
-  countClicks();
+  countClicks('oneButton', '.fifty-fifty', true, '50/50');
 }

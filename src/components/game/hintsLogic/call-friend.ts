@@ -1,5 +1,6 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
-import { toggleButtonsStatement } from '../toggle-buttons-statement';
+import { showModal } from '../../ui/modal/modal';
+import { countClicks } from './count-clicks';
 
 export function callFriend() {
   const { questions, questionNum } = getQuestionMeta('questions');
@@ -19,8 +20,8 @@ export function callFriend() {
     const index = Math.floor(Math.random() * wrongAnswersCount);
     friendAnswer = wrongAnswers[index];
   }
-  alert(
-    `Your friend isn't sure, but he thinks the correct answer is ${friendAnswer}`
-  );
-  toggleButtonsStatement('oneButton', '.friend', true);
+  showModal({
+    messageHtml: `Your friend isn't sure, but he thinks the correct answer is <b>${friendAnswer}</b>`,
+  });
+  countClicks('oneButton', '.friend', true, 'call a friend');
 }
