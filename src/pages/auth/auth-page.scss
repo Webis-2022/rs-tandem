@@ -1,0 +1,143 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.auth {
+  min-height: calc(100vh - 40px);
+  padding: v.$spacing-xl v.$spacing-md;
+
+  @include m.flex(column, center, center);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: v.$color-white;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius;
+  box-shadow: v.$shadow-default;
+  padding: v.$spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.auth-title {
+  margin: 0;
+}
+
+.auth-subtitle {
+  margin: 0;
+  color: v.$text-light;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: v.$spacing-sm;
+}
+
+.auth-tab {
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$border-radius;
+  border: 1px solid v.$border-color;
+  background: v.$secondary-color;
+  cursor: pointer;
+  transition: v.$transition-speed;
+
+  &.is-active {
+    background: v.$primary-color;
+    color: v.$color-white;
+    border-color: v.$primary-color;
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.auth-form-error {
+  color: v.$color-error;
+  min-height: 18px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-xs;
+}
+
+.auth-label {
+  font-size: 14px;
+  color: v.$text-light;
+}
+
+.auth-hint {
+  font-size: 12px;
+  color: v.$text-light;
+}
+
+.auth-input {
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$border-radius;
+  border: 1px solid v.$border-color;
+  outline: none;
+
+  &:focus {
+    border-color: v.$primary-color;
+  }
+}
+
+.auth-error {
+  color: v.$color-error;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.auth-submit {
+  width: 100%;
+}
+
+.auth-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: v.$spacing-md;
+  flex-wrap: wrap;
+}
+
+.auth-link {
+  color: v.$primary-color;
+  text-decoration: none;
+}
+
+.auth-switch {
+  display: inline-flex;
+  gap: v.$spacing-xs;
+  align-items: center;
+  color: v.$text-light;
+}
+
+.auth-switch-btn {
+  border: none;
+  background: transparent;
+  color: v.$primary-color;
+  cursor: pointer;
+  padding: 0;
+}
+
+.is-hidden {
+  display: none;
+}
+
+@include m.respond-to(mobile) {
+  .auth-card {
+    padding: v.$spacing-md;
+  }
+
+  .auth-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

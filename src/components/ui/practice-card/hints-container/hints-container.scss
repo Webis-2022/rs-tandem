@@ -1,0 +1,35 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.hints-container {
+  @include m.flex(row, center, normal);
+  gap: v.$spacing-md;
+  padding: v.$spacing-md;
+  border-radius: v.$border-radius;
+  margin-bottom: 0;
+}
+
+.hint-btn {
+  @include m.button-shadow;
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$border-radius;
+  border: none;
+  cursor: pointer;
+  transition: v.$transition-speed;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background-color: v.$primary-dark;
+    color: v.$color-white;
+  }
+}
+
+@media (max-width: 768px) {
+  .hints-container {
+    @include m.flex(column, center, normal);
+  }
+}
