@@ -1,12 +1,20 @@
 import './auth-page.scss';
 import { ROUTES, type AuthError } from '../../types';
 import { navigate } from '../../app/navigation';
+import { restoreGameState, saveTopics } from '../../app/state/actions';
 import { createEl, createButton, createLink } from '../../shared/dom';
 import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
 import { saveUserData } from '../../app/state/actions';
+import {
+  getResumeCandidate,
+  promptResumeGame,
+  discardResumeCandidate,
+} from '../../services/resumeActiveGame';
+import { getState } from '../../app/state/store';
+import { getTopics } from '../../services/api/get-topics';
 
 type Field = {
   root: HTMLElement;
@@ -229,9 +237,35 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       if (mode === 'register') {
         await authService.register(email, password);
+        navigate(ROUTES.Dashboard, true);
+        return;
       } else {
         const user = await authService.login(email, password);
         saveUserData(user);
+
+        const game = await getResumeCandidate();
+
+        if (game) {
+          const shouldResume = await promptResumeGame(game);
+
+          if (shouldResume) {
+            restoreGameState(game);
+
+            if (getState().topics.length === 0) {
+              try {
+                const topics = await getTopics();
+                saveTopics(topics);
+              } catch (error) {
+                console.error('Failed to load topics for resumed game:', error);
+              }
+            }
+
+            navigate(ROUTES.Practice, true);
+            return;
+          }
+
+          await discardResumeCandidate();
+        }
       }
 
       // Navigate to dashboard on success

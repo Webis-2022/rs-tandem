@@ -1,7 +1,7 @@
 import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
-import { setNavigate } from './navigation';
+import { navigate, setNavigate } from './navigation';
 import * as authService from '../services/authService';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
@@ -12,10 +12,16 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import { getActiveGame } from '../services/storageService';
-import { getActiveGameByUser } from '../services/api/active-games';
-import { restoreGameState } from './state/actions';
+import { restoreGameState, saveTopics } from './state/actions';
 import { createLoadingView } from '../components/ui/loading/loading';
+
+import {
+  discardResumeCandidate,
+  getResumeCandidate,
+  promptResumeGame,
+} from '../services/resumeActiveGame';
+import { getState } from './state/store';
+import { getTopics } from '../services/api/get-topics';
 
 /**
  * Initialize authentication state
@@ -56,27 +62,32 @@ function isAuthed(): boolean {
  * 2. Supabase fallback
  */
 
-async function restoreActiveGame(): Promise<void> {
-  const localGame = getActiveGame();
+async function tryResumeGame(): Promise<void> {
+  const game = await getResumeCandidate();
 
-  if (localGame) {
-    restoreGameState(localGame);
+  if (!game) {
     return;
   }
 
-  const user = authService.getCurrentUser();
+  const shouldResume = await promptResumeGame(game);
 
-  if (!user) return;
+  if (shouldResume) {
+    restoreGameState(game);
 
-  try {
-    const serverGame = await getActiveGameByUser(user.id);
-
-    if (serverGame) {
-      restoreGameState(serverGame);
+    if (getState().topics.length === 0) {
+      try {
+        const topics = await getTopics();
+        saveTopics(topics);
+      } catch (error) {
+        console.error('Failed to load topics for resumed game:', error);
+      }
     }
-  } catch (error) {
-    console.error('Failed to restore active game from Supabase:', error);
+
+    navigate(ROUTES.Practice, true);
+    return;
   }
+
+  await discardResumeCandidate();
 }
 
 function waitForPaint(): Promise<void> {
@@ -95,7 +106,7 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   // Initialize auth state before setting up router
   await initAuth();
-  await restoreActiveGame();
+  // await restoreActiveGame();
 
   const router = createRouter({
     mount: layout.outlet,
@@ -137,4 +148,7 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   setNavigate(router.go);
   router.start();
+
+  await waitForPaint();
+  await tryResumeGame();
 }
