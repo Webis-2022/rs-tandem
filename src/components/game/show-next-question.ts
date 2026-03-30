@@ -24,7 +24,7 @@ export async function showNextQuestion() {
 
   if (round > questions.length && wrongAnswers.length === 0) {
     await finishCurrentGame();
-    toggleButtonsStatement();
+    toggleButtonsStatement('allButtons');
     return;
   }
 
@@ -42,8 +42,8 @@ export async function showNextQuestion() {
       resetRound();
       showNextQuestion();
     } else {
+      toggleButtonsStatement('allButtons');
       await finishCurrentGame();
-      toggleButtonsStatement();
       return;
     }
   }

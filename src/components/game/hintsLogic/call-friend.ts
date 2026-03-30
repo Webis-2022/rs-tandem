@@ -1,4 +1,6 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
+import { showModal } from '../../ui/modal/modal';
+import { countClicks } from './count-clicks';
 
 export function callFriend() {
   const { questions, questionNum } = getQuestionMeta('questions');
@@ -18,7 +20,8 @@ export function callFriend() {
     const index = Math.floor(Math.random() * wrongAnswersCount);
     friendAnswer = wrongAnswers[index];
   }
-  alert(
-    `Your friend isn't sure, but he thinks the correct answer is ${friendAnswer}`
-  );
+  showModal({
+    messageHtml: `Your friend isn't sure, but he thinks the correct answer is <b>${friendAnswer}</b>`,
+  });
+  countClicks('oneButton', '.friend', true, 'call a friend');
 }
