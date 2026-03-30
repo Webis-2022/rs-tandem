@@ -13,10 +13,9 @@ export function toggleButtonsStatement(
     nextTopicButton?.removeAttribute('disabled');
     libraryButton?.removeAttribute('disabled');
   } else if (mode === 'oneButton') {
-    const button: HTMLButtonElement | null = document.querySelector(
-      className as string
-    );
+    if (!className) return;
+    const button = document.querySelector<HTMLButtonElement>(className);
     if (!button) return;
-    (button.disabled as boolean | undefined) = isDisabled;
+    button.disabled = Boolean(isDisabled);
   }
 }

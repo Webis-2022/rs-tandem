@@ -29,8 +29,9 @@ export function removeTwoWrongAnswers() {
       }
     }
   });
-  toggleButtonsStatement('oneButton', '.fifty-fifty', true);
+
   const countClicks = () => {
+    toggleButtonsStatement('oneButton', '.fifty-fifty', true);
     saveUsedHint('50/50');
   };
   countClicks();
