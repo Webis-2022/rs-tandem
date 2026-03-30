@@ -13,7 +13,6 @@ type GameResult = {
 };
 
 export function createStatsTable(gameResult: GameResult[]) {
-  const questionsPerRound = 10;
   const table = createEl('div', { className: 'stats-table' });
   const headers = [
     'Topic',
@@ -30,11 +29,17 @@ export function createStatsTable(gameResult: GameResult[]) {
   });
 
   gameResult.forEach((row) => {
-    const score = questionsPerRound - row.wrong_answers_count;
-    const usedHints = JSON.parse(row.used_hints);
+    let usedHints;
+
+    try {
+      usedHints = row.used_hints ? JSON.parse(row.used_hints) : [];
+    } catch {
+      usedHints = [];
+    }
+
     const values = [
       row.topic,
-      score,
+      row.score,
       row.wrong_answers_count,
       usedHints['50/50'],
       usedHints['call a friend'],

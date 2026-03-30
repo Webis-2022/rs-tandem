@@ -65,7 +65,7 @@ export const createDashboardView = (): HTMLElement => {
       });
     };
 
-    difficultySelector.addEventListener('change', async (e) => {
+    const handleDifficultySelector = async (e: Event) => {
       const target = e.target as HTMLOptionElement;
       const difficulty = target?.value;
       const games = await getGames(difficulty);
@@ -78,20 +78,24 @@ export const createDashboardView = (): HTMLElement => {
       };
       const optionData = createOptionDataObj(games);
       createSelectOptions(optionData, gameSelector);
+    };
 
-      gameSelector.addEventListener('change', async (e) => {
-        const target = e.target as HTMLOptionElement;
-        const gameId = target?.value;
-        const gameResult = await getGameResult(Number(gameId));
-        const table = createStatsTable(gameResult);
-        const panelContent: HTMLDivElement | null =
-          document.querySelector('.panel-content');
-        if (!panelContent) return;
-        panelContent.textContent = '';
-        panelContent.style.display = 'block';
-        panelContent?.append(table);
-      });
-    });
+    difficultySelector.addEventListener('change', handleDifficultySelector);
+
+    const handleGameChange = async (e: Event) => {
+      const target = e.target as HTMLOptionElement;
+      const gameId = target?.value;
+      const gameResult = await getGameResult(Number(gameId));
+      const table = createStatsTable(gameResult);
+      const panelContent: HTMLDivElement | null =
+        document.querySelector('.panel-content');
+      if (!panelContent) return;
+      panelContent.textContent = '';
+      panelContent.style.display = 'block';
+      panelContent?.append(table);
+    };
+
+    gameSelector.addEventListener('change', handleGameChange);
 
     createSelectOptions(optionsText, difficultySelector);
 
