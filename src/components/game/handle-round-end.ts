@@ -5,5 +5,5 @@ import { updateScore } from './updateScore';
 export function handleRoundEnd(points: number) {
   calculateScore(points);
   updateScore();
-  toggleButtonsStatement();
+  toggleButtonsStatement('allButtons');
 }
