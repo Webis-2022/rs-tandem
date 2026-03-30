@@ -5,6 +5,8 @@ import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
+import { saveGameResult } from '../../services/api/save-game-result';
+import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
 import { finishCurrentGame } from '../../services/finishCurrentGame';
 
 export async function showNextQuestion() {
@@ -42,6 +44,8 @@ export async function showNextQuestion() {
       resetRound();
       showNextQuestion();
     } else {
+      await saveGameResult();
+      await markTopicAsCompleted();
       toggleButtonsStatement('allButtons');
       await finishCurrentGame();
       return;

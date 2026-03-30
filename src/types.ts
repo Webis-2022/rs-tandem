@@ -46,7 +46,6 @@ export type AuthChangeCallback = (session: AuthSession | null) => void;
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 type GameState = {
-  gameId: number | null;
   topicId: number;
   difficulty: Difficulty | '';
   round: number;
@@ -59,6 +58,7 @@ type GameState = {
 };
 
 export type AppState = {
+  gameId: number | null;
   user: User | null;
   game: GameState;
   isLoading: boolean;
@@ -78,6 +78,20 @@ export type Question = {
   question: string;
   explanation: string;
   isCorrected?: boolean;
+};
+
+export type GameData = {
+  id: number;
+  created_at: string;
+  user_id: string;
+  score: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  used_hints: {
+    '50/50': number;
+    'call a friend': number;
+    "i don't know": number;
+  };
+  wrong_answers: number;
 };
 
 export type Topic = {
