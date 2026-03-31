@@ -45,6 +45,15 @@ export type AuthChangeCallback = (session: AuthSession | null) => void;
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type UITheme = 'light' | 'dark';
+
+export type UIState = {
+  theme: UITheme;
+  activeRoute: RoutePath;
+  isNavOpen: boolean;
+  onboardingSeen: boolean;
+};
+
 type GameState = {
   gameId: number | null;
   topicId: number;
@@ -63,6 +72,7 @@ export type AppState = {
   game: GameState;
   isLoading: boolean;
   topics: Topic[];
+  ui: UIState;
 };
 
 export type HintCounter = {
@@ -92,11 +102,15 @@ export type Topic = {
 export type ModalOptions = {
   /** Optional title rendered in modal header. */
   title?: string;
+  /** Plain text content for modal body. Rendered via textContent. */
+  messageText?: string;
+  /** Optional bold part appended after messageText. Rendered via textContent inside <b>. */
+  messageStrongText?: string;
   /**
    * Trusted HTML content for modal body.
    * Use buildModalParagraphsHtml([...]) for paragraph-based text.
    */
-  messageHtml: string;
+  messageHtml?: string;
   /** If true, render Cancel + Confirm buttons; otherwise render single OK button. */
   showConfirm?: boolean;
   /** Confirm button label in confirm mode. */

@@ -17,8 +17,8 @@ $landing-card-hover-shadow-opacity: 0.14;
 .landing-hero,
 .landing-section,
 .landing-final {
-  background: v.$color-white;
-  border: 1px solid v.$border-color;
+  background: var(--surface-color, v.$color-white);
+  border: 1px solid var(--border-color, v.$border-color);
   border-radius: v.$border-radius;
   padding: v.$spacing-lg;
   box-shadow: 0 6px 20px rgba(0, 0, 0, $landing-card-shadow-opacity);
@@ -42,12 +42,12 @@ $landing-card-hover-shadow-opacity: 0.14;
   margin: 0;
   font-size: 28px;
   line-height: 1.25;
-  color: v.$text-color;
+  color: var(--text-color, v.$text-color);
 }
 
 .landing-hero-subtitle {
   margin: 0;
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   line-height: 1.6;
 }
 
@@ -66,7 +66,7 @@ $landing-card-hover-shadow-opacity: 0.14;
 .landing-actions-secondary {
   background: color.scale(v.$secondary-color, $lightness: 2%);
   color: v.$text-color;
-  border: 1px solid v.$border-color;
+  border: 1px solid var(--border-color, v.$border-color);
 }
 
 .landing-links {
@@ -93,7 +93,7 @@ $landing-card-hover-shadow-opacity: 0.14;
 
 .landing-section-title {
   margin: 0;
-  color: v.$text-color;
+  color: var(--text-color, v.$text-color);
   font-size: 22px;
 }
 
@@ -105,10 +105,10 @@ $landing-card-hover-shadow-opacity: 0.14;
 
 .landing-feature,
 .landing-faq-item {
-  border: 1px solid v.$border-color;
+  border: 1px solid var(--border-color, v.$border-color);
   border-radius: v.$border-radius;
   padding: v.$spacing-md;
-  background: v.$color-white;
+  background: var(--surface-color, v.$color-white);
   transition: box-shadow v.$transition-speed ease;
 
   &:hover {
@@ -119,13 +119,13 @@ $landing-card-hover-shadow-opacity: 0.14;
 .landing-feature-title,
 .landing-faq-item-question {
   margin: 0 0 v.$spacing-xs;
-  color: v.$text-color;
+  color: var(--text-color, v.$text-color);
 }
 
 .landing-feature-text,
 .landing-faq-item-answer {
   margin: 0;
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   line-height: 1.5;
 }
 
@@ -138,7 +138,7 @@ $landing-card-hover-shadow-opacity: 0.14;
 }
 
 .landing-flow-item {
-  color: v.$text-color;
+  color: var(--text-color, v.$text-color);
   line-height: 1.5;
 }
 
@@ -156,7 +156,7 @@ $landing-card-hover-shadow-opacity: 0.14;
 
 .landing-final-text {
   margin: 0;
-  color: v.$text-color;
+  color: var(--text-color, v.$text-color);
   line-height: 1.5;
 }
 
