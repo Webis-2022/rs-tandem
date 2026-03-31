@@ -1,0 +1,18 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.panel-top-bar {
+  background-color: v.$primary-dark;
+  border-top-left-radius: v.$border-radius;
+  border-top-right-radius: v.$border-radius;
+  padding: v.$spacing-md;
+  color: v.$color-white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.panel-content {
+  @include m.flex(row, center, center);
+  min-height: 300px;
+}

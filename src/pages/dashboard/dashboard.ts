@@ -1,9 +1,11 @@
 import './dashboard.scss';
-import { navigate } from '../../app/navigation';
-import { ROUTES } from '../../types';
-import { createEl, createButton } from '../../shared/dom';
-import * as authService from '../../services/authService';
+import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
+import { getGames } from '../../services/api/get-games';
+import { type GameData } from '../../types';
+import { getGameResult } from '../../services/api/get-game-result';
+import { gameStatsPanel } from '../../components/dashboard-elements/stats-table/game-stats-panel/game-stats-panel';
+import { createStatsTable } from '../../components/dashboard-elements/stats-table/stats-table';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -20,16 +22,19 @@ export const createDashboardView = (): HTMLElement => {
 
   updateConnectionStatus();
 
-  const user = authService.getCurrentUser();
-  const userEmail = user?.email || 'Unknown user';
-
-  const createTopBar = () => {
-    const optionsText = ['easy', 'medium', 'hard'];
+  const createTopBar = async () => {
+    const optionsText = {
+      easy: 'easy',
+      medium: 'medium',
+      hard: 'hard',
+    };
     const topBar = createEl('div', { className: 'top-bar' });
     const difficultySelector = createEl('select', {
       className: 'difficulty-selector',
-    });
-    const gameSelector = createEl('select', { className: 'game-selector' });
+    }) as HTMLSelectElement;
+    const gameSelector = createEl('select', {
+      className: 'game-selector',
+    }) as HTMLSelectElement;
     difficultySelector.setAttribute('name', 'difficulty');
     const createPlaceholder = (text: string) => {
       const placeholder = createEl('option');
@@ -45,41 +50,61 @@ export const createDashboardView = (): HTMLElement => {
     const gamePlaceholder = createPlaceholder('Select Game');
     difficultySelector.append(difficultyPlaceholder as Node);
     gameSelector.append(gamePlaceholder as Node);
-    optionsText.forEach((text) => {
-      const option = createEl('option');
-      if (option instanceof HTMLOptionElement) {
-        option.value = text;
-        option.textContent = text;
-        difficultySelector.append(option);
-      }
-    });
+    const createSelectOptions = (
+      optionsData: { [key: string]: string },
+      selector: HTMLSelectElement
+    ) => {
+      let option;
+      Object.keys(optionsData).forEach((text) => {
+        option = createEl('option');
+        if (option instanceof HTMLOptionElement) {
+          option.textContent = text;
+          option.value = optionsData[text];
+          selector.append(option);
+        }
+      });
+    };
+
+    const handleDifficultySelector = async (e: Event) => {
+      const target = e.target as HTMLOptionElement;
+      const difficulty = target?.value;
+      const games = await getGames(difficulty);
+      const createOptionDataObj = (games: GameData[]) => {
+        const obj: { [key: string]: string } = {};
+        games.forEach((game, index) => {
+          obj[`Game ${index + 1}`] = String(game.id);
+        });
+        return obj;
+      };
+      const optionData = createOptionDataObj(games);
+      createSelectOptions(optionData, gameSelector);
+    };
+
+    difficultySelector.addEventListener('change', handleDifficultySelector);
+
+    const handleGameChange = async (e: Event) => {
+      const target = e.target as HTMLOptionElement;
+      const gameId = target?.value;
+      const gameResult = await getGameResult(Number(gameId));
+      const table = createStatsTable(gameResult);
+      const panelContent: HTMLDivElement | null =
+        document.querySelector('.panel-content');
+      if (!panelContent) return;
+      panelContent.textContent = '';
+      panelContent.style.display = 'block';
+      panelContent?.append(table);
+    };
+
+    gameSelector.addEventListener('change', handleGameChange);
+
+    createSelectOptions(optionsText, difficultySelector);
+
     topBar.append(difficultySelector, gameSelector);
     return topBar;
   };
 
-  const title = createEl('h1', {
-    text: `Welcome, ${userEmail}!`,
+  createTopBar().then((topBar) => {
+    section.append(topBar, status, gameStatsPanel());
   });
-
-  const subtitle = createEl('p', {
-    text: 'Dashboard. Тут у нас будет профиль пользователя :) А еще много классных виджетов!',
-  });
-
-  const btn = createButton(
-    'Logout',
-    async () => {
-      try {
-        await authService.logout();
-        navigate(ROUTES.Landing, true);
-      } catch (error) {
-        console.error('Logout failed:', error);
-        // Still navigate even if logout fails
-        navigate(ROUTES.Landing, true);
-      }
-    },
-    'btn'
-  );
-  const topBar = createTopBar();
-  section.append(topBar, status, title, subtitle, btn);
   return section;
 };

@@ -6,7 +6,6 @@ import type {
   AuthChangeCallback,
 } from '../types';
 import { state, notify } from '../app/state/store';
-import { createNewGame } from './api/create-new-game';
 
 // Storage keys for localStorage persistence
 const STORAGE_KEYS = {
@@ -206,7 +205,6 @@ export async function login(email: string, password: string): Promise<User> {
 
     const session = createSessionFromSupabase(data.session);
     persistSession(session);
-    createNewGame();
 
     return session.user;
   } catch (error) {

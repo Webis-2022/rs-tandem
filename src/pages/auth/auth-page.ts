@@ -8,6 +8,7 @@ import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
 import { saveUserData } from '../../app/state/actions';
+import { createNewGame } from '../../services/api/create-new-game';
 import {
   getResumeCandidate,
   promptResumeGame,
@@ -239,35 +240,36 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
         await authService.register(email, password);
         navigate(ROUTES.Dashboard, true);
         return;
-      } else {
-        const user = await authService.login(email, password);
-        saveUserData(user);
-
-        const game = await getResumeCandidate();
-
-        if (game) {
-          const shouldResume = await promptResumeGame(game);
-
-          if (shouldResume) {
-            restoreGameState(game);
-
-            if (getState().topics.length === 0) {
-              try {
-                const topics = await getTopics();
-                saveTopics(topics);
-              } catch (error) {
-                console.error('Failed to load topics for resumed game:', error);
-              }
-            }
-
-            navigate(ROUTES.Practice, true);
-            return;
-          }
-
-          await discardResumeCandidate();
-        }
       }
 
+      const user = await authService.login(email, password);
+      saveUserData(user);
+
+      const game = await getResumeCandidate();
+
+      if (game) {
+        const shouldResume = await promptResumeGame(game);
+
+        if (shouldResume) {
+          restoreGameState(game);
+
+          if (getState().topics.length === 0) {
+            try {
+              const topics = await getTopics();
+              saveTopics(topics);
+            } catch (error) {
+              console.error('Failed to load topics for resumed game:', error);
+            }
+          }
+
+          navigate(ROUTES.Practice, true);
+          return;
+        }
+
+        await discardResumeCandidate();
+      }
+
+      await createNewGame(user.id);
       // Navigate to dashboard on success
       navigate(ROUTES.Dashboard, true);
     } catch (error) {

@@ -1,4 +1,5 @@
 import { getQuestionMeta } from '../../../utils/get-question-meta';
+import { countClicks } from './count-clicks';
 
 export function showSidePanel(e: MouseEvent) {
   e.stopPropagation();
@@ -12,4 +13,5 @@ export function showSidePanel(e: MouseEvent) {
   if (!sidePanel) return;
   sidePanel.classList.remove('closed');
   sidePanel.classList.add('opened');
+  countClicks('oneButton', '.i-dont-know', true, "i don't know");
 }
