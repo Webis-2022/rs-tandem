@@ -13,10 +13,14 @@ type GameState = AppState['game'];
 
 export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
 
+/**
+ * Ищет сохраненную игру для продолжения.
+ * Сначала проверяет localStorage, потом сервер.
+ */
 export async function getResumeCandidate(): Promise<GameState | null> {
   const localGame = getActiveGame();
 
-  if (isResumeCandidate(localGame)) {
+  if (hasRequiredResumeData(localGame)) {
     return localGame;
   }
 
@@ -29,14 +33,18 @@ export async function getResumeCandidate(): Promise<GameState | null> {
   try {
     const serverGame = await getActiveGameByUser(user.id);
 
-    return isResumeCandidate(serverGame) ? serverGame : null;
+    return hasRequiredResumeData(serverGame) ? serverGame : null;
   } catch (error) {
     console.error('Failed to load resume candidate from server:', error);
     return null;
   }
 }
 
-export function isResumeCandidate(
+/**
+ * Проверяет, хватает ли данных в сохраненной игре
+ * для сценария продолжения.
+ */
+export function hasRequiredResumeData(
   game: GameState | null | undefined
 ): game is GameState {
   if (!game) {
@@ -46,8 +54,11 @@ export function isResumeCandidate(
   return Boolean(game.topicId >= 1 && game.difficulty && game.round >= 1);
 }
 
+/**
+ * Спрашивает пользователя, хочет ли он продолжить игру.
+ */
 export async function promptResumeGame(game: GameState): Promise<boolean> {
-  if (!isResumeCandidate(game)) {
+  if (!hasRequiredResumeData(game)) {
     return false;
   }
 
@@ -63,6 +74,9 @@ export async function promptResumeGame(game: GameState): Promise<boolean> {
   return result.confirmed;
 }
 
+/**
+ * Удаляет сохраненную игру локально и на сервере.
+ */
 export async function discardResumeCandidate(): Promise<void> {
   clearActiveGame();
 
@@ -73,7 +87,10 @@ export async function discardResumeCandidate(): Promise<void> {
   }
 }
 
-async function loadTopicsIfNeeded(): Promise<void> {
+/**
+ * Загружает topics, если их еще нет в store.
+ */
+async function ensureTopicsLoaded(): Promise<void> {
   if (getState().topics.length > 0) {
     return;
   }
@@ -86,11 +103,17 @@ async function loadTopicsIfNeeded(): Promise<void> {
   }
 }
 
+/**
+ * Восстанавливает игру и при необходимости загружает topics.
+ */
 async function restoreResumedGame(game: GameState): Promise<void> {
   restoreGameState(game);
-  await loadTopicsIfNeeded();
+  await ensureTopicsLoaded();
 }
 
+/**
+ * Запускает весь сценарий продолжения игры.
+ */
 export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
   const game = await getResumeCandidate();
 
