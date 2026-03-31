@@ -47,7 +47,7 @@ export function changeGameMode(gameMode: 'game' | 'super-game') {
   });
 }
 
-export function saveTopics(topics: Topic[]) {
+export async function saveTopics(topics: Topic[]) {
   const prev = getState();
   setState({
     ...prev,

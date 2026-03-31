@@ -22,7 +22,10 @@ export function createEl(
 
 export function createButton(
   text: string,
-  onClick?: (event: MouseEvent) => void,
+  onClick?: (
+    event?: MouseEvent | undefined,
+    difficultyLevel?: 'easy' | 'medium' | 'hard' | 'undefined'
+  ) => void,
   className?: string,
   disabled: boolean = false
 ): HTMLButtonElement {

@@ -35,7 +35,7 @@ import { ROUTES } from '../../types';
 describe('createLibraryView', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
-    vi.clearAllMocks(); // vi.clearAllMocks() — очистить историю вызовов моков
+    vi.clearAllMocks();
 
     mocks.getState.mockReturnValue({
       user: null,
@@ -53,12 +53,12 @@ describe('createLibraryView', () => {
   });
 
   test('renders title and subtitle', () => {
-    mocks.getTopics.mockReturnValue(new Promise(() => {})); // возвращается промис, который никогда не завершится, чтобы getTopics().then(...) не успел заменить интерфейс
+    mocks.getTopics.mockReturnValue(new Promise(() => {}));
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
-    expect(screen.getByText('Library')).toBeInTheDocument(); // toBeInTheDocument() - элемент есть в DOM
+    expect(screen.getByText('Library')).toBeInTheDocument();
     expect(
       screen.getByText(
         'Choose difficulty and select a topic to start practice.'
@@ -69,16 +69,16 @@ describe('createLibraryView', () => {
   test('shows loading state before topics are loaded', () => {
     mocks.getTopics.mockReturnValue(new Promise(() => {}));
 
-    const view = createLibraryView();
+    const view = createLibraryView('medium');
     document.body.append(view);
 
-    expect(screen.getByText('Loading topics...')).toBeInTheDocument(); // getByText - синхронный поиск, элемент должен быть уже сейчас
+    expect(screen.getByText('Loading topics...')).toBeInTheDocument();
   });
 
   test('shows message when topics list is empty', async () => {
-    mocks.getTopics.mockResolvedValue([]); // имитируем успешный ответ, но без тем
+    mocks.getTopics.mockResolvedValue([]);
 
-    const view = createLibraryView();
+    const view = createLibraryView('hard');
     document.body.append(view);
 
     expect(await screen.findByText('No topics found.')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('createLibraryView', () => {
   test('changes active difficulty button on click', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
     const easyBtn = screen.getByRole('button', { name: 'Easy' });
@@ -106,7 +106,7 @@ describe('createLibraryView', () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockResolvedValue(undefined);
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
     const startBtn = await screen.findByRole('button', { name: 'Start' });

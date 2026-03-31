@@ -58,12 +58,12 @@
 }
 
 .library-card-actions {
-  @include m.flex(row, flex-end, center);
+  @include m.flex(row, space-between, center);
 }
 
-// .library-list-status {
-//   color: v.$text-light;
-// }
+.topic-icon {
+  width: 20px;
+}
 
 .library-list-status.is-error {
   color: v.$color-error;
