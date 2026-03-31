@@ -80,10 +80,6 @@ export let state: AppState = {
 
 const listeners: ((state: AppState) => void)[] = [];
 
-type SetStateOptions = {
-  saveGameToStorage?: boolean;
-};
-
 export function subscribe(listener: (state: AppState) => void) {
   listeners.push(listener);
 
@@ -105,11 +101,11 @@ export function getState() {
 
 export function setState(
   newState: AppState,
-  options: SetStateOptions = { saveGameToStorage: true }
+  options?: { saveGameToStorage?: boolean }
 ) {
   state = newState;
 
-  if (options.saveGameToStorage !== false) {
+  if (options?.saveGameToStorage !== false) {
     saveActiveGame(state.game);
   }
 
