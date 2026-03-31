@@ -209,7 +209,7 @@ export async function login(email: string, password: string): Promise<User> {
 
     const session = createSessionFromSupabase(data.session);
     persistSession(session);
-    createNewGame();
+    await createNewGame(session.user.id);
 
     return session.user;
   } catch (error) {
