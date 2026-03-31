@@ -80,6 +80,10 @@ export let state: AppState = {
 
 const listeners: ((state: AppState) => void)[] = [];
 
+type SetStateOptions = {
+  saveGameToStorage?: boolean;
+};
+
 export function subscribe(listener: (state: AppState) => void) {
   listeners.push(listener);
 
@@ -99,9 +103,16 @@ export function getState() {
   return state;
 }
 
-export function setState(newState: AppState) {
+export function setState(
+  newState: AppState,
+  options: SetStateOptions = { saveGameToStorage: true }
+) {
   state = newState;
-  saveActiveGame(state.game); // после каждого обновления state текущая игра синхронизируется с localStorage
+
+  if (options.saveGameToStorage !== false) {
+    saveActiveGame(state.game);
+  }
+
   saveUIState(state.ui);
   notify();
 }

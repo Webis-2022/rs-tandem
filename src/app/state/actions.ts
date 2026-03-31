@@ -298,8 +298,11 @@ export function restoreGameState(game: AppState['game']) {
 export function resetGameState() {
   const prev = getState();
 
-  setState({
-    ...prev,
-    game: { ...initialGameState },
-  });
+  setState(
+    {
+      ...prev,
+      game: { ...initialGameState },
+    },
+    { saveGameToStorage: false }
+  );
 }
