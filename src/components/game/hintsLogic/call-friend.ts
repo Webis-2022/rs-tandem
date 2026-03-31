@@ -8,7 +8,7 @@ export function callFriend() {
   const probability = Number(Math.random().toFixed(2));
   const probabilityThreshold = 0.7;
   const wrongAnswersCount = 3;
-  let friendAnswer;
+  let friendAnswer: string;
   const correctAnswer = question.answer;
   const wrongAnswers = question.options.filter(
     (option) => option !== correctAnswer
@@ -20,8 +20,11 @@ export function callFriend() {
     const index = Math.floor(Math.random() * wrongAnswersCount);
     friendAnswer = wrongAnswers[index];
   }
+
   showModal({
-    messageHtml: `Your friend isn't sure, but he thinks the correct answer is <b>${friendAnswer}</b>`,
+    messageText: "Your friend isn't sure, but he thinks the correct answer is ",
+    messageStrongText: friendAnswer,
   });
+
   countClicks('oneButton', '.friend', true, 'call a friend');
 }
