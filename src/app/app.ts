@@ -12,16 +12,8 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import { restoreGameState, saveTopics } from './state/actions';
 import { createLoadingView } from '../components/ui/loading/loading';
-
-import {
-  discardResumeCandidate,
-  getResumeCandidate,
-  promptResumeGame,
-} from '../services/resumeActiveGame';
-import { getState } from './state/store';
-import { getTopics } from '../services/api/get-topics';
+import { runResumeGameFlow } from '../services/resumeActiveGame';
 
 /**
  * Initialize authentication state
@@ -63,32 +55,11 @@ function isAuthed(): boolean {
  */
 
 async function tryResumeGame(): Promise<void> {
-  const game = await getResumeCandidate();
+  const result = await runResumeGameFlow();
 
-  if (!game) {
-    return;
+  if (result === 'discarded') {
+    navigate(ROUTES.Dashboard, true);
   }
-
-  const shouldResume = await promptResumeGame(game);
-
-  if (shouldResume) {
-    restoreGameState(game);
-
-    if (getState().topics.length === 0) {
-      try {
-        const topics = await getTopics();
-        saveTopics(topics);
-      } catch (error) {
-        console.error('Failed to load topics for resumed game:', error);
-      }
-    }
-
-    navigate(ROUTES.Practice, true);
-    return;
-  }
-
-  await discardResumeCandidate();
-  navigate(ROUTES.Dashboard, true);
 }
 
 function waitForPaint(): Promise<void> {

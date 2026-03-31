@@ -1,11 +1,17 @@
-import type { AppState } from '../types';
+import { ROUTES, type AppState } from '../types';
+import { navigate } from '../app/navigation';
+import { restoreGameState, saveTopics } from '../app/state/actions';
+import { getState } from '../app/state/store';
 import * as authService from './authService';
 import { getActiveGame, clearActiveGame } from './storageService';
 import { getActiveGameByUser } from './api/active-games';
+import { getTopics } from './api/get-topics';
 import { removeActiveGameFromServer } from './syncActiveGame';
 import { showModal } from '../components/ui/modal/modal';
 
 type GameState = AppState['game'];
+
+export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
 
 export async function getResumeCandidate(): Promise<GameState | null> {
   const localGame = getActiveGame();
@@ -65,4 +71,41 @@ export async function discardResumeCandidate(): Promise<void> {
   } catch (error) {
     console.error('Failed to remove active game from server:', error);
   }
+}
+
+async function loadTopicsIfNeeded(): Promise<void> {
+  if (getState().topics.length > 0) {
+    return;
+  }
+
+  try {
+    const topics = await getTopics();
+    saveTopics(topics);
+  } catch (error) {
+    console.error('Failed to load topics for resumed game:', error);
+  }
+}
+
+async function restoreResumedGame(game: GameState): Promise<void> {
+  restoreGameState(game);
+  await loadTopicsIfNeeded();
+}
+
+export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
+  const game = await getResumeCandidate();
+
+  if (!game) {
+    return 'no-game';
+  }
+
+  const shouldResume = await promptResumeGame(game);
+
+  if (shouldResume) {
+    await restoreResumedGame(game);
+    navigate(ROUTES.Practice, true);
+    return 'resumed';
+  }
+
+  await discardResumeCandidate();
+  return 'discarded';
 }

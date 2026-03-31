@@ -1,7 +1,6 @@
 import './auth-page.scss';
 import { ROUTES, type AuthError } from '../../types';
 import { navigate } from '../../app/navigation';
-import { restoreGameState, saveTopics } from '../../app/state/actions';
 import { createEl, createButton, createLink } from '../../shared/dom';
 import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
@@ -9,13 +8,7 @@ import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
 import { saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import {
-  getResumeCandidate,
-  promptResumeGame,
-  discardResumeCandidate,
-} from '../../services/resumeActiveGame';
-import { getState } from '../../app/state/store';
-import { getTopics } from '../../services/api/get-topics';
+import { runResumeGameFlow } from '../../services/resumeActiveGame';
 
 type Field = {
   root: HTMLElement;
@@ -245,31 +238,14 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const user = await authService.login(email, password);
       saveUserData(user);
 
-      const game = await getResumeCandidate();
+      const resumeResult = await runResumeGameFlow();
 
-      if (game) {
-        const shouldResume = await promptResumeGame(game);
-
-        if (shouldResume) {
-          restoreGameState(game);
-
-          if (getState().topics.length === 0) {
-            try {
-              const topics = await getTopics();
-              saveTopics(topics);
-            } catch (error) {
-              console.error('Failed to load topics for resumed game:', error);
-            }
-          }
-
-          navigate(ROUTES.Practice, true);
-          return;
-        }
-
-        await discardResumeCandidate();
+      if (resumeResult === 'resumed') {
+        return;
       }
 
       await createNewGame(user.id);
+
       // Navigate to dashboard on success
       navigate(ROUTES.Dashboard, true);
     } catch (error) {
