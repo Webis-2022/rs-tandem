@@ -14,8 +14,9 @@ import { createNotFoundView } from '../pages/not-found/not-found';
 
 import { getActiveGame } from '../services/storageService';
 import { getActiveGameByUser } from '../services/api/active-games';
-import { restoreGameState } from './state/actions';
+import { applyTheme, restoreGameState, setActiveRoute } from './state/actions';
 import { createLoadingView } from '../components/ui/loading/loading';
+import { getState } from './state/store';
 
 /**
  * Initialize authentication state
@@ -86,6 +87,8 @@ function waitForPaint(): Promise<void> {
 }
 
 export async function initApp(mount: HTMLElement): Promise<void> {
+  applyTheme(getState().ui.theme);
+
   const layout = createLayout();
   mount.replaceChildren(layout.root);
 
@@ -101,6 +104,9 @@ export async function initApp(mount: HTMLElement): Promise<void> {
     mount: layout.outlet,
     fallback: ROUTES.NotFound,
     isAuthed,
+    onRouteChange: (route) => {
+      setActiveRoute(route);
+    },
     routes: {
       [ROUTES.Landing]: {
         createView: createLandingView,

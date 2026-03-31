@@ -3,11 +3,82 @@ import type {
   Difficulty,
   HintCounter,
   Question,
+  RoutePath,
   Topic,
+  UITheme,
   User,
 } from '../../types';
-import { getState, initialGameState, setState, state } from './store';
+import { getState, initialGameState, setState } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
+
+export function applyTheme(theme: UITheme): void {
+  document.documentElement.dataset.theme = theme;
+}
+
+export function setTheme(theme: UITheme): void {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    ui: {
+      ...prev.ui,
+      theme,
+    },
+  });
+
+  applyTheme(theme);
+}
+
+export function toggleTheme(): void {
+  const prev = getState();
+  setTheme(prev.ui.theme === 'light' ? 'dark' : 'light');
+}
+
+export function setActiveRoute(route: RoutePath): void {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    ui: {
+      ...prev.ui,
+      activeRoute: route,
+      isNavOpen: false,
+    },
+  });
+}
+
+export function setNavOpen(isNavOpen: boolean): void {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    ui: {
+      ...prev.ui,
+      isNavOpen,
+    },
+  });
+}
+
+export function toggleNav(): void {
+  const prev = getState();
+  setNavOpen(!prev.ui.isNavOpen);
+}
+
+export function closeNav(): void {
+  setNavOpen(false);
+}
+
+export function markOnboardingSeen(): void {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    ui: {
+      ...prev.ui,
+      onboardingSeen: true,
+    },
+  });
+}
 
 export async function increaseRound() {
   const prev = getState();
@@ -65,6 +136,7 @@ export function saveTopicQuestions(questions: Question[]) {
     },
   });
 }
+
 export function calculateScore(roundScore: number) {
   const prev = getState();
 
@@ -215,8 +287,10 @@ export async function startNewGame(params: {
 }
 
 export function restoreGameState(game: AppState['game']) {
+  const prev = getState();
+
   setState({
-    ...state,
+    ...prev,
     game,
   });
 }
@@ -224,11 +298,8 @@ export function restoreGameState(game: AppState['game']) {
 export function resetGameState() {
   const prev = getState();
 
-  setState(
-    {
-      ...prev,
-      game: { ...initialGameState },
-    },
-    { saveGameToStorage: false }
-  );
+  setState({
+    ...prev,
+    game: { ...initialGameState },
+  });
 }
