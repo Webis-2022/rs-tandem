@@ -7,7 +7,6 @@ import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
 import { saveUserData } from '../../app/state/actions';
-import { createNewGame } from '../../services/api/create-new-game';
 
 type Field = {
   root: HTMLElement;
@@ -233,7 +232,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       } else {
         const user = await authService.login(email, password);
         saveUserData(user);
-        await createNewGame(user.id);
       }
 
       // Navigate to dashboard on success
