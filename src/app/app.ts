@@ -88,6 +88,7 @@ async function tryResumeGame(): Promise<void> {
   }
 
   await discardResumeCandidate();
+  navigate(ROUTES.Dashboard, true);
 }
 
 function waitForPaint(): Promise<void> {
