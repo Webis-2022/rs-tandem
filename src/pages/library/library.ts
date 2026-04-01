@@ -6,14 +6,14 @@ import { createEl, createButton } from '../../shared/dom';
 import { saveTopics, startNewGame } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
-import { fetchCompletedTopics } from '../../services/api/fetch-completed-topics';
+import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 
 export const createLibraryView = (
   difficultyLevel: 'easy' | 'medium' | 'hard'
 ): HTMLElement => {
   const section = createEl('section', { className: 'page' });
 
-  const completedTopics = fetchCompletedTopics(difficultyLevel);
+  const completedTopics = fetchCompletedTopicIds(difficultyLevel);
 
   const title = createEl('h1', {
     text: 'Library',
@@ -97,10 +97,7 @@ export const createLibraryView = (
 
   list.append(createLoadingView('Loading topics...'));
 
-  const renderTopicCard = (
-    topic: Topic,
-    completedTopic: Topic
-  ): HTMLElement => {
+  const renderTopicCard = (topic: Topic, isCompleted: boolean): HTMLElement => {
     const card = createEl('div', { className: 'library-card' });
     const topicIcon = createEl('img', {
       className: 'topic-icon',
@@ -110,11 +107,7 @@ export const createLibraryView = (
     card.style.opacity = '1';
     card.style.pointerEvents = 'auto';
 
-    if (
-      completedTopic &&
-      Object.keys(completedTopic).length > 0 &&
-      topic.name === completedTopic.name
-    ) {
+    if (isCompleted) {
       card.style.backgroundColor = '#ccc';
       card.style.opacity = '0.6';
       card.style.pointerEvents = 'none';
@@ -174,9 +167,11 @@ export const createLibraryView = (
         return;
       }
 
-      (topics as Topic[]).forEach((topic, index) => {
-        const completedTopic = completedTopicsArray[index];
-        list.append(renderTopicCard(topic, completedTopic));
+      const completedIds = new Set(completedTopicsArray);
+
+      topics.forEach((topic) => {
+        const isCompleted = completedIds.has(topic.id);
+        list.append(renderTopicCard(topic, isCompleted));
       });
 
       saveTopics(topics);
