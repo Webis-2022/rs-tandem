@@ -7,15 +7,15 @@ const mocks = vi.hoisted(() => ({
   startNewGame: vi.fn(),
   saveTopics: vi.fn(),
   getState: vi.fn(),
-  fetchCompletedTopics: vi.fn(),
+  fetchCompletedTopicIds: vi.fn(),
 }));
 
 vi.mock('../../services/api/get-topics', () => ({
   getTopics: mocks.getTopics,
 }));
 
-vi.mock('../../services/api/fetch-completed-topics', () => ({
-  fetchCompletedTopics: mocks.fetchCompletedTopics,
+vi.mock('../../services/api/fetch-completed-topic-ids', () => ({
+  fetchCompletedTopicIds: mocks.fetchCompletedTopicIds,
 }));
 
 vi.mock('../../app/navigation', () => ({
@@ -53,7 +53,7 @@ describe('createLibraryView', () => {
       isLoading: false,
     });
 
-    mocks.fetchCompletedTopics.mockResolvedValue([]);
+    mocks.fetchCompletedTopicIds.mockResolvedValue([]);
   });
 
   test('renders title and subtitle', () => {
