@@ -6,9 +6,29 @@
 @import '_page.scss';
 @import '_button.scss';
 
+:root {
+  --surface-color: #{$color-white};
+  --surface-muted: #{$secondary-color};
+  --text-color: #{$text-color};
+  --text-light-color: #{$text-light};
+  --border-color: #{$border-color};
+  --accent-color: #{$primary-color};
+}
+
+[data-theme='dark'] {
+  --surface-color: #1d2028;
+  --surface-muted: #2a2f3a;
+  --text-color: #f5f7fb;
+  --text-light-color: #c8cfdd;
+  --border-color: #3a4252;
+  --accent-color: #8ea2ff;
+}
+
 body {
   font-family: $font-family-base;
   overflow-x: hidden;
+  background: var(--surface-color);
+  color: var(--text-color);
 }
 
 h1,
