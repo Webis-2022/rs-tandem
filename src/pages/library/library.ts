@@ -25,6 +25,14 @@ export const createLibraryView = (
     className: 'library-subtitle',
   });
 
+  const handleDifficultyButton = (difficulty: 'easy' | 'medium' | 'hard') => {
+    const main = document.querySelector('main.main');
+    if (main) {
+      main.replaceChildren();
+      main.append(createLibraryView(difficulty));
+    }
+  };
+
   let difficulty: Difficulty = difficultyLevel;
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
@@ -37,35 +45,17 @@ export const createLibraryView = (
   const diffBtns: Record<Difficulty, HTMLButtonElement> = {
     easy: createButton(
       'Easy',
-      () => {
-        const main = document.querySelector('main.main');
-        if (main) {
-          main.replaceChildren();
-          main.append(createLibraryView('easy'));
-        }
-      },
+      () => handleDifficultyButton('easy'),
       'btn library-diff-btn'
     ),
     medium: createButton(
       'Medium',
-      () => {
-        const main = document.querySelector('main.main');
-        if (main) {
-          main.replaceChildren();
-          main.append(createLibraryView('medium'));
-        }
-      },
+      () => handleDifficultyButton('medium'),
       'btn library-diff-btn'
     ),
     hard: createButton(
       'Hard',
-      () => {
-        const main = document.querySelector('main.main');
-        if (main) {
-          main.replaceChildren();
-          main.append(createLibraryView('hard'));
-        }
-      },
+      () => handleDifficultyButton('hard'),
       'btn library-diff-btn'
     ),
   };

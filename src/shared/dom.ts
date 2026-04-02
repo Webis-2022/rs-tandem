@@ -19,12 +19,8 @@ export function createEl(
 
   return element;
 }
-type ButtonClick =
-  | ((event?: MouseEvent) => void)
-  | ((
-      event?: MouseEvent,
-      difficultyLevel?: 'easy' | 'medium' | 'hard' | 'undefined'
-    ) => void);
+
+type ButtonClick = (event?: MouseEvent) => void;
 
 export function createButton(
   text: string,
@@ -33,24 +29,16 @@ export function createButton(
   disabled: boolean = false
 ): HTMLButtonElement {
   const button = createEl('button', { text }) as HTMLButtonElement;
+
   button.type = 'button';
   button.disabled = disabled;
 
-  if (className) button.className = className;
+  if (className) {
+    button.className = className;
+  }
 
   if (onClick) {
-    button.addEventListener('click', (event) => {
-      if (onClick.length === 1) {
-        (onClick as (event?: MouseEvent) => void)(event);
-      } else {
-        (
-          onClick as (
-            event?: MouseEvent,
-            difficultyLevel?: 'easy' | 'medium' | 'hard' | 'undefined'
-          ) => void
-        )(event);
-      }
-    });
+    button.addEventListener('click', onClick);
   }
 
   return button;
