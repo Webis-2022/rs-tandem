@@ -32,10 +32,12 @@ export function createPracticeCard() {
     goToNextTopic();
     resetWrongAnswersCounter();
   });
-  const libraryButton = createButton('Library', undefined, 'library-btn', true);
-  libraryButton.addEventListener('click', () => {
-    navigate(ROUTES.Library, true);
-  });
+  const libraryButton = createButton(
+    'Library',
+    () => navigate(ROUTES.Library, true),
+    'library-btn',
+    true
+  );
   const cardBody = createEl('div', { className: 'card-body' });
   const cardFooter = createEl('div', { className: 'card-footer' });
   const hintsContainer = createHintsContainer();

@@ -15,9 +15,8 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
-import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
-import { saveGameResult } from '../../services/api/save-game-result';
 import { getState } from '../../app/state/store';
+import { handleGameCompletion } from './handle-game-completion';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
@@ -35,8 +34,7 @@ export async function checkAnswer(gameMode: string) {
 
     if (isLast && isCorrect) {
       if (wrongAnswersCounter === 0) {
-        await saveGameResult();
-        await markTopicAsCompleted();
+        handleGameCompletion();
       }
     }
 
@@ -70,8 +68,7 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
-        await saveGameResult();
-        await markTopicAsCompleted();
+        handleGameCompletion();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -85,8 +82,7 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
-      await saveGameResult();
-      await markTopicAsCompleted();
+      handleGameCompletion();
       return;
     }
     countWrongAnswers();
