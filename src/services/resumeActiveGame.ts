@@ -40,6 +40,8 @@ export async function getResumeCandidate(): Promise<GameState | null> {
   }
 }
 
+const validDifficulties = ['easy', 'medium', 'hard'] as const;
+
 /**
  * Проверяет, хватает ли данных в сохраненной игре
  * для сценария продолжения.
@@ -51,7 +53,13 @@ export function hasRequiredResumeData(
     return false;
   }
 
-  return Boolean(game.topicId >= 1 && game.difficulty && game.round >= 1);
+  return Boolean(
+    game.topicId >= 1 &&
+    validDifficulties.includes(
+      game.difficulty as (typeof validDifficulties)[number]
+    ) &&
+    game.round >= 1
+  );
 }
 
 /**
@@ -95,40 +103,41 @@ async function ensureTopicsLoaded(): Promise<void> {
     return;
   }
 
-  try {
-    const topics = await getTopics();
-    saveTopics(topics);
-  } catch (error) {
-    console.error('Failed to load topics for resumed game:', error);
-  }
+  const topics = await getTopics();
+  saveTopics(topics);
 }
 
 /**
  * Восстанавливает игру и при необходимости загружает topics.
  */
 async function restoreResumedGame(game: GameState): Promise<void> {
-  restoreGameState(game);
   await ensureTopicsLoaded();
+  restoreGameState(game);
 }
 
 /**
  * Запускает весь сценарий продолжения игры.
  */
 export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
-  const game = await getResumeCandidate();
+  try {
+    const game = await getResumeCandidate();
 
-  if (!game) {
+    if (!game) {
+      return 'no-game';
+    }
+
+    const shouldResume = await promptResumeGame(game);
+
+    if (shouldResume) {
+      await restoreResumedGame(game);
+      navigate(ROUTES.Practice, true);
+      return 'resumed';
+    }
+
+    await discardResumeCandidate();
+    return 'discarded';
+  } catch (error) {
+    console.error('Resume game flow failed:', error);
     return 'no-game';
   }
-
-  const shouldResume = await promptResumeGame(game);
-
-  if (shouldResume) {
-    await restoreResumedGame(game);
-    navigate(ROUTES.Practice, true);
-    return 'resumed';
-  }
-
-  await discardResumeCandidate();
-  return 'discarded';
 }
