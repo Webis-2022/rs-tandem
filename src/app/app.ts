@@ -12,6 +12,8 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
+import { applyTheme, setActiveRoute } from './state/actions';
+import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
 import { runResumeGameFlow } from '../services/resumeActiveGame';
 
@@ -48,12 +50,9 @@ function isAuthed(): boolean {
 }
 
 /**
- * Restore active game
- * Priority:
- * 1. localStorage (for authenticated users)
- * 2. Supabase fallback
+ * Checks for an unfinished game and asks the user
+ * whether it should be resumed.
  */
-
 async function tryResumeGame(): Promise<void> {
   const result = await runResumeGameFlow();
 
@@ -69,6 +68,8 @@ function waitForPaint(): Promise<void> {
 }
 
 export async function initApp(mount: HTMLElement): Promise<void> {
+  applyTheme(getState().ui.theme);
+
   const layout = createLayout();
   mount.replaceChildren(layout.root);
 
@@ -78,12 +79,14 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   // Initialize auth state before setting up router
   await initAuth();
-  // await restoreActiveGame();
 
   const router = createRouter({
     mount: layout.outlet,
     fallback: ROUTES.NotFound,
     isAuthed,
+    onRouteChange: (route) => {
+      setActiveRoute(route);
+    },
     routes: {
       [ROUTES.Landing]: {
         createView: createLandingView,

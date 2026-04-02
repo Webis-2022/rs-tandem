@@ -1,5 +1,56 @@
-import { type AppState } from '../../types';
+import { ROUTES, type AppState, type UIState } from '../../types';
 import { saveActiveGame } from '../../services/storageService';
+
+const UI_STORAGE_KEY = 'tandem:ui';
+
+const initialUIState: UIState = {
+  theme: 'light',
+  activeRoute: ROUTES.Landing,
+  isNavOpen: false,
+  onboardingSeen: false,
+};
+
+function loadUIState(): Pick<UIState, 'theme' | 'onboardingSeen'> {
+  try {
+    const persisted = localStorage.getItem(UI_STORAGE_KEY);
+
+    if (!persisted) {
+      return {
+        theme: initialUIState.theme,
+        onboardingSeen: initialUIState.onboardingSeen,
+      };
+    }
+
+    const parsed = JSON.parse(persisted) as Partial<UIState>;
+
+    return {
+      theme: parsed.theme === 'dark' ? 'dark' : 'light',
+      onboardingSeen: Boolean(parsed.onboardingSeen),
+    };
+  } catch (error) {
+    console.error('Failed to load UI state from localStorage:', error);
+    return {
+      theme: initialUIState.theme,
+      onboardingSeen: initialUIState.onboardingSeen,
+    };
+  }
+}
+
+function saveUIState(ui: UIState): void {
+  try {
+    localStorage.setItem(
+      UI_STORAGE_KEY,
+      JSON.stringify({
+        theme: ui.theme,
+        onboardingSeen: ui.onboardingSeen,
+      })
+    );
+  } catch (error) {
+    console.error('Failed to save UI state to localStorage:', error);
+  }
+}
+
+const persistedUI = loadUIState();
 
 export let state: AppState = {
   user: null,
@@ -21,6 +72,10 @@ export let state: AppState = {
   },
   isLoading: false,
   topics: [],
+  ui: {
+    ...initialUIState,
+    ...persistedUI,
+  },
 };
 
 const listeners: ((state: AppState) => void)[] = [];
@@ -28,7 +83,12 @@ const listeners: ((state: AppState) => void)[] = [];
 export function subscribe(listener: (state: AppState) => void) {
   listeners.push(listener);
 
-  return () => listeners.filter((l) => l !== listener);
+  return () => {
+    const index = listeners.indexOf(listener);
+    if (index !== -1) {
+      listeners.splice(index, 1);
+    }
+  };
 }
 
 export function notify() {
@@ -49,6 +109,7 @@ export function setState(
     saveActiveGame(state.game);
   }
 
+  saveUIState(state.ui);
   notify();
 }
 
