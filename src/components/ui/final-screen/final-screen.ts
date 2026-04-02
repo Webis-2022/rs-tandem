@@ -73,13 +73,13 @@ export async function createFinalScreen() {
     background = createBackground('./img/stormy-bg.webp');
     modalWindow = createModalWindow(loserText, './img/html-and-css-loser.png');
   } else if (score > loserScore && score < masterScore) {
-    background = createBackground('./img/celebration-bg.png');
+    background = createBackground('./img/celebration-bg.webp');
     modalWindow = createModalWindow(
       masterText,
       './img/html-and-css-master.png'
     );
   } else if (score > masterScore && score < guruScore) {
-    background = createBackground('./img/celebration-bg.png');
+    background = createBackground('./img/celebration-bg.webp');
     modalWindow = createModalWindow(guruText, './img/html-and-css-guru.png');
   }
   if (!layout) return;

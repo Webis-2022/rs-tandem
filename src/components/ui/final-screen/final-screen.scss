@@ -67,4 +67,9 @@
   cursor: pointer;
   transition: all v.$transition-speed ease-in-out;
   font-size: v.$font-size-sm;
+
+  &:hover {
+    background-color: v.$color-white;
+    color: v.$primary-color;
+  }
 }

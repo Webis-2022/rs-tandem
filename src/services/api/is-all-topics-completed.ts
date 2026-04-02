@@ -25,6 +25,10 @@ export async function isAllTopicsCompleted(): Promise<boolean> {
   if (!topics) {
     return false;
   } else {
+    console.log(
+      topics.length === topicsCount &&
+        topics?.every((topic) => topic.is_completed === true)
+    );
     return (
       topics.length === topicsCount &&
       topics?.every((topic) => topic.is_completed === true)
