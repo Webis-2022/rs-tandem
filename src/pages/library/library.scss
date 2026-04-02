@@ -41,6 +41,10 @@
   gap: v.$spacing-md;
 }
 
+.loading-view {
+  grid-column: 1 / -1;
+}
+
 .library-card {
   background: v.$color-white;
   border: 1px solid v.$border-color;
