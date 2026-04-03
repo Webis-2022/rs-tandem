@@ -9,7 +9,7 @@ type TopicStatus = {
 };
 
 export async function isAllTopicsCompleted(): Promise<boolean> {
-  const topicsCount = 20;
+  const topicsCount = getState().topics.length;
   const state = getState();
   const userId = state.user?.id;
   const difficulty = state.game.difficulty;
@@ -25,10 +25,6 @@ export async function isAllTopicsCompleted(): Promise<boolean> {
   if (!topics) {
     return false;
   } else {
-    console.log(
-      topics.length === topicsCount &&
-        topics?.every((topic) => topic.is_completed === true)
-    );
     return (
       topics.length === topicsCount &&
       topics?.every((topic) => topic.is_completed === true)
