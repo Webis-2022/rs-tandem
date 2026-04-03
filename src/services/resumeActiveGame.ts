@@ -103,8 +103,12 @@ async function ensureTopicsLoaded(): Promise<void> {
     return;
   }
 
-  const topics = await getTopics();
-  saveTopics(topics);
+  try {
+    const topics = await getTopics();
+    saveTopics(topics);
+  } catch (error) {
+    console.error('Failed to load topics while resuming game:', error);
+  }
 }
 
 /**
