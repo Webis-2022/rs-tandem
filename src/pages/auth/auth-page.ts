@@ -8,6 +8,7 @@ import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/authService';
 import { saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
+import { runResumeGameFlow } from '../../services/resumeActiveGame';
 
 type Field = {
   root: HTMLElement;
@@ -230,11 +231,20 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       if (mode === 'register') {
         await authService.register(email, password);
-      } else {
-        const user = await authService.login(email, password);
-        saveUserData(user);
-        await createNewGame(user.id);
+        navigate(ROUTES.Dashboard, true);
+        return;
       }
+
+      const user = await authService.login(email, password);
+      saveUserData(user);
+
+      const resumeResult = await runResumeGameFlow();
+
+      if (resumeResult === 'resumed') {
+        return;
+      }
+
+      await createNewGame(user.id);
 
       // Navigate to dashboard on success
       navigate(ROUTES.Dashboard, true);
