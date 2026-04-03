@@ -9,15 +9,14 @@ type TopicStatus = {
 };
 
 export async function isAllTopicsCompleted(): Promise<boolean> {
+  const topicsCount = getState().topics.length;
   const state = getState();
   const userId = state.user?.id;
-  const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
   const { data, error } = await supabase
     .from('topic_status')
     .select('*')
     .eq('user_id', userId)
-    .eq('topic_id', topicId)
     .eq('difficulty', difficulty);
   const topics: TopicStatus[] | null = data;
   if (error) {
@@ -26,6 +25,9 @@ export async function isAllTopicsCompleted(): Promise<boolean> {
   if (!topics) {
     return false;
   } else {
-    return topics?.every((topic) => topic.is_completed === true);
+    return (
+      topics.length === topicsCount &&
+      topics?.every((topic) => topic.is_completed === true)
+    );
   }
 }
