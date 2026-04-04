@@ -1,19 +1,21 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
 
-// Создаем моки для каждой функции
-// vi.fn() создает фейковую функцию
-// vi.hoisted() подготавливает эти моки заранее, до обработки vi.mock(...)
 const mocks = vi.hoisted(() => ({
   getTopics: vi.fn(),
   navigate: vi.fn(),
   startNewGame: vi.fn(),
+  saveTopics: vi.fn(),
   getState: vi.fn(),
+  fetchCompletedTopicIds: vi.fn(),
 }));
 
-// Подменяем реальные модули тестовыми (vi.mock() — подменить модуль)
 vi.mock('../../services/api/get-topics', () => ({
   getTopics: mocks.getTopics,
+}));
+
+vi.mock('../../services/api/fetch-completed-topic-ids', () => ({
+  fetchCompletedTopicIds: mocks.fetchCompletedTopicIds,
 }));
 
 vi.mock('../../app/navigation', () => ({
@@ -26,16 +28,16 @@ vi.mock('../../app/state/store', () => ({
 
 vi.mock('../../app/state/actions', () => ({
   startNewGame: mocks.startNewGame,
+  saveTopics: mocks.saveTopics,
 }));
 
-// к моменту импорта library.ts все зависимости были заменены на моки (чтобы не подтянулись настоящие getTopics, navigate и тд)
 import { createLibraryView } from './library';
 import { ROUTES } from '../../types';
 
 describe('createLibraryView', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
-    vi.clearAllMocks(); // vi.clearAllMocks() — очистить историю вызовов моков
+    vi.clearAllMocks();
 
     mocks.getState.mockReturnValue({
       user: null,
@@ -50,15 +52,17 @@ describe('createLibraryView', () => {
       },
       isLoading: false,
     });
+
+    mocks.fetchCompletedTopicIds.mockResolvedValue([]);
   });
 
   test('renders title and subtitle', () => {
-    mocks.getTopics.mockReturnValue(new Promise(() => {})); // возвращается промис, который никогда не завершится, чтобы getTopics().then(...) не успел заменить интерфейс
+    mocks.getTopics.mockImplementation(() => new Promise(() => {}));
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
-    expect(screen.getByText('Library')).toBeInTheDocument(); // toBeInTheDocument() - элемент есть в DOM
+    expect(screen.getByText('Library')).toBeInTheDocument();
     expect(
       screen.getByText(
         'Choose difficulty and select a topic to start practice.'
@@ -67,27 +71,29 @@ describe('createLibraryView', () => {
   });
 
   test('shows loading state before topics are loaded', () => {
-    mocks.getTopics.mockReturnValue(new Promise(() => {}));
+    mocks.getTopics.mockImplementation(() => new Promise(() => {}));
 
-    const view = createLibraryView();
+    const view = createLibraryView('medium');
     document.body.append(view);
 
-    expect(screen.getByText('Loading topics...')).toBeInTheDocument(); // getByText - синхронный поиск, элемент должен быть уже сейчас
+    expect(screen.getByText('Loading topics...')).toBeInTheDocument();
   });
 
   test('shows message when topics list is empty', async () => {
-    mocks.getTopics.mockResolvedValue([]); // имитируем успешный ответ, но без тем
+    mocks.getTopics.mockResolvedValue([]);
 
-    const view = createLibraryView();
+    const view = createLibraryView('hard');
     document.body.append(view);
 
-    expect(await screen.findByText('No topics found.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('No topics found.')).toBeInTheDocument();
+    });
   });
 
   test('changes active difficulty button on click', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
     const easyBtn = screen.getByRole('button', { name: 'Easy' });
@@ -106,10 +112,14 @@ describe('createLibraryView', () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockResolvedValue(undefined);
 
-    const view = createLibraryView();
+    const view = createLibraryView('easy');
     document.body.append(view);
 
-    const startBtn = await screen.findByRole('button', { name: 'Start' });
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    });
+
+    const startBtn = screen.getByRole('button', { name: 'Start' });
     fireEvent.click(startBtn);
 
     await waitFor(() => {

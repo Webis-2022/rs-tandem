@@ -1,15 +1,19 @@
 import './library.scss';
 import { ROUTES, type Difficulty, type Topic } from '../../types';
 import { navigate } from '../../app/navigation';
-import { getState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import { saveTopics, startNewGame } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
+import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 
-export const createLibraryView = (): HTMLElement => {
+export const createLibraryView = (
+  difficultyLevel: 'easy' | 'medium' | 'hard'
+): HTMLElement => {
   const section = createEl('section', { className: 'page' });
+
+  const completedTopics = fetchCompletedTopicIds(difficultyLevel);
 
   const title = createEl('h1', {
     text: 'Library',
@@ -21,7 +25,15 @@ export const createLibraryView = (): HTMLElement => {
     className: 'library-subtitle',
   });
 
-  let difficulty: Difficulty = getState().game.difficulty || 'easy';
+  const handleDifficultyButton = (difficulty: 'easy' | 'medium' | 'hard') => {
+    const main = document.querySelector('main.main');
+    if (main) {
+      main.replaceChildren();
+      main.append(createLibraryView(difficulty));
+    }
+  };
+
+  let difficulty: Difficulty = difficultyLevel;
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
 
@@ -31,9 +43,21 @@ export const createLibraryView = (): HTMLElement => {
   });
 
   const diffBtns: Record<Difficulty, HTMLButtonElement> = {
-    easy: createButton('Easy', undefined, 'btn library-diff-btn'),
-    medium: createButton('Medium', undefined, 'btn library-diff-btn'),
-    hard: createButton('Hard', undefined, 'btn library-diff-btn'),
+    easy: createButton(
+      'Easy',
+      () => handleDifficultyButton('easy'),
+      'btn library-diff-btn'
+    ),
+    medium: createButton(
+      'Medium',
+      () => handleDifficultyButton('medium'),
+      'btn library-diff-btn'
+    ),
+    hard: createButton(
+      'Hard',
+      () => handleDifficultyButton('hard'),
+      'btn library-diff-btn'
+    ),
   };
 
   const setActiveDifficultyUI = () => {
@@ -63,8 +87,22 @@ export const createLibraryView = (): HTMLElement => {
 
   list.append(createLoadingView('Loading topics...'));
 
-  const renderTopicCard = (topic: Topic): HTMLElement => {
+  const renderTopicCard = (topic: Topic, isCompleted: boolean): HTMLElement => {
     const card = createEl('div', { className: 'library-card' });
+    const topicIcon = createEl('img', {
+      className: 'topic-icon',
+    });
+
+    card.style.backgroundColor = '#fff';
+    card.style.opacity = '1';
+    card.style.pointerEvents = 'auto';
+
+    if (isCompleted) {
+      card.style.backgroundColor = '#ccc';
+      card.style.opacity = '0.6';
+      card.style.pointerEvents = 'none';
+      (topicIcon as HTMLImageElement).src = './img/tick-mark.png';
+    }
 
     const name = createEl('div', {
       text: topic.name ?? `Topic #${topic.id}`,
@@ -99,14 +137,14 @@ export const createLibraryView = (): HTMLElement => {
       'btn'
     );
 
-    actions.append(startBtn);
+    actions.append(topicIcon, startBtn);
     card.append(name, actions);
 
     return card;
   };
 
-  getTopics()
-    .then((topics) => {
+  Promise.all([getTopics(), completedTopics])
+    .then(([topics, completedTopicsArray]) => {
       list.replaceChildren();
 
       if (!topics || topics.length === 0) {
@@ -119,18 +157,22 @@ export const createLibraryView = (): HTMLElement => {
         return;
       }
 
-      (topics as Topic[]).forEach((topic) => {
-        list.append(renderTopicCard(topic));
+      const completedIds = new Set(completedTopicsArray);
+
+      topics.forEach((topic) => {
+        const isCompleted = completedIds.has(topic.id);
+        list.append(renderTopicCard(topic, isCompleted));
       });
+
       saveTopics(topics);
     })
     .catch((err: unknown) => {
       const message =
         err instanceof Error ? err.message : 'Failed to load topics.';
-
       list.replaceChildren(createErrorMessage(message));
     });
 
   section.append(title, subtitle, difficultyRow, status, list);
+
   return section;
 };

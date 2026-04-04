@@ -20,19 +20,26 @@ export function createEl(
   return element;
 }
 
+type ButtonClick = (event?: MouseEvent) => void;
+
 export function createButton(
   text: string,
-  onClick?: (event: MouseEvent) => void,
+  onClick?: ButtonClick,
   className?: string,
   disabled: boolean = false
 ): HTMLButtonElement {
-  const button = createEl('button', { text: text }) as HTMLButtonElement;
+  const button = createEl('button', { text }) as HTMLButtonElement;
 
   button.type = 'button';
   button.disabled = disabled;
 
-  if (className) button.className = className;
-  if (onClick) button.addEventListener('click', onClick);
+  if (className) {
+    button.className = className;
+  }
+
+  if (onClick) {
+    button.addEventListener('click', onClick);
+  }
 
   return button;
 }

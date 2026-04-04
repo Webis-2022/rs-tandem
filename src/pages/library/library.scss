@@ -62,7 +62,11 @@
 }
 
 .library-card-actions {
-  @include m.flex(row, flex-end, center);
+  @include m.flex(row, space-between, center);
+}
+
+.topic-icon {
+  width: v.$spacing-lg;
 }
 
 .library-list-status.is-error {
