@@ -1,16 +1,6 @@
 import { createEl } from '../../../shared/dom';
+import type { GameResult } from '../../../types';
 import './stats-table.scss';
-
-type GameResult = {
-  game_id: number;
-  user_id: string;
-  score: number;
-  topic: string;
-  difficulty: string;
-  topic_id: number;
-  used_hints: string;
-  wrong_answers_count: number;
-};
 
 export function createStatsTable(gameResult: GameResult[]) {
   const table = createEl('div', { className: 'stats-table' });

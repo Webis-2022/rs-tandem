@@ -2,10 +2,10 @@ import './dashboard.scss';
 import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { getGames } from '../../services/api/get-games';
-import { type GameData } from '../../types';
 import { getGameResult } from '../../services/api/get-game-result';
 import { gameStatsPanel } from '../../components/dashboard-elements/stats-table/game-stats-panel/game-stats-panel';
 import { createStatsTable } from '../../components/dashboard-elements/stats-table/stats-table';
+import type { GameResult } from '../../types';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -65,11 +65,19 @@ export const createDashboardView = (): HTMLElement => {
       });
     };
 
+    type Game = {
+      id: number;
+      created_at: string;
+      user_id: string;
+      difficulty: string;
+      achievements: string;
+    };
+
     const handleDifficultySelector = async (e: Event) => {
       const target = e.target as HTMLOptionElement;
       const difficulty = target?.value;
-      const games = await getGames(difficulty);
-      const createOptionDataObj = (games: GameData[]) => {
+      const games: Game[] = await getGames(difficulty);
+      const createOptionDataObj = (games: Game[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
           obj[`Game ${index + 1}`] = String(game.id);
@@ -83,9 +91,21 @@ export const createDashboardView = (): HTMLElement => {
     difficultySelector.addEventListener('change', handleDifficultySelector);
 
     const handleGameChange = async (e: Event) => {
+      const badgesContainer = document.querySelector('.badges-container');
+      const badge = createEl('img', {
+        className: 'badge-img',
+      }) as HTMLImageElement;
+      let achievementImg: string = '';
       const target = e.target as HTMLOptionElement;
       const gameId = target?.value;
-      const gameResult = await getGameResult(Number(gameId));
+      const gameResult: GameResult[] = await getGameResult(Number(gameId));
+      gameResult.forEach((game) => {
+        if (game.game_id === Number(gameId)) {
+          achievementImg = game.achievement;
+        }
+      });
+      badge.src = achievementImg;
+      badgesContainer?.append(badge);
       const table = createStatsTable(gameResult);
       const panelContent: HTMLDivElement | null =
         document.querySelector('.panel-content');
