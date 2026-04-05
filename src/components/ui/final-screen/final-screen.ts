@@ -12,7 +12,7 @@ export async function createFinalScreen() {
   let background = createEl('div');
   let modalWindow = createEl('div');
   const layout = document.querySelector('.layout');
-  const main = layout?.querySelector('.main');
+  const main = layout?.querySelector('.layout-main');
   const delayForModal = 600;
 
   const loserScore = 50;
