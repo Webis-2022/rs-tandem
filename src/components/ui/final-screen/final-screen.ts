@@ -1,6 +1,8 @@
 import { navigate } from '../../../app/navigation';
+import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
+import { finishCurrentGame } from '../../../services/finishCurrentGame';
 import { createButton, createEl } from '../../../shared/dom';
 import { ROUTES } from '../../../types';
 import { delay } from '../../../utils/delay';
@@ -12,7 +14,7 @@ export async function createFinalScreen() {
   let background = createEl('div');
   let modalWindow = createEl('div');
   const layout = document.querySelector('.layout');
-  const main = layout?.querySelector('.main');
+  const main = layout?.querySelector('.layout-main');
   const delayForModal = 600;
 
   const loserScore = 50;
@@ -35,8 +37,22 @@ export async function createFinalScreen() {
     return backgroundDiv;
   };
 
-  const handleRestartButton = () => {
-    deleteCompletedTopics();
+  const handleRestartButton = async () => {
+    const difficulty = getState().game.difficulty;
+
+    if (!difficulty) {
+      console.error('Difficulty is not selected');
+      return;
+    }
+
+    try {
+      await deleteCompletedTopics(difficulty);
+      await finishCurrentGame();
+      await startNewGame({ topicId: 1, difficulty });
+      navigate(ROUTES.Practice, true);
+    } catch (error) {
+      console.error('Failed to restart progress:', error);
+    }
   };
 
   const createModalWindow = (text: string, badge: string) => {
