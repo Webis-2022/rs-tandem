@@ -64,6 +64,19 @@ type GameState = {
   wrongAnswersCounter: number;
   questions: Question[];
   gameMode: string;
+  achievement: string;
+};
+
+export type GameResult = {
+  game_id: number;
+  user_id: string;
+  score: number;
+  topic: string;
+  difficulty: string;
+  topic_id: number;
+  used_hints: string;
+  wrong_answers_count: number;
+  achievement: string;
 };
 
 export type AppState = {

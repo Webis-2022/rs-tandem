@@ -1,4 +1,5 @@
 @use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
 
 .top-bar {
   display: flex;
@@ -19,4 +20,18 @@
   border-radius: v.$border-radius;
   outline: none;
   cursor: pointer;
+}
+
+.badges-container {
+  height: fit-content;
+  display: inline-block;
+}
+
+.achievements {
+  @include m.flex(row, center, center);
+  gap: v.$spacing-md;
+}
+
+.badge-img {
+  width: 80px;
 }

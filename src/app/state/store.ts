@@ -57,7 +57,7 @@ export let state: AppState = {
   gameId: null,
   game: {
     topicId: 1,
-    difficulty: '',
+    difficulty: 'easy',
     round: 1,
     score: 0,
     usedHints: {
@@ -69,6 +69,7 @@ export let state: AppState = {
     wrongAnswersCounter: 0,
     questions: [],
     gameMode: 'game',
+    achievement: '',
   },
   isLoading: false,
   topics: [],
@@ -115,7 +116,7 @@ export function setState(
 
 export const initialGameState: AppState['game'] = {
   topicId: 1,
-  difficulty: '',
+  difficulty: 'easy',
   round: 1,
   score: 0,
   usedHints: {
@@ -127,4 +128,5 @@ export const initialGameState: AppState['game'] = {
   wrongAnswersCounter: 0,
   questions: [],
   gameMode: 'game',
+  achievement: '',
 };

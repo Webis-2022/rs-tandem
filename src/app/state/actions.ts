@@ -306,3 +306,14 @@ export function resetGameState() {
     { saveGameToStorage: false }
   );
 }
+export function saveAchievementToState(achievement: string) {
+  const prev = getState();
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      achievement,
+    },
+  });
+}
