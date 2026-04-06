@@ -4,6 +4,6 @@ export function rerenderGameCard(section: HTMLElement | null) {
   if (!section) return;
   section?.remove();
   const practiceView = createPracticeView();
-  const mainSection = document.querySelector('.main');
-  mainSection?.append(practiceView);
+  const layoutMain = document.querySelector('.layout-main');
+  layoutMain?.append(practiceView);
 }

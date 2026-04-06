@@ -12,7 +12,7 @@ export async function createFinalScreen() {
   let background = createEl('div');
   let modalWindow = createEl('div');
   const layout = document.querySelector('.layout');
-  const main = layout?.querySelector('.main');
+  const layoutMain = layout?.querySelector('.layout-main');
   const delayForModal = 600;
 
   const loserScore = 50;
@@ -84,8 +84,8 @@ export async function createFinalScreen() {
   }
   if (!layout) return;
   layout.firstChild?.remove();
-  main?.replaceChildren();
-  main?.append(background);
+  layoutMain?.replaceChildren();
+  layoutMain?.append(background);
   await delay(delayForModal);
-  main?.append(modalWindow);
+  layoutMain?.append(modalWindow);
 }
