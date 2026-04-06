@@ -1,0 +1,75 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.background-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.final-screen-modal {
+  width: 70%;
+  height: 300px;
+  background: rgba(0, 0, 0, 0.4);
+  @include m.flex(column, center, center);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  border-radius: v.$border-radius;
+}
+
+.text-container {
+  width: 70%;
+  color: v.$color-white;
+}
+
+.badge-container {
+  width: 30%;
+  @include m.flex(column, center, center);
+  gap: v.$spacing-md;
+  color: v.$color-white;
+}
+
+.badge-img {
+  width: 110px;
+  animation: scale-badge 1s ease-in-out infinite;
+}
+
+@keyframes scale-badge {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.button-set {
+  margin-top: v.$spacing-lg;
+  @include m.flex(row, center, center);
+  gap: v.$spacing-md;
+}
+
+.restart-btn {
+  background-color: transparent;
+  color: v.$color-white;
+  border: v.$border-width-md solid v.$color-white;
+  border-radius: v.$border-radius;
+  padding: v.$spacing-xs v.$spacing-xs;
+  cursor: pointer;
+  transition: all v.$transition-speed ease-in-out;
+  font-size: v.$font-size-sm;
+
+  &:hover {
+    background-color: v.$color-white;
+    color: v.$primary-color;
+  }
+}

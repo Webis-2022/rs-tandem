@@ -7,11 +7,17 @@ export function showSidePanel(e: MouseEvent) {
   const question = questions[questionNum];
   const sidePanel: HTMLDivElement | null =
     document.querySelector('.side-panel');
+  if (!sidePanel) return;
+
   const textContainer = sidePanel?.querySelector('.text-container');
   if (!textContainer) return;
-  textContainer.innerHTML = question.explanation;
-  if (!sidePanel) return;
+
+  const fallbackExplanation =
+    'No explanation is available for this question yet. Try checking the related theory link for additional context.';
+  textContainer.innerHTML = question.explanation || fallbackExplanation;
+
   sidePanel.classList.remove('closed');
   sidePanel.classList.add('opened');
+  sidePanel.setAttribute('aria-hidden', 'false');
   countClicks('oneButton', '.i-dont-know', true, "i don't know");
 }
