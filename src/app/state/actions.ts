@@ -18,13 +18,16 @@ export function applyTheme(theme: UITheme): void {
 export function setTheme(theme: UITheme): void {
   const prev = getState();
 
-  setState({
-    ...prev,
-    ui: {
-      ...prev.ui,
-      theme,
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        theme,
+      },
     },
-  });
+    { saveGameToStorage: false }
+  );
 
   applyTheme(theme);
 }
@@ -37,26 +40,32 @@ export function toggleTheme(): void {
 export function setActiveRoute(route: RoutePath): void {
   const prev = getState();
 
-  setState({
-    ...prev,
-    ui: {
-      ...prev.ui,
-      activeRoute: route,
-      isNavOpen: false,
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        activeRoute: route,
+        isNavOpen: false,
+      },
     },
-  });
+    { saveGameToStorage: false }
+  );
 }
 
 export function setNavOpen(isNavOpen: boolean): void {
   const prev = getState();
 
-  setState({
-    ...prev,
-    ui: {
-      ...prev.ui,
-      isNavOpen,
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        isNavOpen,
+      },
     },
-  });
+    { saveGameToStorage: false }
+  );
 }
 
 export function toggleNav(): void {
@@ -71,13 +80,16 @@ export function closeNav(): void {
 export function markOnboardingSeen(): void {
   const prev = getState();
 
-  setState({
-    ...prev,
-    ui: {
-      ...prev.ui,
-      onboardingSeen: true,
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        onboardingSeen: true,
+      },
     },
-  });
+    { saveGameToStorage: false }
+  );
 }
 
 export async function increaseRound() {
@@ -101,10 +113,13 @@ export async function increaseRound() {
 export function saveGameId(gameId: number) {
   const prev = getState();
 
-  setState({
-    ...prev,
-    gameId,
-  });
+  setState(
+    {
+      ...prev,
+      gameId,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function changeGameMode(gameMode: 'game' | 'super-game') {
@@ -120,10 +135,13 @@ export function changeGameMode(gameMode: 'game' | 'super-game') {
 
 export function saveTopics(topics: Topic[]) {
   const prev = getState();
-  setState({
-    ...prev,
-    topics,
-  });
+  setState(
+    {
+      ...prev,
+      topics,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function saveTopicQuestions(questions: Question[]) {
@@ -246,22 +264,28 @@ export function saveUsedHint(hintName: keyof HintCounter) {
   });
 }
 
-export async function saveUserData(user: User) {
+export function saveUserData(user: User) {
   const prev = getState();
 
-  setState({
-    ...prev,
-    user,
-  });
+  setState(
+    {
+      ...prev,
+      user,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function removeUserData() {
   const prev = getState();
 
-  setState({
-    ...prev,
-    user: null,
-  });
+  setState(
+    {
+      ...prev,
+      user: null,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export async function startNewGame(params: {
