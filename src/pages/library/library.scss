@@ -74,6 +74,10 @@
 
 .library-card-actions {
   @include m.flex(row, space-between, center);
+
+  .btn {
+    margin-left: auto;
+  }
 }
 
 .library-list-status.is-error {
