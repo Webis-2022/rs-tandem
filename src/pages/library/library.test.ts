@@ -59,7 +59,7 @@ describe('createLibraryView', () => {
   test('renders title and subtitle', () => {
     mocks.getTopics.mockImplementation(() => new Promise(() => {}));
 
-    const view = createLibraryView('easy');
+    const view = createLibraryView();
     document.body.append(view);
 
     expect(screen.getByText('Library')).toBeInTheDocument();
@@ -73,7 +73,7 @@ describe('createLibraryView', () => {
   test('shows loading state before topics are loaded', () => {
     mocks.getTopics.mockImplementation(() => new Promise(() => {}));
 
-    const view = createLibraryView('medium');
+    const view = createLibraryView();
     document.body.append(view);
 
     expect(screen.getByText('Loading topics...')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('createLibraryView', () => {
   test('shows message when topics list is empty', async () => {
     mocks.getTopics.mockResolvedValue([]);
 
-    const view = createLibraryView('hard');
+    const view = createLibraryView();
     document.body.append(view);
 
     await waitFor(() => {
@@ -93,7 +93,7 @@ describe('createLibraryView', () => {
   test('changes active difficulty button on click', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
 
-    const view = createLibraryView('easy');
+    const view = createLibraryView();
     document.body.append(view);
 
     const easyBtn = screen.getByRole('button', { name: 'Easy' });
@@ -112,7 +112,7 @@ describe('createLibraryView', () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockResolvedValue(undefined);
 
-    const view = createLibraryView('easy');
+    const view = createLibraryView();
     document.body.append(view);
 
     await waitFor(() => {

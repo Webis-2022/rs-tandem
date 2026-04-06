@@ -1,9 +1,10 @@
 import { getState } from '../../app/state/store';
+import type { Difficulty, Topic } from '../../types';
 import { supabase } from '../supabaseClient';
 
 export async function fetchCompletedTopicIds(
-  difficulty = 'easy'
-): Promise<string[]> {
+  difficulty: Difficulty
+): Promise<Topic['id'][]> {
   const state = getState();
   const userId = state.user?.id;
 
@@ -11,7 +12,8 @@ export async function fetchCompletedTopicIds(
     .from('topic_status')
     .select('topic_id')
     .eq('user_id', userId)
-    .eq('difficulty', difficulty);
+    .eq('difficulty', difficulty)
+    .eq('is_completed', true);
 
   if (error) {
     throw error;

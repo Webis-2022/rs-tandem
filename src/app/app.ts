@@ -109,7 +109,7 @@ export async function initApp(mount: HTMLElement): Promise<void> {
         redirectTo: ROUTES.Login,
       },
       [ROUTES.Library]: {
-        createView: () => createLibraryView('easy'),
+        createView: createLibraryView,
         guard: 'authed',
         redirectTo: ROUTES.Login,
       },

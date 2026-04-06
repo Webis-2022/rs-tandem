@@ -5,11 +5,11 @@ import './hints-container.scss';
 import { callFriend } from '../../../game/hintsLogic/call-friend';
 
 export function createHintsContainer() {
-  const hintButtons: Record<string, [(event?: MouseEvent) => void, string]> = {
+  const hintButtons: Record<string, [(event: MouseEvent) => void, string]> = {
     '50/50': [() => removeTwoWrongAnswers(), 'fifty-fifty'],
     'Call a friend': [() => callFriend(), 'friend'],
     "I don't know": [
-      (event?: MouseEvent) => showSidePanel(event!),
+      (event: MouseEvent) => showSidePanel(event),
       'i-dont-know',
     ],
   };
