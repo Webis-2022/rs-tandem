@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
+import { within } from '@testing-library/dom';
 
 const mocks = vi.hoisted(() => ({
   getTopics: vi.fn(),
@@ -129,5 +130,57 @@ describe('createLibraryView', () => {
       });
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
+  });
+});
+
+test('marks completed topic and disables Start button', async () => {
+  mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+  mocks.fetchCompletedTopicIds.mockResolvedValue([1]);
+
+  const view = createLibraryView();
+  document.body.append(view);
+
+  await waitFor(() => {
+    const card = within(view).getByText('HTML').closest('.library-card');
+    expect(card).toHaveClass('is-completed');
+
+    const startBtn = within(card as HTMLElement).getByRole('button', {
+      name: /start/i,
+    });
+    expect(startBtn).toBeDisabled();
+  });
+
+  expect(view.querySelector('.topic-icon')).not.toBeNull();
+});
+
+test('loads completed topics for selected difficulty', async () => {
+  mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+  mocks.fetchCompletedTopicIds.mockResolvedValue([]);
+
+  const view = createLibraryView();
+  document.body.append(view);
+
+  await waitFor(() => {
+    expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('easy');
+  });
+
+  mocks.fetchCompletedTopicIds.mockClear();
+
+  const mediumBtn = within(view).getByRole('button', { name: 'Medium' });
+  fireEvent.click(mediumBtn);
+
+  await waitFor(() => {
+    expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
+  });
+});
+
+test('shows error message when topics loading fails', async () => {
+  mocks.getTopics.mockRejectedValue(new Error('Failed to load topics.'));
+
+  const view = createLibraryView();
+  document.body.append(view);
+
+  await waitFor(() => {
+    expect(screen.getByText('Failed to load topics.')).toBeInTheDocument();
   });
 });
