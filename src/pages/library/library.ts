@@ -22,6 +22,7 @@ export const createLibraryView = (): HTMLElement => {
   });
 
   let difficulty: Difficulty = getState().game.difficulty || 'easy';
+  const round: number = getState().game.round;
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
 
@@ -84,6 +85,7 @@ export const createLibraryView = (): HTMLElement => {
           await startNewGame({
             topicId: topic.id,
             difficulty,
+            round,
           });
 
           status.textContent = '';

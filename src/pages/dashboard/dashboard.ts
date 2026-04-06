@@ -105,7 +105,7 @@ export const createDashboardView = (): HTMLElement => {
         }
       });
       badge.src = achievementImg;
-      badgesContainer?.append(badge);
+      badgesContainer?.replaceChildren(badge);
       const table = createStatsTable(gameResult);
       const panelContent: HTMLDivElement | null =
         document.querySelector('.panel-content');

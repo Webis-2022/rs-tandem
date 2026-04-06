@@ -267,6 +267,7 @@ export function removeUserData() {
 export async function startNewGame(params: {
   topicId: number;
   difficulty: Difficulty;
+  round: number;
 }) {
   const prev = getState();
 
@@ -276,6 +277,7 @@ export async function startNewGame(params: {
       ...initialGameState,
       topicId: params.topicId,
       difficulty: params.difficulty,
+      round: params.round,
     },
   });
 

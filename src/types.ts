@@ -64,7 +64,6 @@ type GameState = {
   wrongAnswersCounter: number;
   questions: Question[];
   gameMode: string;
-  achievement: string;
 };
 
 export type GameResult = {

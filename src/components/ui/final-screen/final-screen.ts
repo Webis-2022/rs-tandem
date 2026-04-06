@@ -84,7 +84,9 @@ export async function createFinalScreen() {
     background = createBackground('./img/celebration-bg.webp');
     modalWindow = createModalWindow(guruText, achievementImg);
   }
-  saveAchievement(achievementImg);
+
+  await saveAchievement(achievementImg);
+
   if (!layout) return;
   layout.firstChild?.remove();
   layoutMain?.replaceChildren();
