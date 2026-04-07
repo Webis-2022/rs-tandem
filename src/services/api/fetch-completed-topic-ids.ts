@@ -19,5 +19,5 @@ export async function fetchCompletedTopicIds(
     throw error;
   }
 
-  return data.map((item) => item.topic_id);
+  return (data ?? []).map((item) => item.topic_id);
 }
