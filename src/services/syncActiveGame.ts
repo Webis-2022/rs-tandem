@@ -1,17 +1,21 @@
 import * as authService from './authService';
 import { getState } from '../app/state/store';
 import { upsertActiveGame, deleteActiveGame } from './api/active-games';
+import type { AppState } from '../types';
 
-// Сохраняет текущую активную игру пользователя в Supabase.
-// Если пользователь не авторизован, просто ничего не делает.
-export async function syncActiveGameToServer(): Promise<void> {
+type GameState = AppState['game'];
+
+// Сохраняет активную игру пользователя в Supabase.
+// Если game передан явно, синхронизирует именно его.
+// Иначе берет текущее состояние из store.
+export async function syncActiveGameToServer(game?: GameState): Promise<void> {
   const user = authService.getCurrentUser();
 
   if (!user) return;
 
-  const { game } = getState();
+  const currentGame = game ?? getState().game;
 
-  await upsertActiveGame(user.id, game);
+  await upsertActiveGame(user.id, currentGame);
 }
 
 // Удаляет активную игру пользователя из Supabase.

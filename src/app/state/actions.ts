@@ -140,13 +140,20 @@ export function saveTopicQuestions(questions: Question[]) {
 export function calculateScore(roundScore: number) {
   const prev = getState();
 
+  const nextGame = {
+    ...prev.game,
+    score: prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
+  };
+
+  console.log('calculateScore -> next score:', nextGame.score);
+
   setState({
     ...prev,
-    game: {
-      ...prev.game,
-      score:
-        prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
-    },
+    game: nextGame,
+  });
+
+  void syncActiveGameToServer(nextGame).catch((error) => {
+    console.error('Failed to sync active game after score update:', error);
   });
 }
 
@@ -232,17 +239,26 @@ export function resetWrongAnswersCounter() {
 
 export function saveUsedHint(hintName: keyof HintCounter) {
   const prev = getState();
+
   if (!prev.game.usedHints) return;
+
+  const nextGame = {
+    ...prev.game,
+    usedHints: {
+      ...prev.game.usedHints,
+      [hintName]: prev.game.usedHints[hintName] + 1,
+    },
+  };
+
+  console.log('saveUsedHint -> nextUsedHints:', nextGame.usedHints);
 
   setState({
     ...prev,
-    game: {
-      ...prev.game,
-      usedHints: {
-        ...prev.game.usedHints,
-        [hintName]: prev.game.usedHints[hintName] + 1,
-      },
-    },
+    game: nextGame,
+  });
+
+  void syncActiveGameToServer(nextGame).catch((error) => {
+    console.error('Failed to sync active game after hint update:', error);
   });
 }
 
