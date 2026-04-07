@@ -10,6 +10,7 @@ import type {
 } from '../../types';
 import { getState, initialGameState, setState } from './store';
 import { syncActiveGameToServer } from '../../services/syncActiveGame';
+import { clearActiveGame } from '../../services/storageService';
 
 export function applyTheme(theme: UITheme): void {
   document.documentElement.dataset.theme = theme;
@@ -337,4 +338,6 @@ export function resetGameState() {
     },
     { saveGameToStorage: false }
   );
+
+  clearActiveGame();
 }
