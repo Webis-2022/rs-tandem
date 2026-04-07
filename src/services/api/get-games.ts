@@ -1,22 +1,13 @@
 import { supabase } from '../supabaseClient';
 
-type Params = {
-  difficulty?: string;
-  gameId?: number;
-};
-
-export async function getGames(params: Params) {
+export async function getGames(params: { gameIds: number[] }) {
   let query = supabase
     .from('games')
     .select('*')
     .order('created_at', { ascending: true });
 
-  if (params.difficulty) {
-    query = query.eq('difficulty', params.difficulty);
-  }
-
-  if (params.gameId) {
-    query = query.eq('id', params.gameId);
+  if (params.gameIds && params.gameIds.length > 0) {
+    query = query.in('id', params.gameIds);
   }
 
   const { data, error } = await query;

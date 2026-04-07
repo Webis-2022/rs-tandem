@@ -20,7 +20,9 @@ export async function showNextQuestion() {
   const questions = questionMeta.questions;
   const wrongAnswers = wrongAnswerMeta.questions;
   const round = questionMeta.round;
+  console.log('r', round);
   const questionNum = questionMeta.questionNum;
+  console.log(questionNum);
   let question = questions[questionMeta.questionNum];
 
   if (round > questions.length && wrongAnswers.length === 0) {

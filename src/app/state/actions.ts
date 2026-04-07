@@ -277,7 +277,7 @@ export async function startNewGame(params: {
       ...initialGameState,
       topicId: params.topicId,
       difficulty: params.difficulty,
-      round: params.round,
+      // round: params.round,
     },
   });
 
