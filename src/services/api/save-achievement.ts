@@ -7,9 +7,9 @@ export function saveAchievement(achievement: string) {
     const state = getState();
     const gameId = state.gameId;
     const { error } = await supabase
-      .from('game_results')
+      .from('games')
       .update({ achievement: achievement })
-      .eq('game_id', gameId);
+      .eq('id', gameId);
     if (error) {
       throw error;
     }

@@ -5,7 +5,7 @@ import { getGames } from '../../services/api/get-games';
 import { getGameResult } from '../../services/api/get-game-result';
 import { gameStatsPanel } from '../../components/dashboard-elements/stats-table/game-stats-panel/game-stats-panel';
 import { createStatsTable } from '../../components/dashboard-elements/stats-table/stats-table';
-import type { GameResult } from '../../types';
+import type { GameData, GameResult } from '../../types';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -65,19 +65,11 @@ export const createDashboardView = (): HTMLElement => {
       });
     };
 
-    type Game = {
-      id: number;
-      created_at: string;
-      user_id: string;
-      difficulty: string;
-      achievements: string;
-    };
-
     const handleDifficultySelector = async (e: Event) => {
       const target = e.target as HTMLOptionElement;
       const difficulty = target?.value;
-      const games: Game[] = await getGames(difficulty);
-      const createOptionDataObj = (games: Game[]) => {
+      const games: GameData[] = await getGames({ difficulty: difficulty });
+      const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
           obj[`Game ${index + 1}`] = String(game.id);
@@ -95,16 +87,16 @@ export const createDashboardView = (): HTMLElement => {
       const badge = createEl('img', {
         className: 'badge-img',
       }) as HTMLImageElement;
-      let achievementImg: string = '';
+
       const target = e.target as HTMLOptionElement;
       const gameId = target?.value;
       const gameResult: GameResult[] = await getGameResult(Number(gameId));
-      gameResult.forEach((game) => {
-        if (game.game_id === Number(gameId)) {
-          achievementImg = game.achievement;
-        }
+      const games: GameData[] = await getGames({
+        difficulty: undefined,
+        gameId: Number(gameId),
       });
-      badge.src = achievementImg;
+
+      badge.src = games[0].achievement;
       badgesContainer?.replaceChildren(badge);
       const table = createStatsTable(gameResult);
       const panelContent: HTMLDivElement | null =

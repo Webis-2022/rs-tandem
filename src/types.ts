@@ -75,7 +75,6 @@ export type GameResult = {
   topic_id: number;
   used_hints: string;
   wrong_answers_count: number;
-  achievement: string;
 };
 
 export type AppState = {
@@ -106,14 +105,8 @@ export type GameData = {
   id: number;
   created_at: string;
   user_id: string;
-  score: number;
   difficulty: 'easy' | 'medium' | 'hard';
-  used_hints: {
-    '50/50': number;
-    'call a friend': number;
-    "i don't know": number;
-  };
-  wrong_answers: number;
+  achievement: string;
 };
 
 export type Topic = {
