@@ -8,13 +8,6 @@ export async function createNewGame(userId: string) {
   if (!userId) throw new Error('userId missing');
   const state = getState();
   const difficulty = state.game.difficulty;
-  const usedHints = {
-    '50/50': 0,
-    'call a friend': 0,
-    "i don't know": 0,
-  };
-  const totalWrongAnswers = 0;
-  const totalScore = 0;
 
   const {
     data: newGame,
@@ -24,9 +17,6 @@ export async function createNewGame(userId: string) {
     .insert({
       user_id: userId,
       difficulty,
-      used_hints: JSON.stringify(usedHints),
-      wrong_answers: totalWrongAnswers,
-      score: totalScore,
     })
     .select()
     .single();
