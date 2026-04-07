@@ -24,6 +24,8 @@ export async function getResumeCandidate(): Promise<GameState | null> {
     return localGame;
   }
 
+  clearActiveGame();
+
   const user = authService.getCurrentUser();
 
   if (!user) {
@@ -54,11 +56,13 @@ export function hasRequiredResumeData(
   }
 
   return Boolean(
-    game.topicId >= 1 &&
+    game.topicId > 0 &&
     validDifficulties.includes(
       game.difficulty as (typeof validDifficulties)[number]
     ) &&
-    game.round >= 1
+    game.round > 0 &&
+    Array.isArray(game.questions) &&
+    game.questions.length > 0
   );
 }
 
