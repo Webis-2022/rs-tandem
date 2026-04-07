@@ -1,12 +1,13 @@
 import './library.scss';
 import { ROUTES, type Difficulty, type Topic } from '../../types';
 import { navigate } from '../../app/navigation';
-import { getState } from '../../app/state/store';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import { saveTopics, startNewGame } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
+import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
+import { getState } from '../../app/state/store';
 
 export const createLibraryView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -24,47 +25,51 @@ export const createLibraryView = (): HTMLElement => {
   let difficulty: Difficulty = getState().game.difficulty || 'easy';
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
-
   const difficultyLabel = createEl('span', {
     text: 'Difficulty:',
     className: 'library-difficulty-label',
   });
 
-  const diffBtns: Record<Difficulty, HTMLButtonElement> = {
-    easy: createButton('Easy', undefined, 'btn library-diff-btn'),
-    medium: createButton('Medium', undefined, 'btn library-diff-btn'),
-    hard: createButton('Hard', undefined, 'btn library-diff-btn'),
+  // Меняет сложность и обновляет список тем.
+  const handleDifficultyChange = (key: Difficulty) => {
+    if (difficulty === key) return;
+    difficulty = key;
+    void updateTopicsList();
   };
 
+  const diffBtns: Record<Difficulty, HTMLButtonElement> = {
+    easy: createButton(
+      'Easy',
+      () => handleDifficultyChange('easy'),
+      'btn library-diff-btn'
+    ),
+    medium: createButton(
+      'Medium',
+      () => handleDifficultyChange('medium'),
+      'btn library-diff-btn'
+    ),
+    hard: createButton(
+      'Hard',
+      () => handleDifficultyChange('hard'),
+      'btn library-diff-btn'
+    ),
+  };
+
+  const status = createEl('div', { className: 'library-status' });
+  const list = createEl('div', { className: 'library-list' });
+
+  // Подсвечивает активную кнопку сложности.
   const setActiveDifficultyUI = () => {
     (Object.keys(diffBtns) as Difficulty[]).forEach((key) => {
       diffBtns[key].classList.toggle('is-active', key === difficulty);
     });
   };
 
-  (Object.keys(diffBtns) as Difficulty[]).forEach((key) => {
-    diffBtns[key].addEventListener('click', () => {
-      difficulty = key;
-      setActiveDifficultyUI();
+  // Создает карточку темы.
+  const renderTopicCard = (topic: Topic, isCompleted: boolean): HTMLElement => {
+    const card = createEl('div', {
+      className: `library-card${isCompleted ? ' is-completed' : ''}`,
     });
-  });
-
-  setActiveDifficultyUI();
-
-  difficultyRow.append(
-    difficultyLabel,
-    diffBtns.easy,
-    diffBtns.medium,
-    diffBtns.hard
-  );
-
-  const list = createEl('div', { className: 'library-list' });
-  const status = createEl('div', { className: 'library-status' });
-
-  list.append(createLoadingView('Loading topics...'));
-
-  const renderTopicCard = (topic: Topic): HTMLElement => {
-    const card = createEl('div', { className: 'library-card' });
 
     const name = createEl('div', {
       text: topic.name ?? `Topic #${topic.id}`,
@@ -92,12 +97,24 @@ export const createLibraryView = (): HTMLElement => {
           status.textContent =
             err instanceof Error ? err.message : 'Failed to start game.';
           status.classList.add('is-error');
-        } finally {
           startBtn.disabled = false;
         }
       },
-      'btn'
+      'btn',
+      isCompleted
     );
+
+    if (isCompleted) {
+      const topicIcon = createEl('img', {
+        className: 'topic-icon',
+      }) as HTMLImageElement;
+
+      topicIcon.src = '/img/tick-mark.png';
+      topicIcon.alt = '';
+      topicIcon.setAttribute('aria-hidden', 'true');
+
+      actions.append(topicIcon);
+    }
 
     actions.append(startBtn);
     card.append(name, actions);
@@ -105,8 +122,17 @@ export const createLibraryView = (): HTMLElement => {
     return card;
   };
 
-  getTopics()
-    .then((topics) => {
+  // Загружает и обновляет список тем.
+  const updateTopicsList = async (): Promise<void> => {
+    setActiveDifficultyUI();
+    list.replaceChildren(createLoadingView('Loading topics...'));
+
+    try {
+      const [topics, completedTopicIds] = await Promise.all([
+        getTopics(),
+        fetchCompletedTopicIds(difficulty),
+      ]);
+
       list.replaceChildren();
 
       if (!topics || topics.length === 0) {
@@ -119,18 +145,28 @@ export const createLibraryView = (): HTMLElement => {
         return;
       }
 
-      (topics as Topic[]).forEach((topic) => {
-        list.append(renderTopicCard(topic));
+      const completedIds = new Set(completedTopicIds);
+
+      topics.forEach((topic) => {
+        list.append(renderTopicCard(topic, completedIds.has(topic.id)));
       });
+
       saveTopics(topics);
-    })
-    .catch((err: unknown) => {
+    } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : 'Failed to load topics.';
-
       list.replaceChildren(createErrorMessage(message));
-    });
+    }
+  };
+
+  difficultyRow.append(
+    difficultyLabel,
+    diffBtns.easy,
+    diffBtns.medium,
+    diffBtns.hard
+  );
 
   section.append(title, subtitle, difficultyRow, status, list);
+  void updateTopicsList();
   return section;
 };
