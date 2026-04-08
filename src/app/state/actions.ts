@@ -145,8 +145,6 @@ export function calculateScore(roundScore: number) {
     score: prev.game.score + roundScore < 0 ? 0 : prev.game.score + roundScore,
   };
 
-  console.log('calculateScore -> next score:', nextGame.score);
-
   setState({
     ...prev,
     game: nextGame,
@@ -249,8 +247,6 @@ export function saveUsedHint(hintName: keyof HintCounter) {
       [hintName]: prev.game.usedHints[hintName] + 1,
     },
   };
-
-  console.log('saveUsedHint -> nextUsedHints:', nextGame.usedHints);
 
   setState({
     ...prev,
