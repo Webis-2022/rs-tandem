@@ -75,11 +75,9 @@ export type AppState = {
   ui: UIState;
 };
 
-export type HintCounter = {
-  '50/50': number;
-  'call a friend': number;
-  "i don't know": number;
-};
+export const HINT_KEYS = ['50/50', 'call a friend', "i don't know"] as const;
+export type HintKey = (typeof HINT_KEYS)[number];
+export type HintCounter = Record<HintKey, number>;
 
 export type Question = {
   level: Difficulty;

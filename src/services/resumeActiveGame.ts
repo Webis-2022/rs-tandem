@@ -1,4 +1,4 @@
-import { ROUTES, type AppState, type HintCounter } from '../types';
+import { HINT_KEYS, ROUTES, type AppState, type HintCounter } from '../types';
 import { navigate } from '../app/navigation';
 import { restoreGameState, saveTopics } from '../app/state/actions';
 import { getState } from '../app/state/store';
@@ -24,11 +24,7 @@ function hasValidUsedHints(
     return false;
   }
 
-  return (
-    typeof usedHints['50/50'] === 'number' &&
-    typeof usedHints['call a friend'] === 'number' &&
-    typeof usedHints["i don't know"] === 'number'
-  );
+  return HINT_KEYS.every((key) => typeof usedHints[key] === 'number');
 }
 
 /**
