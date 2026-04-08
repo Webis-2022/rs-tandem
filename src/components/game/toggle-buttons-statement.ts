@@ -13,7 +13,9 @@ export function toggleButtonsStatement(
     hintButtons.forEach((button) => button.setAttribute('disabled', ''));
     checkButton?.setAttribute('disabled', '');
     nextTopicButton?.removeAttribute('disabled');
+    nextTopicButton?.classList.add('animated-button');
     libraryButton?.removeAttribute('disabled');
+    libraryButton?.classList.add('animated-button');
     Array.from(answerButtons).forEach((btn) => (btn.disabled = true));
   } else if (mode === 'oneButton') {
     if (!className) return;
