@@ -69,7 +69,7 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
-        handleGameCompletion();
+        await handleGameCompletion();
         resetWrongAnswersCounter();
       }
     } else {
