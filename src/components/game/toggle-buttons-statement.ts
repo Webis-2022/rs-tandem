@@ -8,10 +8,13 @@ export function toggleButtonsStatement(
     const libraryButton = document.querySelector('.library-btn');
     const hintButtons = document.querySelectorAll('.hint-btn');
     const checkButton = document.querySelector('.check-button');
+    const answerButtons: NodeListOf<HTMLButtonElement> =
+      document.querySelectorAll('.answer-button');
     hintButtons.forEach((button) => button.setAttribute('disabled', ''));
     checkButton?.setAttribute('disabled', '');
     nextTopicButton?.removeAttribute('disabled');
     libraryButton?.removeAttribute('disabled');
+    Array.from(answerButtons).forEach((btn) => (btn.disabled = true));
   } else if (mode === 'oneButton') {
     if (!className) return;
     const button = document.querySelector<HTMLButtonElement>(className);
