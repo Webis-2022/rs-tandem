@@ -353,3 +353,21 @@ export function resetGameState() {
 
   clearActiveGame();
 }
+
+export function resetUsedHints() {
+  const prev = getState();
+
+  const emptyHints: HintCounter = {
+    '50/50': 0,
+    'call a friend': 0,
+    "i don't know": 0,
+  };
+
+  setState({
+    ...prev,
+    game: {
+      ...prev.game,
+      usedHints: emptyHints,
+    },
+  });
+}
