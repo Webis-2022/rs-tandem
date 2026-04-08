@@ -3,6 +3,7 @@ import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
 import { saveAchievement } from '../../../services/api/save-achievement';
+import { finishCurrentGame } from '../../../services/finishCurrentGame';
 import { createButton, createEl } from '../../../shared/dom';
 import { ROUTES } from '../../../types';
 import { delay } from '../../../utils/delay';
