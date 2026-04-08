@@ -9,6 +9,8 @@ type Params = {
 
 export async function getGameResult(params: Params) {
   return withApiErrorHandling(async () => {
+    const state = getState();
+    const userId = state.user?.id;
     let id;
     if (params.gameId) {
       id = params.gameId;
@@ -17,7 +19,7 @@ export async function getGameResult(params: Params) {
       id = state.gameId;
     }
 
-    let query = supabase.from('game_results').select('*');
+    let query = supabase.from('game_results').select('*').eq('user_id', userId);
 
     if (params.gameId) {
       query = query.eq('game_id', id);
