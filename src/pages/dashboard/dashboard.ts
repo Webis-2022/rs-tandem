@@ -74,7 +74,7 @@ export const createDashboardView = (): HTMLElement => {
       });
       const gameIds = gameResults.map((game) => game.game_id);
       const uniqueIds = Array.from(new Set(gameIds));
-      const games = await getGames({ gameIds: uniqueIds });
+      const games: GameData[] = (await getGames({ gameIds: uniqueIds })) || [];
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
@@ -105,7 +105,7 @@ export const createDashboardView = (): HTMLElement => {
         gameId,
         difficulty: undefined,
       });
-      const games: GameData[] = await getGames({ gameIds: [gameId] });
+      const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
 
       badge.src = games[0].achievement;
       badgesContainer?.replaceChildren(badge);
