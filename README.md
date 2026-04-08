@@ -10,6 +10,13 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 - Aleksandra Potapova - https://github.com/alekspanda
 - Sergei Urazov - https://github.com/urazof
 
+## Meeting notes:
+- [First meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-17.md)
+- [Second meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-19.md)
+- [Third meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-08.md)
+- [Fourth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-16.md)
+- [Fifth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-23.md)
+
 ## Tech Stack
 
 - TypeScript
