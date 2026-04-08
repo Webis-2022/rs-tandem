@@ -19,7 +19,7 @@ export function gameStatsPanel() {
   });
   const achievementsText = createEl('span', { className: 'achievements-text' });
   const badgesContainer = createEl('span', { className: 'badges-container' });
-  achievementsText.textContent = 'Achievements';
+  achievementsText.textContent = 'Achievement';
   achievements.append(achievementsText, badgesContainer);
 
   panelTopBar.append(username, achievements);

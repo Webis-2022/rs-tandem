@@ -56,7 +56,7 @@ export type UIState = {
 
 type GameState = {
   topicId: number;
-  difficulty: Difficulty | '';
+  difficulty: Difficulty | null;
   round: number;
   score: number;
   usedHints: HintCounter | undefined;
@@ -64,6 +64,17 @@ type GameState = {
   wrongAnswersCounter: number;
   questions: Question[];
   gameMode: string;
+};
+
+export type GameResult = {
+  game_id: number;
+  user_id: string;
+  score: number;
+  topic: string;
+  difficulty: string;
+  topic_id: number;
+  used_hints: string;
+  wrong_answers_count: number;
 };
 
 export type AppState = {
@@ -94,14 +105,8 @@ export type GameData = {
   id: number;
   created_at: string;
   user_id: string;
-  score: number;
   difficulty: 'easy' | 'medium' | 'hard';
-  used_hints: {
-    '50/50': number;
-    'call a friend': number;
-    "i don't know": number;
-  };
-  wrong_answers: number;
+  achievement: string;
 };
 
 export type Topic = {

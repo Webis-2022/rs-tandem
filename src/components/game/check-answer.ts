@@ -2,6 +2,7 @@ import {
   calculateScore,
   countWrongAnswers,
   markAsCorrected,
+  resetWrongAnswersCounter,
   saveWrongAnswers,
 } from '../../app/state/actions';
 import { highLightAnswer } from './high-light-answer';
@@ -68,7 +69,8 @@ export async function checkAnswer(gameMode: string) {
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
-        handleGameCompletion();
+        await handleGameCompletion();
+        resetWrongAnswersCounter();
       }
     } else {
       playSound('./sound/incorrect.mp3');
@@ -82,7 +84,8 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
-      handleGameCompletion();
+      await handleGameCompletion();
+      resetWrongAnswersCounter();
       return;
     }
     countWrongAnswers();

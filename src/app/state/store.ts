@@ -57,7 +57,7 @@ export let state: AppState = {
   gameId: null,
   game: {
     topicId: 1,
-    difficulty: '',
+    difficulty: null,
     round: 1,
     score: 0,
     usedHints: {
@@ -114,9 +114,9 @@ export function setState(
 }
 
 export const initialGameState: AppState['game'] = {
-  topicId: 1,
-  difficulty: '',
-  round: 1,
+  topicId: 0,
+  difficulty: null,
+  round: 0,
   score: 0,
   usedHints: {
     '50/50': 0,

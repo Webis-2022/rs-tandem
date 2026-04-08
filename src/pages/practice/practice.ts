@@ -16,6 +16,9 @@ export function createPracticeView(): HTMLElement {
   const state = getState();
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
+  if (!difficulty) {
+    throw new Error('Difficulty is not selected');
+  }
   getQuestions(topicId, difficulty)
     .then(async (questions) => {
       if (!section.isConnected) return;

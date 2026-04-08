@@ -2,10 +2,10 @@ import './dashboard.scss';
 import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { getGames } from '../../services/api/get-games';
-import { type GameData } from '../../types';
 import { getGameResult } from '../../services/api/get-game-result';
 import { gameStatsPanel } from '../../components/dashboard-elements/stats-table/game-stats-panel/game-stats-panel';
 import { createStatsTable } from '../../components/dashboard-elements/stats-table/stats-table';
+import type { GameData, GameResult } from '../../types';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -68,7 +68,13 @@ export const createDashboardView = (): HTMLElement => {
     const handleDifficultySelector = async (e: Event) => {
       const target = e.target as HTMLOptionElement;
       const difficulty = target?.value;
-      const games = await getGames(difficulty);
+      const gameResults: GameResult[] = await getGameResult({
+        gameId: undefined,
+        difficulty,
+      });
+      const gameIds = gameResults.map((game) => game.game_id);
+      const uniqueIds = Array.from(new Set(gameIds));
+      const games: GameData[] = (await getGames({ gameIds: uniqueIds })) || [];
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
@@ -88,9 +94,21 @@ export const createDashboardView = (): HTMLElement => {
     difficultySelector.addEventListener('change', handleDifficultySelector);
 
     const handleGameChange = async (e: Event) => {
+      const badgesContainer = document.querySelector('.badges-container');
+      const badge = createEl('img', {
+        className: 'badge-img',
+      }) as HTMLImageElement;
+
       const target = e.target as HTMLOptionElement;
-      const gameId = target?.value;
-      const gameResult = await getGameResult(Number(gameId));
+      const gameId = Number(target?.value);
+      const gameResult: GameResult[] = await getGameResult({
+        gameId,
+        difficulty: undefined,
+      });
+      const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
+
+      badge.src = games[0].achievement;
+      badgesContainer?.replaceChildren(badge);
       const table = createStatsTable(gameResult);
       const panelContent: HTMLDivElement | null =
         document.querySelector('.panel-content');
