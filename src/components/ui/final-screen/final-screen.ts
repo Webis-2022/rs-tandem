@@ -2,6 +2,7 @@ import { navigate } from '../../../app/navigation';
 import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
+import { saveAchievement } from '../../../services/api/save-achievement';
 import { finishCurrentGame } from '../../../services/finishCurrentGame';
 import { createButton, createEl } from '../../../shared/dom';
 import { ROUTES } from '../../../types';
@@ -9,6 +10,7 @@ import { delay } from '../../../utils/delay';
 import './final-screen.scss';
 
 export async function createFinalScreen() {
+  let achievementImg: string = '';
   const state = getState();
   const score = state.game.score;
   let background = createEl('div');
@@ -61,7 +63,7 @@ export async function createFinalScreen() {
     const badgeContainer = createEl('span', { className: 'badge-container' });
     badgeContainer.innerHTML = achievementText;
     const badgeImg = createEl('img', {
-      className: 'badge-img',
+      className: 'badge-img-animated',
     }) as HTMLImageElement;
     badgeImg.src = badge;
     badgeContainer.append(badgeImg);
@@ -83,19 +85,27 @@ export async function createFinalScreen() {
   };
 
   if (score <= loserScore) {
+    achievementImg = './img/html-and-css-loser.png';
     background = createBackground('./img/stormy-bg.webp');
-    modalWindow = createModalWindow(loserText, './img/html-and-css-loser.png');
+    modalWindow = createModalWindow(loserText, achievementImg);
   } else if (score >= loserScore && score <= masterScore) {
+    achievementImg = './img/html-and-css-master.png';
     background = createBackground('./img/celebration-bg.webp');
-    modalWindow = createModalWindow(
-      masterText,
-      './img/html-and-css-master.png'
-    );
+    modalWindow = createModalWindow(masterText, achievementImg);
   } else if (score >= masterScore && score <= guruScore) {
+    achievementImg = './img/html-and-css-guru.png';
     background = createBackground('./img/celebration-bg.webp');
-    modalWindow = createModalWindow(guruText, './img/html-and-css-guru.png');
+    modalWindow = createModalWindow(guruText, achievementImg);
   }
+
   if (!layout) return;
+
+  try {
+    await saveAchievement(achievementImg);
+  } catch (e) {
+    console.error('Failed to save achievement', e);
+  }
+
   layout.firstChild?.remove();
   layoutMain?.replaceChildren();
   layoutMain?.append(background);
