@@ -6,9 +6,9 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 
 ## Team:
 
-- Jevgeni Verjovkin - https://github.com/Webis-2022/Jevgeni-Verjovkin
-- Aleksandra Potapova - https://github.com/alekspanda
-- Sergei Urazov - https://github.com/urazof
+- [Jevgeni Verjovkin](https://github.com/Webis-2022/Jevgeni-Verjovkin), link to diary - [Webis-2022](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/Webis-2022)
+- [Aleksandra Potapova](https://github.com/alekspanda), link to diary - [alekspanda](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/alekspanda)
+- [Sergei Urazov](https://github.com/urazof), link to diary - [Urazof](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/Urazof)
 
 ## Tech Stack
 
