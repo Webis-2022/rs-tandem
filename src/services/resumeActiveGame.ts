@@ -1,4 +1,4 @@
-import { ROUTES, type AppState } from '../types';
+import { HINT_KEYS, ROUTES, type AppState, type HintCounter } from '../types';
 import { navigate } from '../app/navigation';
 import { restoreGameState, saveTopics } from '../app/state/actions';
 import { getState } from '../app/state/store';
@@ -12,6 +12,20 @@ import { showModal } from '../components/ui/modal/modal';
 type GameState = AppState['game'];
 
 export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
+
+/**
+ * Проверяет, что usedHints существует
+ * и содержит счетчики для всех доступных подсказок.
+ */
+function hasValidUsedHints(
+  usedHints: HintCounter | undefined
+): usedHints is HintCounter {
+  if (!usedHints) {
+    return false;
+  }
+
+  return HINT_KEYS.every((key) => typeof usedHints[key] === 'number');
+}
 
 /**
  * Ищет сохраненную игру для продолжения.
@@ -45,8 +59,8 @@ export async function getResumeCandidate(): Promise<GameState | null> {
 const validDifficulties = ['easy', 'medium', 'hard'] as const;
 
 /**
- * Проверяет, хватает ли данных в сохраненной игре
- * для сценария продолжения.
+ * Проверяет, что в сохраненной игре есть
+ * все обязательные данные для корректного resume.
  */
 export function hasRequiredResumeData(
   game: GameState | null | undefined
@@ -62,7 +76,8 @@ export function hasRequiredResumeData(
     ) &&
     game.round > 0 &&
     Array.isArray(game.questions) &&
-    game.questions.length > 0
+    game.questions.length > 0 &&
+    hasValidUsedHints(game.usedHints)
   );
 }
 
