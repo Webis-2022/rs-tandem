@@ -85,13 +85,14 @@ export async function createFinalScreen() {
     modalWindow = createModalWindow(guruText, achievementImg);
   }
 
+  if (!layout) return;
+
   try {
     await saveAchievement(achievementImg);
   } catch (e) {
     console.error('Failed to save achievement', e);
   }
 
-  if (!layout) return;
   layout.firstChild?.remove();
   layoutMain?.replaceChildren();
   layoutMain?.append(background);

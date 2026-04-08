@@ -75,7 +75,6 @@ export const createDashboardView = (): HTMLElement => {
       const gameIds = gameResults.map((game) => game.game_id);
       const uniqueIds = Array.from(new Set(gameIds));
       const games = await getGames({ gameIds: uniqueIds });
-      console.log('gR', gameResults);
       // const games: GameData[] = await getGames({ difficulty: difficulty });
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};

@@ -56,7 +56,7 @@ export type UIState = {
 
 type GameState = {
   topicId: number;
-  difficulty: Difficulty | '';
+  difficulty: Difficulty | null;
   round: number;
   score: number;
   usedHints: HintCounter | undefined;
