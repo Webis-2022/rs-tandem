@@ -79,10 +79,15 @@ export const createDashboardView = (): HTMLElement => {
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
-          obj[`Game ${index + 1}`] = String(game.id);
+          const date = new Date(game.created_at);
+          obj[`Game ${index + 1}: ${date.toLocaleString()}`] = String(game.id);
         });
         return obj;
       };
+      const options = gameSelector.children;
+      Array.from(options).forEach((option, index) => {
+        if (index !== 0) option.remove();
+      });
       const optionData = createOptionDataObj(games);
       createSelectOptions(optionData, gameSelector);
     };

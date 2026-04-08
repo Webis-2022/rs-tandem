@@ -1,4 +1,5 @@
 import { navigate } from '../../../app/navigation';
+import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
 import { saveAchievement } from '../../../services/api/save-achievement';
@@ -21,12 +22,9 @@ export async function createFinalScreen() {
   const masterScore = 85;
   const guruScore = 100;
 
-  const guruText =
-    'Congratulations! You have excellent knowledge of HTML and CSS.';
-  const masterText =
-    'Well done! You have a solid understanding of HTML and CSS, but there’s always room to improve.';
-  const loserText =
-    'Unfortunately, your HTML and CSS skills are far from ideal. We recommend more practice and review of the basics.';
+  const guruText = `Congratulations! You have excellent knowledge of HTML and CSS. You scored ${score} points!`;
+  const masterText = `Well done! You have a solid understanding of HTML and CSS, but there’s always room to improve. You scored ${score} points!`;
+  const loserText = `Unfortunately, your HTML and CSS skills are far from ideal. We recommend more practice and review of the basics. You scored ${score} points!`;
   const achievementText = 'Your achievement:';
 
   const createBackground = (image: string) => {
@@ -37,8 +35,22 @@ export async function createFinalScreen() {
     return backgroundDiv;
   };
 
-  const handleRestartButton = () => {
-    deleteCompletedTopics();
+  const handleRestartButton = async () => {
+    const difficulty = getState().game.difficulty;
+
+    if (!difficulty) {
+      console.error('Difficulty is not selected');
+      return;
+    }
+
+    try {
+      await deleteCompletedTopics(difficulty);
+      await finishCurrentGame();
+      await startNewGame({ topicId: 1, difficulty });
+      navigate(ROUTES.Practice, true);
+    } catch (error) {
+      console.error('Failed to restart progress:', error);
+    }
   };
 
   const createModalWindow = (text: string, badge: string) => {

@@ -56,13 +56,28 @@
   gap: v.$spacing-sm;
 }
 
+.library-card.is-completed {
+  opacity: v.$modal-overlay-opacity;
+  background-color: v.$border-color;
+}
+
+.topic-icon {
+  width: v.$spacing-xl;
+  height: v.$spacing-xl;
+  object-fit: contain;
+}
+
 .library-card-title {
   font-size: v.$font-size-lg;
   color: v.$text-color;
 }
 
 .library-card-actions {
-  @include m.flex(row, flex-end, center);
+  @include m.flex(row, space-between, center);
+
+  .btn {
+    margin-left: auto;
+  }
 }
 
 .library-list-status.is-error {

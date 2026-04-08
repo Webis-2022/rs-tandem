@@ -5,7 +5,6 @@ import { type GameData } from '../../types';
 
 export async function createNewGame(userId: string) {
   if (!userId) throw new Error('userId missing');
-
   const {
     data: newGame,
     error,
