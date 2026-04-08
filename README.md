@@ -1,14 +1,27 @@
-# rs-tandem
+# RSS Tandem App – DOMinator
 
 ## Project description
 
 HTML Trainer for interview preparation. Generating questions on various topics using LLM.
+
+## What we are proud of in this project
+
+We are proud that we were able to build this trainer despite all the difficulties, including those not directly related to development.
+
+During this project, each of us learned something new. We tried working with the backend, and for some of us it was the first such experience. We also learned how to integrate an AI agent into the application for question generation and explored GitHub features for team collaboration in more depth.
+
+## Video Demo
+
+- [RSS Tandem App Checkpoint 5 Preview](https://youtu.be/HWwnsfwI7CI). This video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
 
 ## Team:
 
 - Jevgeni Verjovkin - https://github.com/Webis-2022/Jevgeni-Verjovkin
 - Aleksandra Potapova - https://github.com/alekspanda
 - Sergei Urazov - https://github.com/urazof
+
+## Trello
+- [Trello Board](https://trello.com/b/sp5J9fxW/my-trello-board)
 
 ## Tech Stack
 
@@ -85,8 +98,3 @@ Not responsible for:
 
 - Deciding when to generate vs reuse cached questions
   (this must be handled inside Edge Functions)
-
-## Video Demo
-
-- https://youtu.be/HWwnsfwI7CI
-- Video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
