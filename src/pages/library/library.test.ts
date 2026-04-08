@@ -116,7 +116,6 @@ describe('createLibraryView', () => {
       expect(mocks.startNewGame).toHaveBeenCalledWith({
         topicId: 1,
         difficulty: 'easy',
-        round: 0,
       });
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
