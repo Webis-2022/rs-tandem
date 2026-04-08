@@ -4,15 +4,18 @@ import { removeTwoWrongAnswers } from '../../../game/hintsLogic/remove-two-wrong
 import './hints-container.scss';
 import { callFriend } from '../../../game/hintsLogic/call-friend';
 import { getState } from '../../../../app/state/store';
-import type { HintCounter } from '../../../../types';
+import type { HintKey } from '../../../../types';
 
 type HintConfig = {
-  [key: string]: [(e: MouseEvent) => void, string, keyof HintCounter];
+  [key: string]: [(e: MouseEvent) => void, string, HintKey];
 };
 
-export function createHintsContainer() {
+function isHintDisabled(hintKey: HintKey): boolean {
   const usedHints = getState().game.usedHints;
+  return (usedHints?.[hintKey] ?? 0) > 0;
+}
 
+export function createHintsContainer() {
   const hintButtons: HintConfig = {
     '50/50': [removeTwoWrongAnswers, 'fifty-fifty', '50/50'],
     'Call a friend': [callFriend, 'friend', 'call a friend'],
@@ -27,12 +30,17 @@ export function createHintsContainer() {
 
   Object.entries(hintButtons).forEach(
     ([buttonKey, [handler, className, hintKey]]) => {
-      const hintButton = createButton(buttonKey, handler, className);
-      hintButton.classList.add('hint-btn');
+      const hintButton = createButton(
+        buttonKey,
+        (event: MouseEvent) => {
+          handler(event);
+          hintButton.disabled = isHintDisabled(hintKey);
+        },
+        className
+      );
 
-      if ((usedHints?.[hintKey] ?? 0) > 0) {
-        hintButton.disabled = true;
-      }
+      hintButton.classList.add('hint-btn');
+      hintButton.disabled = isHintDisabled(hintKey);
 
       container.append(hintButton);
     }
