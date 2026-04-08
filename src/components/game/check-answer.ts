@@ -84,7 +84,7 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
-      handleGameCompletion();
+      await handleGameCompletion();
       resetWrongAnswersCounter();
       return;
     }
