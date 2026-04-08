@@ -37,19 +37,7 @@
 
 .badge-img {
   width: 110px;
-  animation: scale-badge 1s ease-in-out infinite;
-}
-
-@keyframes scale-badge {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
+  @include m.pulse();
 }
 
 .button-set {
