@@ -122,8 +122,18 @@ export async function initApp(mount: HTMLElement): Promise<void> {
   });
 
   setNavigate(router.go);
+
+  const shouldResumeBeforeStart =
+    isAuthed() && window.location.pathname === ROUTES.Practice;
+
+  if (shouldResumeBeforeStart) {
+    await tryResumeGame();
+  }
+
   router.start();
 
-  await waitForPaint();
-  await tryResumeGame();
+  if (!shouldResumeBeforeStart && isAuthed()) {
+    await waitForPaint();
+    await tryResumeGame();
+  }
 }
