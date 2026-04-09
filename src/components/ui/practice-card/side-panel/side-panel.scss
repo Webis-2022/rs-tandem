@@ -44,7 +44,8 @@
   font-family: v.$font-family-base;
 }
 
-.text-container {
+.side-panel-text {
+  color: v.$text-color;
   padding: v.$spacing-md;
 }
 
