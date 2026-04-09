@@ -2,7 +2,7 @@
 
 ## Project description
 
-HTML Trainer for interview preparation. Generating questions on various topics using LLM.
+HTML & CSS Trainer for interview preparation. The app generates a wide range of questions on key topics using a language model, helping you reinforce knowledge and identify gaps. Suitable for both revising fundamentals and deeper practice. A convenient training format makes learning fast and effective.
 
 ## Team:
 
@@ -42,8 +42,7 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 4. Run development server:
    npm run dev
 
-Project will be available at:
-http://localhost:3000
+5. After running the server, open the URL shown in the terminal
 
 ## App Deploy Link
 
@@ -59,32 +58,17 @@ All changes must go through pull request.
 
 ## APIService
 
-Responsible for:
+Handles all communication with Supabase, including database access, authentication, and Edge Function calls.
 
-- Communication with Supabase (database, auth, edge functions)
+Responsibilities:
+- Sending requests and returning normalized data
+- Handling errors and optional retries
+- Attaching session context automatically
 
-- Calling Supabase Edge Functions (e.g. question batch generation)
-
-- Normalizing and forwarding errors
-
-- Optional retry logic for network failures
-
-- Attaching session context automatically (handled via Supabase client)
-
-- Returning clean data to higher layers (QuestionService, etc.)
-
-Not responsible for:
-
-- AI logic or prompt generation
-
-- Business logic (game rules, scoring, validation)
-
-- State management
-
-- UI rendering
-
-- Deciding when to generate vs reuse cached questions
-  (this must be handled inside Edge Functions)
+Out of scope:
+- Business logic (game rules, scoring)
+- AI prompt generation
+- State management and UI
 
 ## Video Demo
 
