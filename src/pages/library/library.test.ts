@@ -9,6 +9,9 @@ const mocks = vi.hoisted(() => ({
   saveTopics: vi.fn(),
   getState: vi.fn(),
   fetchCompletedTopicIds: vi.fn(),
+  showModal: vi.fn(),
+  getActiveGame: vi.fn(),
+  hasRequiredResumeData: vi.fn(),
 }));
 
 vi.mock('../../services/api/get-topics', () => ({
@@ -30,6 +33,18 @@ vi.mock('../../app/state/store', () => ({
 vi.mock('../../app/state/actions', () => ({
   startNewGame: mocks.startNewGame,
   saveTopics: mocks.saveTopics,
+}));
+
+vi.mock('../../components/ui/modal/modal', () => ({
+  showModal: mocks.showModal,
+}));
+
+vi.mock('../../services/storageService', () => ({
+  getActiveGame: mocks.getActiveGame,
+}));
+
+vi.mock('../../services/resumeActiveGame', () => ({
+  hasRequiredResumeData: mocks.hasRequiredResumeData,
 }));
 
 import { createLibraryView } from './library';
@@ -55,6 +70,9 @@ describe('createLibraryView', () => {
     });
 
     mocks.fetchCompletedTopicIds.mockResolvedValue([]);
+    mocks.getActiveGame.mockReturnValue(null);
+    mocks.hasRequiredResumeData.mockReturnValue(false);
+    mocks.showModal.mockResolvedValue({ confirmed: true });
   });
 
   test('renders title and subtitle', () => {
@@ -131,56 +149,240 @@ describe('createLibraryView', () => {
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
   });
-});
 
-test('marks completed topic and disables Start button', async () => {
-  mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
-  mocks.fetchCompletedTopicIds.mockResolvedValue([1]);
+  test('marks completed topic and disables Start button', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.fetchCompletedTopicIds.mockResolvedValue([1]);
 
-  const view = createLibraryView();
-  document.body.append(view);
+    const view = createLibraryView();
+    document.body.append(view);
 
-  await waitFor(() => {
-    const card = within(view).getByText('HTML').closest('.library-card');
-    expect(card).toHaveClass('is-completed');
+    await waitFor(() => {
+      const card = within(view).getByText('HTML').closest('.library-card');
+      expect(card).toHaveClass('is-completed');
 
-    const startBtn = within(card as HTMLElement).getByRole('button', {
-      name: /start/i,
+      const startBtn = within(card as HTMLElement).getByRole('button', {
+        name: /start/i,
+      });
+      expect(startBtn).toBeDisabled();
     });
-    expect(startBtn).toBeDisabled();
+
+    expect(view.querySelector('.topic-icon')).not.toBeNull();
   });
 
-  expect(view.querySelector('.topic-icon')).not.toBeNull();
-});
+  test('loads completed topics for selected difficulty', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.fetchCompletedTopicIds.mockResolvedValue([]);
 
-test('loads completed topics for selected difficulty', async () => {
-  mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
-  mocks.fetchCompletedTopicIds.mockResolvedValue([]);
+    const view = createLibraryView();
+    document.body.append(view);
 
-  const view = createLibraryView();
-  document.body.append(view);
+    await waitFor(() => {
+      expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('easy');
+    });
 
-  await waitFor(() => {
-    expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('easy');
+    mocks.fetchCompletedTopicIds.mockClear();
+
+    const mediumBtn = within(view).getByRole('button', { name: 'Medium' });
+    fireEvent.click(mediumBtn);
+
+    await waitFor(() => {
+      expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
+    });
   });
 
-  mocks.fetchCompletedTopicIds.mockClear();
+  test('shows error message when topics loading fails', async () => {
+    mocks.getTopics.mockRejectedValue(new Error('Failed to load topics.'));
 
-  const mediumBtn = within(view).getByRole('button', { name: 'Medium' });
-  fireEvent.click(mediumBtn);
+    const view = createLibraryView();
+    document.body.append(view);
 
-  await waitFor(() => {
-    expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
+    await waitFor(() => {
+      expect(screen.getByText('Failed to load topics.')).toBeInTheDocument();
+    });
   });
-});
 
-test('shows error message when topics loading fails', async () => {
-  mocks.getTopics.mockRejectedValue(new Error('Failed to load topics.'));
+  test('starts new game without modal when there is no active game', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.startNewGame.mockResolvedValue(undefined);
+    mocks.getActiveGame.mockReturnValue(null);
 
-  const view = createLibraryView();
-  document.body.append(view);
+    const view = createLibraryView();
+    document.body.append(view);
 
-  await waitFor(() => {
-    expect(screen.getByText('Failed to load topics.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+
+    await waitFor(() => {
+      expect(mocks.showModal).not.toHaveBeenCalled();
+      expect(mocks.startNewGame).toHaveBeenCalledWith({
+        topicId: 1,
+        difficulty: 'easy',
+      });
+      expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
+    });
+  });
+
+  test('navigates to practice without starting a new game for the same active game', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.getActiveGame.mockReturnValue({
+      topicId: 1,
+      difficulty: 'easy',
+      round: 2,
+    });
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+
+    await waitFor(() => {
+      expect(mocks.showModal).not.toHaveBeenCalled();
+      expect(mocks.startNewGame).not.toHaveBeenCalled();
+      expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
+    });
+  });
+
+  test('shows modal and starts a new game after confirmation when another active game exists', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.startNewGame.mockResolvedValue(undefined);
+
+    mocks.getState.mockReturnValue({
+      user: null,
+      game: {
+        topicId: 0,
+        difficulty: '',
+        round: 0,
+        score: 0,
+        usedHints: [],
+        wrongAnswers: [],
+        questions: [],
+      },
+      topics: [{ id: 1, name: 'HTML' }],
+      isLoading: false,
+    });
+
+    mocks.getActiveGame.mockReturnValue({
+      topicId: 1,
+      difficulty: 'easy',
+      round: 2,
+    });
+
+    mocks.hasRequiredResumeData.mockReturnValue(true);
+    mocks.showModal.mockResolvedValue({ confirmed: true });
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Medium' })
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Medium' }));
+
+    await waitFor(() => {
+      expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
+    });
+
+    const startBtn = await screen.findByRole('button', { name: 'Start' });
+    fireEvent.click(startBtn);
+
+    await waitFor(() => {
+      expect(mocks.showModal).toHaveBeenCalled();
+      expect(mocks.startNewGame).toHaveBeenCalledWith({
+        topicId: 1,
+        difficulty: 'medium',
+      });
+      expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
+    });
+
+    expect(mocks.showModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Start new game?',
+        messageHtml: expect.stringContaining('HTML'),
+      })
+    );
+  });
+
+  test('does not start a new game when modal is cancelled', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+
+    mocks.getState.mockReturnValue({
+      user: null,
+      game: {
+        topicId: 0,
+        difficulty: '',
+        round: 0,
+        score: 0,
+        usedHints: [],
+        wrongAnswers: [],
+        questions: [],
+      },
+      topics: [{ id: 1, name: 'HTML' }],
+      isLoading: false,
+    });
+
+    mocks.getActiveGame.mockReturnValue({
+      topicId: 1,
+      difficulty: 'easy',
+      round: 2,
+    });
+
+    mocks.hasRequiredResumeData.mockReturnValue(true);
+    mocks.showModal.mockResolvedValue({ confirmed: false });
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Medium' })
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Medium' }));
+
+    await waitFor(() => {
+      expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
+    });
+
+    const startBtn = await screen.findByRole('button', { name: 'Start' });
+    fireEvent.click(startBtn);
+
+    await waitFor(() => {
+      expect(mocks.showModal).toHaveBeenCalled();
+      expect(mocks.startNewGame).not.toHaveBeenCalled();
+      expect(mocks.navigate).not.toHaveBeenCalled();
+    });
+  });
+
+  test('shows error message and re-enables button when startNewGame fails', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+    mocks.startNewGame.mockRejectedValue(new Error('Start failed'));
+    mocks.getActiveGame.mockReturnValue(null);
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    });
+
+    const startBtn = screen.getByRole('button', { name: 'Start' });
+    fireEvent.click(startBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Start failed')).toBeInTheDocument();
+      expect(startBtn).not.toBeDisabled();
+    });
   });
 });
