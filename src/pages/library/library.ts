@@ -1,29 +1,33 @@
 import './library.scss';
-import { ROUTES, type Difficulty, type Topic } from '../../types';
+import {
+  ROUTES,
+  type AppState,
+  type Difficulty,
+  type Topic,
+} from '../../types';
 import { navigate } from '../../app/navigation';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
-import { saveTopics, startNewGame } from '../../app/state/actions';
+import {
+  restoreGameState,
+  saveTopics,
+  startNewGame,
+} from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
 import { showModal } from '../../components/ui/modal/modal';
-import { hasRequiredResumeData } from '../../services/resumeActiveGame';
-import { getActiveGame } from '../../services/storageService';
+import { getResumeCandidate } from '../../services/resumeActiveGame';
+
+type GameState = AppState['game'];
 
 function isSameActiveGame(
-  activeGame: ReturnType<typeof getActiveGame>,
+  activeGame: GameState,
   topicId: number,
   difficulty: Difficulty
 ): boolean {
-  if (!activeGame) return false;
-
-  return (
-    activeGame.topicId === topicId &&
-    activeGame.difficulty === difficulty &&
-    activeGame.round > 0
-  );
+  return activeGame.topicId === topicId && activeGame.difficulty === difficulty;
 }
 
 function getTopicTitleById(topicId: number): string {
@@ -41,10 +45,10 @@ async function confirmReplaceActiveGame(
   const result = await showModal({
     title: 'Start new game?',
     messageHtml: `
-     <p>You already have an unfinished game:</p>
+      <p>You already have an unfinished game:</p>
       <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
       <p>Starting a new game will replace your current progress.</p>
-    `,
+`,
     showConfirm: true,
     confirmText: 'Start new game',
     cancelText: 'Cancel',
@@ -84,7 +88,6 @@ function createTopicCard(
     topicIcon.src = '/img/tick-mark.png';
     topicIcon.alt = '';
     topicIcon.setAttribute('aria-hidden', 'true');
-
     actions.append(topicIcon);
   }
 
@@ -110,12 +113,12 @@ export const createLibraryView = (): HTMLElement => {
   let difficulty: Difficulty = getState().game.difficulty || 'easy';
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
+
   const difficultyLabel = createEl('span', {
     text: 'Difficulty:',
     className: 'library-difficulty-label',
   });
 
-  // Меняет сложность и обновляет список тем.
   const handleDifficultyChange = (key: Difficulty) => {
     if (difficulty === key) return;
     difficulty = key;
@@ -143,7 +146,6 @@ export const createLibraryView = (): HTMLElement => {
   const status = createEl('div', { className: 'library-status' });
   const list = createEl('div', { className: 'library-list' });
 
-  // Подсвечивает активную кнопку сложности.
   const setActiveDifficultyUI = () => {
     (Object.keys(diffBtns) as Difficulty[]).forEach((key) => {
       diffBtns[key].classList.toggle('is-active', key === difficulty);
@@ -154,21 +156,21 @@ export const createLibraryView = (): HTMLElement => {
     topicId: number,
     startBtn: HTMLButtonElement
   ): Promise<void> => {
-    const activeGame = getActiveGame();
-
     status.textContent = '';
     status.classList.remove('is-error');
     startBtn.disabled = true;
 
     try {
-      if (isSameActiveGame(activeGame, topicId, difficulty)) {
+      const activeGame = await getResumeCandidate();
+
+      if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
+        restoreGameState(activeGame);
         navigate(ROUTES.Practice, true);
         return;
       }
 
-      if (activeGame && hasRequiredResumeData(activeGame)) {
+      if (activeGame) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);
-
         const shouldReplace = await confirmReplaceActiveGame(
           activeGame.difficulty,
           activeTopicTitle
@@ -197,7 +199,6 @@ export const createLibraryView = (): HTMLElement => {
     }
   };
 
-  // Загружает и обновляет список тем.
   const updateTopicsList = async (): Promise<void> => {
     setActiveDifficultyUI();
     list.replaceChildren(createLoadingView('Loading topics...'));
@@ -248,6 +249,8 @@ export const createLibraryView = (): HTMLElement => {
   );
 
   section.append(title, subtitle, difficultyRow, status, list);
+
   void updateTopicsList();
+
   return section;
 };
