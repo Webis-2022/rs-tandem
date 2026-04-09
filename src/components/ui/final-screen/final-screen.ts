@@ -58,7 +58,7 @@ export async function createFinalScreen() {
     const modalWindow = createEl('div', {
       className: 'final-screen-modal',
     }) as HTMLDivElement;
-    const textContainer = createEl('div', { className: 'text-container' });
+    const textContainer = createEl('div', { className: 'final-screen-text' });
     textContainer.innerHTML = text;
     const badgeContainer = createEl('span', { className: 'badge-container' });
     badgeContainer.innerHTML = achievementText;
