@@ -12,10 +12,13 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import { applyTheme, setActiveRoute } from './state/actions';
+import { applyTheme, restoreGameState, setActiveRoute } from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
-import { runResumeGameFlow } from '../services/resumeActiveGame';
+import {
+  getResumeCandidate,
+  runResumeGameFlow,
+} from '../services/resumeActiveGame';
 
 /**
  * Initialize authentication state
@@ -57,8 +60,27 @@ async function tryResumeGame(): Promise<void> {
   const result = await runResumeGameFlow();
 
   if (result === 'discarded') {
-    navigate(ROUTES.Dashboard, true);
+    navigate(ROUTES.Library, true);
   }
+}
+
+async function restorePracticeStateOnRefresh(): Promise<boolean> {
+  if (window.location.pathname !== ROUTES.Practice) {
+    return false;
+  }
+
+  if (!isAuthed()) {
+    return false;
+  }
+
+  const candidate = await getResumeCandidate();
+
+  if (!candidate) {
+    return false;
+  }
+
+  restoreGameState(candidate);
+  return true;
 }
 
 function waitForPaint(): Promise<void> {
@@ -79,6 +101,7 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   // Initialize auth state before setting up router
   await initAuth();
+  const restoredPracticeState = await restorePracticeStateOnRefresh();
 
   const router = createRouter({
     mount: layout.outlet,
@@ -91,13 +114,13 @@ export async function initApp(mount: HTMLElement): Promise<void> {
       [ROUTES.Landing]: {
         createView: createLandingView,
         guard: 'guest',
-        redirectTo: ROUTES.Dashboard,
+        redirectTo: ROUTES.Library,
       },
       [ROUTES.NotFound]: { createView: createNotFoundView },
       [ROUTES.Login]: {
         createView: createLoginView,
         guard: 'guest',
-        redirectTo: ROUTES.Dashboard,
+        redirectTo: ROUTES.Library,
       },
       [ROUTES.Logout]: {
         createView: createLogoutView,
@@ -123,6 +146,10 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   setNavigate(router.go);
   router.start();
+
+  if (restoredPracticeState) {
+    return;
+  }
 
   await waitForPaint();
   await tryResumeGame();

@@ -20,10 +20,9 @@ export async function showNextQuestion() {
   const questions = questionMeta.questions;
   const wrongAnswers = wrongAnswerMeta.questions;
   const round = questionMeta.round;
-  const questionNum = questionMeta.questionNum;
-  let question = questions[questionMeta.questionNum];
 
   if (round > questions.length && wrongAnswers.length === 0) {
+    await handleGameCompletion();
     await finishCurrentGame();
     toggleButtonsStatement('allButtons');
     return;
@@ -41,27 +40,37 @@ export async function showNextQuestion() {
     if (result.confirmed) {
       changeGameMode('super-game');
       resetRound();
-      showNextQuestion();
+      await showNextQuestion();
+      return;
     } else {
-      handleGameCompletion();
+      await handleGameCompletion();
       toggleButtonsStatement('allButtons');
       await finishCurrentGame();
       return;
     }
   }
+
+  const currentMeta =
+    getState().game.gameMode === 'game'
+      ? getQuestionMeta('questions')
+      : getQuestionMeta('wrongAnswers');
+  const currentQuestions = currentMeta.questions;
+  const currentQuestionNum = currentMeta.questionNum;
+
+  if (currentQuestionNum < 0 || currentQuestionNum >= currentQuestions.length) {
+    return;
+  }
+
+  const question = currentQuestions[currentQuestionNum];
   const questionContainer = document.querySelector('.question-container');
   if (!questionContainer) return;
+
   const gameMode = getState().game.gameMode;
   if (gameMode === 'game') {
-    if (questionNum < questions.length) {
-      questionContainer.textContent = questions[questionNum].question;
-      createAnswers(question);
-    }
+    questionContainer.textContent = question.question;
+    createAnswers(question);
   } else {
-    if (questionNum < wrongAnswers.length) {
-      question = wrongAnswers[questionNum];
-      questionContainer.textContent = question.question;
-      createAnswers(question);
-    }
+    questionContainer.textContent = question.question;
+    createAnswers(question);
   }
 }

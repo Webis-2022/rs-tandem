@@ -16,12 +16,10 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
-import { getState } from '../../app/state/store';
 import { handleGameCompletion } from './handle-game-completion';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
-  const state = getState();
   let isLast;
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
@@ -30,14 +28,6 @@ export async function checkAnswer(gameMode: string) {
     const [correctAnswer, selectedValue, isCorrect] =
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
-    isLast = isLastQuestion('questions');
-    const wrongAnswersCounter = state.game.wrongAnswersCounter;
-
-    if (isLast && isCorrect) {
-      if (wrongAnswersCounter === 0) {
-        handleGameCompletion();
-      }
-    }
 
     if (isCorrect) {
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
@@ -62,7 +52,7 @@ export async function checkAnswer(gameMode: string) {
       handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
       markAsCorrected(currentQuestion);
       if (isLast) {
-        showModal({
+        await showModal({
           title: undefined,
           messageHtml: buildModalParagraphsHtml([winText]),
           showConfirm: false,
@@ -76,7 +66,7 @@ export async function checkAnswer(gameMode: string) {
       playSound('./sound/incorrect.mp3');
       highLightAnswer(selectedValue, '#fa2525');
       await delay(1000);
-      showModal({
+      await showModal({
         title: undefined,
         messageHtml: buildModalParagraphsHtml([lossText]),
         showConfirm: false,

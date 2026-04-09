@@ -107,8 +107,8 @@ export const createLandingView = (): HTMLElement => {
 
   const heroActions = createEl('div', { className: 'landing-actions' });
   const primaryCta = createButton(
-    isAuthed ? 'Go to Dashboard' : 'Start from Login',
-    () => navigate(isAuthed ? ROUTES.Dashboard : ROUTES.Login),
+    isAuthed ? 'Go to Library' : 'Start from Login',
+    () => navigate(isAuthed ? ROUTES.Library : ROUTES.Login),
     'btn landing-actions-primary'
   );
   const secondaryCta = createButton(
