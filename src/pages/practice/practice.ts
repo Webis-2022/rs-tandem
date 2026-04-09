@@ -8,7 +8,7 @@ import { createSidePanel } from '../../components/ui/practice-card/side-panel/si
 import { getQuestions } from '../../services/api/get-questions';
 import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
-import { syncActiveGameToServer } from '../../services/syncActiveGame';
+import { syncActiveGameToServer } from '../../services/sync-active-game';
 
 export function createPracticeView(): HTMLElement {
   const section = createEl('section', { className: 'page practice-page' });

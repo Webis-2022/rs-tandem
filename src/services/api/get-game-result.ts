@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient.ts';
+import { supabase } from '../supabase-client.ts';
 import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 import { getState } from '../../app/state/store.ts';
 

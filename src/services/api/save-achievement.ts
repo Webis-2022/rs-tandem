@@ -1,5 +1,5 @@
 import { withApiErrorHandling } from '../../shared/helpers/request-error';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 import { getState } from '../../app/state/store';
 
 export function saveAchievement(achievement: string) {

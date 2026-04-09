@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 
 export async function getGames(params: { gameIds: number[] }) {
   let query = supabase
