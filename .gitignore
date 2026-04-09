@@ -13,8 +13,12 @@ dist-ssr
 *.local
 
 # Editor directories and files
+.env
+.eslintcache
 .vscode/*
 !.vscode/extensions.json
+.env
+.eslintcache
 .idea
 .DS_Store
 *.suo
@@ -22,3 +26,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+

@@ -14,6 +14,10 @@ During this project, each of us learned something new. We tried working with the
 
 - [RSS Tandem App Checkpoint 5 Preview](https://youtu.be/HWwnsfwI7CI). This video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
 
+## Project description
+
+HTML Trainer for interview preparation. Generating questions on various topics using LLM.
+
 ## Team:
 
 - [Jevgeni Verjovkin](https://github.com/Webis-2022/Jevgeni-Verjovkin), link to diary - [Webis-2022](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/Webis-2022)
@@ -61,6 +65,10 @@ During this project, each of us learned something new. We tried working with the
    npm run dev
 
 5. After running the server, open the URL shown in the terminal
+
+## App Deploy Link
+
+[https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
 
 ## App Deploy Link
 

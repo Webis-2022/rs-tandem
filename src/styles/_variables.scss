@@ -1,13 +1,25 @@
 // Colors
-$color-primary: #4f46e5;
-$color-secondary: #f97316;
-$color-accent: #10b981;
-$color-background: #f9fafb;
-$color-text: #111827;
+$primary-color: #667eea;
+$primary-dark: #764ba2;
+$secondary-color: #f0f0f0;
+$text-color: #333;
+$text-light: #666;
+
+$border-color: #e0e0e0;
+$color-error: #ff6b6b;
+$color-success: #51cf66;
+
+$color-divider: #ddd;
+$color-white: #fff;
 
 // Typography
-$font-family-base: 'Inter', sans-serif;
+$font-family-base: 'Roboto', sans-serif;
+$font-family-heading: 'Poppins', sans-serif;
+$font-size-sm: 12px;
 $font-size-base: 16px;
+$font-size-lg: 24px;
+$font-size-xl: 48px;
+$font-size-xxl: 96px;
 
 // Margins / Sizes
 $spacing-xs: 4px;
@@ -16,7 +28,14 @@ $spacing-md: 16px;
 $spacing-lg: 24px;
 $spacing-xl: 32px;
 $border-radius: 8px;
+$border-width-md: 2px;
 
 // Other global variables
 $transition-speed: 0.3s;
 $shadow-default: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+// Modal-specific variables
+$modal-overlay-opacity: 0.5;
+$modal-overlay-z-index: 9999;
+$modal-backdrop-blur: 8px;
+$modal-shadow-opacity: 0.2;

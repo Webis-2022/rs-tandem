@@ -1,0 +1,8 @@
+@use '../../../../styles/variables' as v;
+
+.divider {
+  width: 100%;
+  height: v.$border-width-md;
+  background-color: v.$color-divider;
+  margin-bottom: v.$spacing-lg;
+}
