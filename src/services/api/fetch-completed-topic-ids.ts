@@ -1,6 +1,6 @@
 import { getState } from '../../app/state/store';
 import type { Difficulty, Topic } from '../../types';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 
 export async function fetchCompletedTopicIds(
   difficulty: Difficulty

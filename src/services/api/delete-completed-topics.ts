@@ -1,7 +1,7 @@
 import { getState } from '../../app/state/store';
 import { withApiErrorHandling } from '../../shared/helpers/request-error';
 import type { Difficulty } from '../../types';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 
 export function deleteCompletedTopics(difficulty: Difficulty) {
   return withApiErrorHandling(async () => {

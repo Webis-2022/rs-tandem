@@ -2,7 +2,7 @@ import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
 import { navigate, setNavigate } from './navigation';
-import * as authService from '../services/authService';
+import * as authService from '../services/auth-service';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
@@ -15,7 +15,7 @@ import { createNotFoundView } from '../pages/not-found/not-found';
 import { applyTheme, setActiveRoute } from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
-import { runResumeGameFlow } from '../services/resumeActiveGame';
+import { runResumeGameFlow } from '../services/resume-active-game';
 
 /**
  * Initialize authentication state

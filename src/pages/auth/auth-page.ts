@@ -5,10 +5,10 @@ import { createEl, createButton, createLink } from '../../shared/dom';
 import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 import { saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runResumeGameFlow } from '../../services/resumeActiveGame';
+import { runResumeGameFlow } from '../../services/resume-active-game';
 
 type Field = {
   root: HTMLElement;

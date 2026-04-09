@@ -1,5 +1,5 @@
 import { getState } from '../../app/state/store';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 
 type TopicStatus = {
   user_id: number;

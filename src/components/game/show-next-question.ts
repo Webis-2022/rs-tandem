@@ -5,7 +5,7 @@ import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
-import { finishCurrentGame } from '../../services/finishCurrentGame';
+import { finishCurrentGame } from '../../services/finish-current-game';
 import { handleGameCompletion } from './handle-game-completion';
 
 export async function showNextQuestion() {

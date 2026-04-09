@@ -1,5 +1,5 @@
 import { ROUTES, type AppState, type UIState } from '../../types';
-import { saveActiveGame } from '../../services/storageService';
+import { saveActiveGame } from '../../services/storage-service';
 
 const UI_STORAGE_KEY = 'tandem:ui';
 

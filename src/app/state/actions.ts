@@ -9,8 +9,8 @@ import type {
   User,
 } from '../../types';
 import { getState, initialGameState, setState } from './store';
-import { syncActiveGameToServer } from '../../services/syncActiveGame';
-import { clearActiveGame } from '../../services/storageService';
+import { syncActiveGameToServer } from '../../services/sync-active-game';
+import { clearActiveGame } from '../../services/storage-service';
 
 export function applyTheme(theme: UITheme): void {
   document.documentElement.dataset.theme = theme;
