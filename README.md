@@ -70,10 +70,6 @@ HTML Trainer for interview preparation. Generating questions on various topics u
 
 [https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
 
-## App Deploy Link
-
-[https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
-
 ## Branch Strategy
 
 - main — stable production branch
