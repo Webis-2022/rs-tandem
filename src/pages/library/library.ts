@@ -8,6 +8,91 @@ import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
+import { showModal } from '../../components/ui/modal/modal';
+import { hasRequiredResumeData } from '../../services/resumeActiveGame';
+import { getActiveGame } from '../../services/storageService';
+
+function isSameActiveGame(
+  activeGame: ReturnType<typeof getActiveGame>,
+  topicId: number,
+  difficulty: Difficulty
+): boolean {
+  if (!activeGame) return false;
+
+  return (
+    activeGame.topicId === topicId &&
+    activeGame.difficulty === difficulty &&
+    activeGame.round > 0
+  );
+}
+
+function getTopicTitleById(topicId: number): string {
+  const topics = getState().topics;
+
+  return (
+    topics.find((topic) => topic.id === topicId)?.name ?? `Topic #${topicId}`
+  );
+}
+
+async function confirmReplaceActiveGame(
+  difficulty: Difficulty | null | undefined,
+  topicTitle: string
+): Promise<boolean> {
+  const result = await showModal({
+    title: 'Start new game?',
+    messageHtml: `
+     <p>You already have an unfinished game:</p>
+      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
+      <p>Starting a new game will replace your current progress.</p>
+    `,
+    showConfirm: true,
+    confirmText: 'Start new game',
+    cancelText: 'Cancel',
+  });
+
+  return result.confirmed;
+}
+
+function createTopicCard(
+  topic: Topic,
+  isCompleted: boolean,
+  onStart: (startBtn: HTMLButtonElement) => void
+): HTMLElement {
+  const card = createEl('div', {
+    className: `library-card${isCompleted ? ' is-completed' : ''}`,
+  });
+
+  const name = createEl('div', {
+    text: topic.name ?? `Topic #${topic.id}`,
+    className: 'library-card-title',
+  });
+
+  const actions = createEl('div', { className: 'library-card-actions' });
+
+  const startBtn = createButton(
+    'Start',
+    () => onStart(startBtn as HTMLButtonElement),
+    'btn',
+    isCompleted
+  );
+
+  if (isCompleted) {
+    const topicIcon = createEl('img', {
+      className: 'topic-icon',
+    }) as HTMLImageElement;
+
+    topicIcon.src = '/img/tick-mark.png';
+    topicIcon.alt = '';
+    topicIcon.setAttribute('aria-hidden', 'true');
+
+    actions.append(topicIcon);
+  }
+
+  actions.append(startBtn);
+  card.append(name, actions);
+
+  return card;
+}
 
 export const createLibraryView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -65,61 +150,51 @@ export const createLibraryView = (): HTMLElement => {
     });
   };
 
-  // Создает карточку темы.
-  const renderTopicCard = (topic: Topic, isCompleted: boolean): HTMLElement => {
-    const card = createEl('div', {
-      className: `library-card${isCompleted ? ' is-completed' : ''}`,
-    });
+  const handleStartClick = async (
+    topicId: number,
+    startBtn: HTMLButtonElement
+  ): Promise<void> => {
+    const activeGame = getActiveGame();
 
-    const name = createEl('div', {
-      text: topic.name ?? `Topic #${topic.id}`,
-      className: 'library-card-title',
-    });
+    status.textContent = '';
+    status.classList.remove('is-error');
+    startBtn.disabled = true;
 
-    const actions = createEl('div', { className: 'library-card-actions' });
+    try {
+      if (isSameActiveGame(activeGame, topicId, difficulty)) {
+        navigate(ROUTES.Practice, true);
+        return;
+      }
 
-    const startBtn = createButton(
-      'Start',
-      async () => {
-        status.textContent = 'Starting practice...';
-        status.classList.remove('is-error');
-        startBtn.disabled = true;
+      if (activeGame && hasRequiredResumeData(activeGame)) {
+        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
 
-        try {
-          await startNewGame({
-            topicId: topic.id,
-            difficulty,
-          });
+        const shouldReplace = await confirmReplaceActiveGame(
+          activeGame.difficulty,
+          activeTopicTitle
+        );
 
-          status.textContent = '';
-          navigate(ROUTES.Practice, true);
-        } catch (err: unknown) {
-          status.textContent =
-            err instanceof Error ? err.message : 'Failed to start game.';
-          status.classList.add('is-error');
-          startBtn.disabled = false;
+        if (!shouldReplace) {
+          return;
         }
-      },
-      'btn',
-      isCompleted
-    );
+      }
 
-    if (isCompleted) {
-      const topicIcon = createEl('img', {
-        className: 'topic-icon',
-      }) as HTMLImageElement;
+      status.textContent = 'Starting practice...';
 
-      topicIcon.src = '/img/tick-mark.png';
-      topicIcon.alt = '';
-      topicIcon.setAttribute('aria-hidden', 'true');
+      await startNewGame({
+        topicId,
+        difficulty,
+      });
 
-      actions.append(topicIcon);
+      status.textContent = '';
+      navigate(ROUTES.Practice, true);
+    } catch (err: unknown) {
+      status.textContent =
+        err instanceof Error ? err.message : 'Failed to start game.';
+      status.classList.add('is-error');
+    } finally {
+      startBtn.disabled = false;
     }
-
-    actions.append(startBtn);
-    card.append(name, actions);
-
-    return card;
   };
 
   // Загружает и обновляет список тем.
@@ -148,7 +223,13 @@ export const createLibraryView = (): HTMLElement => {
       const completedIds = new Set(completedTopicIds);
 
       topics.forEach((topic) => {
-        list.append(renderTopicCard(topic, completedIds.has(topic.id)));
+        list.append(
+          createTopicCard(
+            topic,
+            completedIds.has(topic.id),
+            (startBtn) => void handleStartClick(topic.id, startBtn)
+          )
+        );
       });
 
       saveTopics(topics);
