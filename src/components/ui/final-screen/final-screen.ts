@@ -3,7 +3,7 @@ import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
 import { saveAchievement } from '../../../services/api/save-achievement';
-import { finishCurrentGame } from '../../../services/finishCurrentGame';
+import { finishCurrentGame } from '../../../services/finish-current-game';
 import { createButton, createEl } from '../../../shared/dom';
 import { ROUTES } from '../../../types';
 import { delay } from '../../../utils/delay';
@@ -58,7 +58,7 @@ export async function createFinalScreen() {
     const modalWindow = createEl('div', {
       className: 'final-screen-modal',
     }) as HTMLDivElement;
-    const textContainer = createEl('div', { className: 'text-container' });
+    const textContainer = createEl('div', { className: 'final-screen-text' });
     textContainer.innerHTML = text;
     const badgeContainer = createEl('span', { className: 'badge-container' });
     badgeContainer.innerHTML = achievementText;

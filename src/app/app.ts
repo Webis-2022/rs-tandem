@@ -2,7 +2,7 @@ import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
 import { navigate, setNavigate } from './navigation';
-import * as authService from '../services/authService';
+import * as authService from '../services/auth-service';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
@@ -18,7 +18,7 @@ import { createLoadingView } from '../components/ui/loading/loading';
 import {
   getResumeCandidate,
   runResumeGameFlow,
-} from '../services/resumeActiveGame';
+} from '../services/resume-active-game';
 
 /**
  * Initialize authentication state

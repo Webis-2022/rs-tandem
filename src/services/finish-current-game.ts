@@ -1,5 +1,5 @@
-import { clearActiveGame } from './storageService';
-import { removeActiveGameFromServer } from './syncActiveGame';
+import { clearActiveGame } from './storage-service';
+import { removeActiveGameFromServer } from './sync-active-game';
 
 export async function finishCurrentGame(): Promise<boolean> {
   clearActiveGame();

@@ -25,7 +25,7 @@ export function createSidePanel(container: HTMLElement, card: HTMLElement) {
   const title = createEl('h2', { className: 'side-panel-title' });
   title.textContent = 'Explanation';
   const divider = createDivider();
-  const textContainer = createEl('div', { className: 'text-container' });
+  const textContainer = createEl('div', { className: 'side-panel-text' });
   sidePanel.append(closeButton, title, divider, textContainer);
   sidePanel.classList.add('closed');
   sidePanel.setAttribute('aria-hidden', 'true');

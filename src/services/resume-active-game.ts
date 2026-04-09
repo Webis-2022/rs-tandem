@@ -2,11 +2,11 @@ import { HINT_KEYS, ROUTES, type AppState, type HintCounter } from '../types';
 import { navigate } from '../app/navigation';
 import { restoreGameState, saveTopics } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import * as authService from './authService';
-import { getActiveGame, clearActiveGame } from './storageService';
+import * as authService from './auth-service';
+import { getActiveGame, clearActiveGame } from './storage-service';
 import { getActiveGameByUser } from './api/active-games';
 import { getTopics } from './api/get-topics';
-import { removeActiveGameFromServer } from './syncActiveGame';
+import { removeActiveGameFromServer } from './sync-active-game';
 import { showModal } from '../components/ui/modal/modal';
 
 type GameState = AppState['game'];

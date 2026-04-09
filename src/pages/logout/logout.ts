@@ -1,6 +1,6 @@
 import { navigate } from '../../app/navigation';
 import { ROUTES } from '../../types';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 import { createEl } from '../../shared/dom';
 import { removeUserData, resetGameState } from '../../app/state/actions';
 

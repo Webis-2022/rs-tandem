@@ -4,7 +4,7 @@ import { navigate } from '../../app/navigation';
 import { createEl, createButton, createLink } from '../../shared/dom';
 import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../../components/ui/modal/modal';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 
 type Feature = {
   title: string;
