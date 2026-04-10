@@ -4,6 +4,7 @@ import './stats-table.scss';
 
 export function createStatsTable(gameResult: GameResult[]) {
   const table = createEl('div', { className: 'stats-table' });
+  console.log('called');
   const headers = [
     'Topic',
     'Score',
