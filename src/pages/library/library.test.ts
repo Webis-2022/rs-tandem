@@ -223,8 +223,24 @@ describe('createLibraryView', () => {
     });
   });
 
-  test('navigates to practice without starting a new game for the same active game', async () => {
+  test('shows confirmation modal and restores same active game after confirmation', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+
+    mocks.getState.mockReturnValue({
+      user: null,
+      game: {
+        topicId: 0,
+        difficulty: '',
+        round: 0,
+        score: 0,
+        usedHints: [],
+        wrongAnswers: [],
+        questions: [],
+      },
+      topics: [{ id: 1, name: 'HTML' }],
+      isLoading: false,
+    });
+
     mocks.getResumeCandidate.mockResolvedValue({
       topicId: 1,
       difficulty: 'easy',
@@ -234,6 +250,8 @@ describe('createLibraryView', () => {
       wrongAnswers: [],
       questions: [{ id: 1 }],
     });
+
+    mocks.showModal.mockResolvedValue({ confirmed: true });
 
     const view = createLibraryView();
     document.body.append(view);
@@ -245,13 +263,19 @@ describe('createLibraryView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
 
     await waitFor(() => {
+      expect(mocks.showModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Continue previous game?',
+          messageHtml: expect.stringContaining('HTML'),
+        })
+      );
+
       expect(mocks.restoreGameState).toHaveBeenCalledWith(
         expect.objectContaining({
           topicId: 1,
           difficulty: 'easy',
         })
       );
-      expect(mocks.showModal).not.toHaveBeenCalled();
       expect(mocks.startNewGame).not.toHaveBeenCalled();
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
