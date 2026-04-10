@@ -73,9 +73,14 @@ export async function createFinalScreen() {
       handleRestartButton,
       'restart-btn'
     );
+    const handleLibraryButton = async () => {
+      await finishCurrentGame();
+      navigate(ROUTES.Library, true);
+    };
+
     const libraryButton = createButton(
       'Library',
-      () => navigate(ROUTES.Library, true),
+      handleLibraryButton,
       'library-btn'
     );
 
