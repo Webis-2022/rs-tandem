@@ -19,6 +19,7 @@ export async function createFinalScreen() {
   const layoutFooter = document.querySelector('.layout-footer');
   const layout = document.querySelector('.layout');
   const layoutMain = layout?.querySelector('.layout-main');
+  if (!layoutMain) return;
   const delayForModal = 600;
 
   const loserScore = 50;
@@ -74,8 +75,6 @@ export async function createFinalScreen() {
       'Restart',
       () => {
         handleRestartButton();
-        layoutHeader?.classList.remove('not-visible');
-        layoutFooter?.classList.remove('not-visible');
       },
       'restart-btn'
     );
@@ -83,8 +82,6 @@ export async function createFinalScreen() {
       'Library',
       () => {
         navigate(ROUTES.Library, true);
-        layoutHeader?.classList.remove('not-visible');
-        layoutFooter?.classList.remove('not-visible');
       },
       'library-btn'
     );
@@ -116,8 +113,8 @@ export async function createFinalScreen() {
     console.error('Failed to save achievement', e);
   }
 
-  layoutHeader?.classList.add('not-visible');
-  layoutFooter?.classList.add('not-visible');
+  layoutHeader?.classList.add('is-hidden');
+  layoutFooter?.classList.add('is-hidden');
 
   layoutMain?.replaceChildren();
   layoutMain?.append(background);
