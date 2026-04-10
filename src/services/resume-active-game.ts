@@ -99,6 +99,12 @@ async function isCompletedResumeCandidate(game: GameState): Promise<boolean> {
  * Сначала проверяет localStorage, потом сервер.
  */
 export async function getResumeCandidate(): Promise<GameState | null> {
+  const user = authService.getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
   const localGame = getActiveGame();
 
   if (hasRequiredResumeData(localGame)) {
@@ -111,11 +117,6 @@ export async function getResumeCandidate(): Promise<GameState | null> {
     await discardResumeCandidate();
   } else {
     clearActiveGame();
-  }
-  const user = authService.getCurrentUser();
-
-  if (!user) {
-    return null;
   }
 
   try {
