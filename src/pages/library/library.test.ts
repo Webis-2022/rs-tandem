@@ -39,7 +39,7 @@ vi.mock('../../components/ui/modal/modal', () => ({
   showModal: mocks.showModal,
 }));
 
-vi.mock('../../services/resumeActiveGame', () => ({
+vi.mock('../../services/resume-active-game', () => ({
   getResumeCandidate: mocks.getResumeCandidate,
 }));
 

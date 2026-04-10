@@ -18,7 +18,7 @@ import { createErrorMessage } from '../../components/ui/error-message/error-mess
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
 import { showModal } from '../../components/ui/modal/modal';
-import { getResumeCandidate } from '../../services/resumeActiveGame';
+import { getResumeCandidate } from '../../services/resume-active-game';
 
 type GameState = AppState['game'];
 
