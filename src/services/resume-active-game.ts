@@ -8,10 +8,14 @@ import { getActiveGameByUser } from './api/active-games';
 import { getTopics } from './api/get-topics';
 import { removeActiveGameFromServer } from './sync-active-game';
 import { showModal } from '../components/ui/modal/modal';
+import { fetchCompletedTopicIds } from './api/fetch-completed-topic-ids';
 
 type GameState = AppState['game'];
 
 export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
+
+const validDifficulties = ['easy', 'medium', 'hard'] as const;
+type ValidDifficulty = (typeof validDifficulties)[number];
 
 /**
  * Проверяет, что usedHints существует
@@ -35,11 +39,16 @@ export async function getResumeCandidate(): Promise<GameState | null> {
   const localGame = getActiveGame();
 
   if (hasRequiredResumeData(localGame)) {
-    return localGame;
+    const isCompleted = await isCompletedResumeCandidate(localGame);
+
+    if (!isCompleted) {
+      return localGame;
+    }
+
+    await discardResumeCandidate();
+  } else {
+    clearActiveGame();
   }
-
-  clearActiveGame();
-
   const user = authService.getCurrentUser();
 
   if (!user) {
@@ -49,14 +58,23 @@ export async function getResumeCandidate(): Promise<GameState | null> {
   try {
     const serverGame = await getActiveGameByUser(user.id);
 
-    return hasRequiredResumeData(serverGame) ? serverGame : null;
+    if (!hasRequiredResumeData(serverGame)) {
+      return null;
+    }
+
+    const isCompleted = await isCompletedResumeCandidate(serverGame);
+
+    if (isCompleted) {
+      await discardResumeCandidate();
+      return null;
+    }
+
+    return serverGame;
   } catch (error) {
     console.error('Failed to load resume candidate from server:', error);
     return null;
   }
 }
-
-const validDifficulties = ['easy', 'medium', 'hard'] as const;
 
 /**
  * Проверяет, что в сохраненной игре есть
@@ -162,5 +180,39 @@ export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
   } catch (error) {
     console.error('Resume game flow failed:', error);
     return 'no-game';
+  }
+}
+
+/**
+ * Проверяет, что в сохраненной игре указана
+ * корректная сложность для resume flow.
+ */
+function hasValidDifficulty(
+  difficulty: GameState['difficulty']
+): difficulty is ValidDifficulty {
+  return (
+    difficulty !== null &&
+    validDifficulties.includes(difficulty as ValidDifficulty)
+  );
+}
+
+/**
+ * Проверяет, не относится ли сохраненная игра
+ * к уже завершенной теме на текущей сложности.
+ */
+async function isCompletedResumeCandidate(game: GameState): Promise<boolean> {
+  if (!hasValidDifficulty(game.difficulty)) {
+    return false;
+  }
+
+  try {
+    const completedTopicIds = await fetchCompletedTopicIds(game.difficulty);
+    return completedTopicIds.includes(game.topicId);
+  } catch (error) {
+    console.error(
+      'Failed to validate resume candidate against completed topics:',
+      error
+    );
+    return false;
   }
 }
