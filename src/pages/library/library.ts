@@ -57,6 +57,25 @@ async function confirmReplaceActiveGame(
   return result.confirmed;
 }
 
+async function confirmContinueSameGame(
+  difficulty: Difficulty | null | undefined,
+  topicTitle: string
+): Promise<boolean> {
+  const result = await showModal({
+    title: 'Continue previous game?',
+    messageHtml: `
+      <p>You already have an unfinished game:</p>
+      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
+      <p>Do you want to continue your previous progress?</p>
+`,
+    showConfirm: true,
+    confirmText: 'Continue game',
+    cancelText: 'Cancel',
+  });
+
+  return result.confirmed;
+}
+
 function createTopicCard(
   topic: Topic,
   isCompleted: boolean,
@@ -166,6 +185,16 @@ export const createLibraryView = (): HTMLElement => {
       const activeGame = await getResumeCandidate();
 
       if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
+        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
+        const shouldContinue = await confirmContinueSameGame(
+          activeGame.difficulty,
+          activeTopicTitle
+        );
+
+        if (!shouldContinue) {
+          return;
+        }
+
         restoreGameState(activeGame);
         shouldEnableButton = false;
         navigate(ROUTES.Practice, true);
