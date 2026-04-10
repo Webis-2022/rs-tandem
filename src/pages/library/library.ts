@@ -160,11 +160,14 @@ export const createLibraryView = (): HTMLElement => {
     status.classList.remove('is-error');
     startBtn.disabled = true;
 
+    let shouldEnableButton = true;
+
     try {
       const activeGame = await getResumeCandidate();
 
       if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
         restoreGameState(activeGame);
+        shouldEnableButton = false;
         navigate(ROUTES.Practice, true);
         return;
       }
@@ -189,13 +192,16 @@ export const createLibraryView = (): HTMLElement => {
       });
 
       status.textContent = '';
+      shouldEnableButton = false;
       navigate(ROUTES.Practice, true);
     } catch (err: unknown) {
       status.textContent =
         err instanceof Error ? err.message : 'Failed to start game.';
       status.classList.add('is-error');
     } finally {
-      startBtn.disabled = false;
+      if (shouldEnableButton) {
+        startBtn.disabled = false;
+      }
     }
   };
 
