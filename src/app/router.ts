@@ -34,6 +34,10 @@ export const createRouter = (options: CreateRouterOptions): Router => {
   };
 
   const render = async (): Promise<void> => {
+    const layoutHeader = document.querySelector('.layout-header');
+    const layoutFooter = document.querySelector('.layout-footer');
+    layoutHeader?.classList.remove('is-hidden');
+    layoutFooter?.classList.remove('is-hidden');
     // Показываем loading state до проверки guard-ов и рендера страницы
     mount.replaceChildren(createLoadingView());
 

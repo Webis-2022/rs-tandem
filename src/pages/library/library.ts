@@ -1,13 +1,120 @@
 import './library.scss';
-import { ROUTES, type Difficulty, type Topic } from '../../types';
+import {
+  ROUTES,
+  type AppState,
+  type Difficulty,
+  type Topic,
+} from '../../types';
 import { navigate } from '../../app/navigation';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
-import { saveTopics, startNewGame } from '../../app/state/actions';
+import {
+  restoreGameState,
+  saveTopics,
+  startNewGame,
+} from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
+import { showModal } from '../../components/ui/modal/modal';
+import { getResumeCandidate } from '../../services/resume-active-game';
+
+type GameState = AppState['game'];
+
+function isSameActiveGame(
+  activeGame: GameState,
+  topicId: number,
+  difficulty: Difficulty
+): boolean {
+  return activeGame.topicId === topicId && activeGame.difficulty === difficulty;
+}
+
+function getTopicTitleById(topicId: number): string {
+  const topics = getState().topics;
+
+  return (
+    topics.find((topic) => topic.id === topicId)?.name ?? `Topic #${topicId}`
+  );
+}
+
+async function confirmReplaceActiveGame(
+  difficulty: Difficulty | null | undefined,
+  topicTitle: string
+): Promise<boolean> {
+  const result = await showModal({
+    title: 'Start new game?',
+    messageHtml: `
+      <p>You already have an unfinished game:</p>
+      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
+      <p>Starting a new game will replace your current progress.</p>
+`,
+    showConfirm: true,
+    confirmText: 'Start new game',
+    cancelText: 'Cancel',
+  });
+
+  return result.confirmed;
+}
+
+async function confirmContinueSameGame(
+  difficulty: Difficulty | null | undefined,
+  topicTitle: string
+): Promise<boolean> {
+  const result = await showModal({
+    title: 'Continue previous game?',
+    messageHtml: `
+      <p>You already have an unfinished game:</p>
+      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
+      <p>Do you want to continue your previous progress?</p>
+`,
+    showConfirm: true,
+    confirmText: 'Continue game',
+    cancelText: 'Cancel',
+  });
+
+  return result.confirmed;
+}
+
+function createTopicCard(
+  topic: Topic,
+  isCompleted: boolean,
+  onStart: (startBtn: HTMLButtonElement) => void
+): HTMLElement {
+  const card = createEl('div', {
+    className: `library-card${isCompleted ? ' is-completed' : ''}`,
+  });
+
+  const name = createEl('div', {
+    text: topic.name ?? `Topic #${topic.id}`,
+    className: 'library-card-title',
+  });
+
+  const actions = createEl('div', { className: 'library-card-actions' });
+
+  const startBtn = createButton(
+    'Start',
+    () => onStart(startBtn as HTMLButtonElement),
+    'btn',
+    isCompleted
+  );
+
+  if (isCompleted) {
+    const topicIcon = createEl('img', {
+      className: 'topic-icon',
+    }) as HTMLImageElement;
+
+    topicIcon.src = '/img/tick-mark.png';
+    topicIcon.alt = '';
+    topicIcon.setAttribute('aria-hidden', 'true');
+    actions.append(topicIcon);
+  }
+
+  actions.append(startBtn);
+  card.append(name, actions);
+
+  return card;
+}
 
 export const createLibraryView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
@@ -25,12 +132,12 @@ export const createLibraryView = (): HTMLElement => {
   let difficulty: Difficulty = getState().game.difficulty || 'easy';
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
+
   const difficultyLabel = createEl('span', {
     text: 'Difficulty:',
     className: 'library-difficulty-label',
   });
 
-  // Меняет сложность и обновляет список тем.
   const handleDifficultyChange = (key: Difficulty) => {
     if (difficulty === key) return;
     difficulty = key;
@@ -58,71 +165,75 @@ export const createLibraryView = (): HTMLElement => {
   const status = createEl('div', { className: 'library-status' });
   const list = createEl('div', { className: 'library-list' });
 
-  // Подсвечивает активную кнопку сложности.
   const setActiveDifficultyUI = () => {
     (Object.keys(diffBtns) as Difficulty[]).forEach((key) => {
       diffBtns[key].classList.toggle('is-active', key === difficulty);
     });
   };
 
-  // Создает карточку темы.
-  const renderTopicCard = (topic: Topic, isCompleted: boolean): HTMLElement => {
-    const card = createEl('div', {
-      className: `library-card${isCompleted ? ' is-completed' : ''}`,
-    });
+  const handleStartClick = async (
+    topicId: number,
+    startBtn: HTMLButtonElement
+  ): Promise<void> => {
+    status.textContent = '';
+    status.classList.remove('is-error');
+    startBtn.disabled = true;
 
-    const name = createEl('div', {
-      text: topic.name ?? `Topic #${topic.id}`,
-      className: 'library-card-title',
-    });
+    let shouldEnableButton = true;
 
-    const actions = createEl('div', { className: 'library-card-actions' });
+    try {
+      const activeGame = await getResumeCandidate();
 
-    const startBtn = createButton(
-      'Start',
-      async () => {
-        status.textContent = 'Starting practice...';
-        status.classList.remove('is-error');
-        startBtn.disabled = true;
+      if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
+        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
+        const shouldContinue = await confirmContinueSameGame(
+          activeGame.difficulty,
+          activeTopicTitle
+        );
 
-        try {
-          await startNewGame({
-            topicId: topic.id,
-            difficulty,
-          });
-
-          status.textContent = '';
-          navigate(ROUTES.Practice, true);
-        } catch (err: unknown) {
-          status.textContent =
-            err instanceof Error ? err.message : 'Failed to start game.';
-          status.classList.add('is-error');
-          startBtn.disabled = false;
+        if (!shouldContinue) {
+          return;
         }
-      },
-      'btn',
-      isCompleted
-    );
 
-    if (isCompleted) {
-      const topicIcon = createEl('img', {
-        className: 'topic-icon',
-      }) as HTMLImageElement;
+        restoreGameState(activeGame);
+        shouldEnableButton = false;
+        navigate(ROUTES.Practice, true);
+        return;
+      }
 
-      topicIcon.src = '/img/tick-mark.png';
-      topicIcon.alt = '';
-      topicIcon.setAttribute('aria-hidden', 'true');
+      if (activeGame) {
+        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
+        const shouldReplace = await confirmReplaceActiveGame(
+          activeGame.difficulty,
+          activeTopicTitle
+        );
 
-      actions.append(topicIcon);
+        if (!shouldReplace) {
+          return;
+        }
+      }
+
+      status.textContent = 'Starting practice...';
+
+      await startNewGame({
+        topicId,
+        difficulty,
+      });
+
+      status.textContent = '';
+      shouldEnableButton = false;
+      navigate(ROUTES.Practice, true);
+    } catch (err: unknown) {
+      status.textContent =
+        err instanceof Error ? err.message : 'Failed to start game.';
+      status.classList.add('is-error');
+    } finally {
+      if (shouldEnableButton) {
+        startBtn.disabled = false;
+      }
     }
-
-    actions.append(startBtn);
-    card.append(name, actions);
-
-    return card;
   };
 
-  // Загружает и обновляет список тем.
   const updateTopicsList = async (): Promise<void> => {
     setActiveDifficultyUI();
     list.replaceChildren(createLoadingView('Loading topics...'));
@@ -148,7 +259,13 @@ export const createLibraryView = (): HTMLElement => {
       const completedIds = new Set(completedTopicIds);
 
       topics.forEach((topic) => {
-        list.append(renderTopicCard(topic, completedIds.has(topic.id)));
+        list.append(
+          createTopicCard(
+            topic,
+            completedIds.has(topic.id),
+            (startBtn) => void handleStartClick(topic.id, startBtn)
+          )
+        );
       });
 
       saveTopics(topics);
@@ -167,6 +284,8 @@ export const createLibraryView = (): HTMLElement => {
   );
 
   section.append(title, subtitle, difficultyRow, status, list);
+
   void updateTopicsList();
+
   return section;
 };
