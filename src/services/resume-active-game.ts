@@ -20,6 +20,13 @@ type GameState = AppState['game'];
 
 export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
 
+type ResumeCandidateSource = 'local' | 'server';
+
+type ResumeCandidate = {
+  game: GameState;
+  source: ResumeCandidateSource;
+};
+
 const validDifficulties: Difficulty[] = ['easy', 'medium', 'hard'];
 type ValidDifficulty = (typeof validDifficulties)[number];
 
@@ -63,9 +70,7 @@ export function hasRequiredResumeData(
 
   return Boolean(
     game.topicId > 0 &&
-    validDifficulties.includes(
-      game.difficulty as (typeof validDifficulties)[number]
-    ) &&
+    hasValidDifficulty(game.difficulty) &&
     game.round > 0 &&
     Array.isArray(game.questions) &&
     game.questions.length > 0 &&
@@ -95,32 +100,41 @@ async function isCompletedResumeCandidate(game: GameState): Promise<boolean> {
 }
 
 /**
- * Ищет сохраненную игру для продолжения.
- * Сначала проверяет localStorage, потом сервер.
+ * Ищет сохраненную игру для продолжения в localStorage.
  */
-export async function getResumeCandidate(): Promise<GameState | null> {
-  const user = authService.getCurrentUser();
+async function getLocalResumeCandidate(): Promise<ResumeCandidate | null> {
+  const localGame = getActiveGame();
 
-  if (!user) {
+  if (!localGame) {
     return null;
   }
 
-  const localGame = getActiveGame();
-
-  if (hasRequiredResumeData(localGame)) {
-    const isCompleted = await isCompletedResumeCandidate(localGame);
-
-    if (!isCompleted) {
-      return localGame;
-    }
-
-    await discardResumeCandidate();
-  } else {
-    clearActiveGame();
+  if (!hasRequiredResumeData(localGame)) {
+    discardLocalResumeCandidate();
+    return null;
   }
 
+  const isCompleted = await isCompletedResumeCandidate(localGame);
+
+  if (isCompleted) {
+    discardLocalResumeCandidate();
+    return null;
+  }
+
+  return {
+    game: localGame,
+    source: 'local',
+  };
+}
+
+/**
+ * Ищет сохраненную игру для продолжения на сервере.
+ */
+async function getServerResumeCandidate(
+  userId: string
+): Promise<ResumeCandidate | null> {
   try {
-    const serverGame = await getActiveGameByUser(user.id);
+    const serverGame = await getActiveGameByUser(userId);
 
     if (!hasRequiredResumeData(serverGame)) {
       return null;
@@ -129,11 +143,14 @@ export async function getResumeCandidate(): Promise<GameState | null> {
     const isCompleted = await isCompletedResumeCandidate(serverGame);
 
     if (isCompleted) {
-      await discardResumeCandidate();
+      await discardServerResumeCandidate();
       return null;
     }
 
-    return serverGame;
+    return {
+      game: serverGame,
+      source: 'server',
+    };
   } catch (error) {
     console.error('Failed to load resume candidate from server:', error);
     return null;
@@ -141,16 +158,57 @@ export async function getResumeCandidate(): Promise<GameState | null> {
 }
 
 /**
- * Удаляет сохраненную игру локально и на сервере.
+ * Ищет resume candidate для продолжения игры.
+ * Сначала проверяет localStorage, затем сервер
+ * и возвращает игру вместе с источником.
  */
-export async function discardResumeCandidate(): Promise<void> {
-  clearActiveGame();
+export async function getResumeCandidate(): Promise<ResumeCandidate | null> {
+  const user = authService.getCurrentUser();
 
+  if (!user) {
+    return null;
+  }
+
+  const localCandidate = await getLocalResumeCandidate();
+
+  if (localCandidate) {
+    return localCandidate;
+  }
+
+  return getServerResumeCandidate(user.id);
+}
+
+/**
+ * Удаляет сохраненную игру локально.
+ */
+function discardLocalResumeCandidate(): void {
+  clearActiveGame();
+}
+
+/**
+ * Удаляет сохраненную игру на сервере.
+ */
+async function discardServerResumeCandidate(): Promise<void> {
   try {
     await removeActiveGameFromServer();
   } catch (error) {
     console.error('Failed to remove active game from server:', error);
   }
+}
+
+/**
+ * Удаляет resume candidate из указанного источника:
+ * localStorage или сервера.
+ */
+async function discardResumeCandidate(
+  source: ResumeCandidateSource
+): Promise<void> {
+  if (source === 'local') {
+    discardLocalResumeCandidate();
+    return;
+  }
+
+  await discardServerResumeCandidate();
 }
 
 /**
@@ -202,21 +260,21 @@ async function restoreResumedGame(game: GameState): Promise<void> {
  */
 export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
   try {
-    const game = await getResumeCandidate();
+    const candidate = await getResumeCandidate();
 
-    if (!game) {
+    if (!candidate) {
       return 'no-game';
     }
 
-    const shouldResume = await promptResumeGame(game);
+    const shouldResume = await promptResumeGame(candidate.game);
 
     if (shouldResume) {
-      await restoreResumedGame(game);
+      await restoreResumedGame(candidate.game);
       navigate(ROUTES.Practice, true);
       return 'resumed';
     }
 
-    await discardResumeCandidate();
+    await discardResumeCandidate(candidate.source);
     return 'discarded';
   } catch (error) {
     console.error('Resume game flow failed:', error);
