@@ -47,6 +47,16 @@ import { createLibraryView } from './library';
 import { ROUTES } from '../../types';
 
 describe('createLibraryView', () => {
+  const resumeGameMock = {
+    topicId: 1,
+    difficulty: 'easy' as const,
+    round: 2,
+    score: 0,
+    usedHints: [],
+    wrongAnswers: [],
+    questions: [{ id: 1 }],
+  };
+
   beforeEach(() => {
     document.body.innerHTML = '';
     vi.clearAllMocks();
@@ -242,13 +252,8 @@ describe('createLibraryView', () => {
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: true });
@@ -301,13 +306,8 @@ describe('createLibraryView', () => {
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: true });
@@ -366,13 +366,8 @@ describe('createLibraryView', () => {
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: false });

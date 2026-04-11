@@ -182,7 +182,8 @@ export const createLibraryView = (): HTMLElement => {
     let shouldEnableButton = true;
 
     try {
-      const activeGame = await getResumeCandidate();
+      const activeCandidate = await getResumeCandidate();
+      const activeGame = activeCandidate?.game;
 
       if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);
