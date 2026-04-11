@@ -15,8 +15,11 @@ export async function createFinalScreen() {
   const score = state.game.score;
   let background = createEl('div');
   let modalWindow = createEl('div');
+  const layoutHeader = document.querySelector('.layout-header');
+  const layoutFooter = document.querySelector('.layout-footer');
   const layout = document.querySelector('.layout');
   const layoutMain = layout?.querySelector('.layout-main');
+  if (!layoutMain) return;
   const delayForModal = 600;
 
   const loserScore = 50;
@@ -70,12 +73,16 @@ export async function createFinalScreen() {
     const buttonSet = createEl('div', { className: 'button-set' });
     const restartButton = createButton(
       'Restart',
-      handleRestartButton,
+      () => {
+        handleRestartButton();
+      },
       'restart-btn'
     );
     const libraryButton = createButton(
       'Library',
-      () => navigate(ROUTES.Library, true),
+      () => {
+        navigate(ROUTES.Library, true);
+      },
       'library-btn'
     );
 
@@ -106,7 +113,9 @@ export async function createFinalScreen() {
     console.error('Failed to save achievement', e);
   }
 
-  layout.firstChild?.remove();
+  layoutHeader?.classList.add('is-hidden');
+  layoutFooter?.classList.add('is-hidden');
+
   layoutMain?.replaceChildren();
   layoutMain?.append(background);
   await delay(delayForModal);
