@@ -234,17 +234,33 @@ export async function promptResumeGame(game: GameState): Promise<boolean> {
 /**
  * Загружает topics, если их еще нет в store.
  */
+let topicsLoadingPromise: Promise<void> | null = null;
+
+/**
+ * Загружает topics, если их еще нет в store.
+ * Параллельные вызовы переиспользуют один и тот же запрос.
+ */
 async function ensureTopicsLoaded(): Promise<void> {
   if (getState().topics.length > 0) {
     return;
   }
 
-  try {
-    const topics = await getTopics();
-    saveTopics(topics);
-  } catch (error) {
-    console.error('Failed to load topics while resuming game:', error);
+  if (topicsLoadingPromise) {
+    return topicsLoadingPromise;
   }
+
+  topicsLoadingPromise = (async () => {
+    try {
+      const topics = await getTopics();
+      saveTopics(topics);
+    } catch (error) {
+      console.error('Failed to load topics while resuming game:', error);
+    } finally {
+      topicsLoadingPromise = null;
+    }
+  })();
+
+  return topicsLoadingPromise;
 }
 
 /**
