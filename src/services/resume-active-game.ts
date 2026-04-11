@@ -27,6 +27,17 @@ type ResumeCandidate = {
   source: ResumeCandidateSource;
 };
 
+type ResumeLookupResult =
+  | { status: 'missing' }
+  | { status: 'invalid'; source: ResumeCandidateSource }
+  | { status: 'completed'; source: ResumeCandidateSource }
+  | { status: 'ready'; candidate: ResumeCandidate };
+
+type ResumeCandidateResolution = {
+  candidate: ResumeCandidate | null;
+  staleSources: ResumeCandidateSource[];
+};
+
 const validDifficulties: Difficulty[] = ['easy', 'medium', 'hard'];
 type ValidDifficulty = (typeof validDifficulties)[number];
 
@@ -100,82 +111,128 @@ async function isCompletedResumeCandidate(game: GameState): Promise<boolean> {
 }
 
 /**
- * Ищет сохраненную игру для продолжения в localStorage.
+ * Проверяет сохраненную игру в localStorage
+ * и возвращает результат в виде статуса resume candidate.
  */
-async function getLocalResumeCandidate(): Promise<ResumeCandidate | null> {
+async function checkLocalResumeCandidate(): Promise<ResumeLookupResult> {
   const localGame = getActiveGame();
 
   if (!localGame) {
-    return null;
+    return { status: 'missing' };
   }
 
   if (!hasRequiredResumeData(localGame)) {
-    discardLocalResumeCandidate();
-    return null;
+    return { status: 'invalid', source: 'local' };
   }
 
   const isCompleted = await isCompletedResumeCandidate(localGame);
 
   if (isCompleted) {
-    discardLocalResumeCandidate();
-    return null;
+    return { status: 'completed', source: 'local' };
   }
 
   return {
-    game: localGame,
-    source: 'local',
+    status: 'ready',
+    candidate: {
+      game: localGame,
+      source: 'local',
+    },
   };
 }
 
 /**
- * Ищет сохраненную игру для продолжения на сервере.
+ * Проверяет сохраненную игру на сервере
+ * и возвращает результат в виде статуса resume candidate.
  */
-async function getServerResumeCandidate(
+async function checkServerResumeCandidate(
   userId: string
-): Promise<ResumeCandidate | null> {
+): Promise<ResumeLookupResult> {
   try {
     const serverGame = await getActiveGameByUser(userId);
 
+    if (!serverGame) {
+      return { status: 'missing' };
+    }
+
     if (!hasRequiredResumeData(serverGame)) {
-      return null;
+      return { status: 'invalid', source: 'server' };
     }
 
     const isCompleted = await isCompletedResumeCandidate(serverGame);
 
     if (isCompleted) {
-      await discardServerResumeCandidate();
-      return null;
+      return { status: 'completed', source: 'server' };
     }
 
     return {
-      game: serverGame,
-      source: 'server',
+      status: 'ready',
+      candidate: {
+        game: serverGame,
+        source: 'server',
+      },
     };
   } catch (error) {
     console.error('Failed to load resume candidate from server:', error);
-    return null;
+    return { status: 'missing' };
   }
 }
 
 /**
- * Ищет resume candidate для продолжения игры.
- * Сначала проверяет localStorage, затем сервер
- * и возвращает игру вместе с источником.
+ * Проверяет, есть ли игра для продолжения.
+ * Возвращает найденную игру и источники,
+ * которые нужно очистить отдельно.
  */
-export async function getResumeCandidate(): Promise<ResumeCandidate | null> {
+async function resolveResumeCandidate(): Promise<ResumeCandidateResolution> {
   const user = authService.getCurrentUser();
 
   if (!user) {
-    return null;
+    return { candidate: null, staleSources: [] };
   }
 
-  const localCandidate = await getLocalResumeCandidate();
+  const staleSources: ResumeCandidateSource[] = [];
 
-  if (localCandidate) {
-    return localCandidate;
+  const localResult = await checkLocalResumeCandidate();
+
+  if (localResult.status === 'ready') {
+    return {
+      candidate: localResult.candidate,
+      staleSources,
+    };
   }
 
-  return getServerResumeCandidate(user.id);
+  if (localResult.status === 'invalid' || localResult.status === 'completed') {
+    staleSources.push(localResult.source);
+  }
+
+  const serverResult = await checkServerResumeCandidate(user.id);
+
+  if (serverResult.status === 'ready') {
+    return {
+      candidate: serverResult.candidate,
+      staleSources,
+    };
+  }
+
+  if (
+    serverResult.status === 'invalid' ||
+    serverResult.status === 'completed'
+  ) {
+    staleSources.push(serverResult.source);
+  }
+
+  return {
+    candidate: null,
+    staleSources,
+  };
+}
+
+/**
+ * Возвращает resume candidate для продолжения игры
+ * без очистки невалидных или устаревших данных.
+ */
+export async function getResumeCandidate(): Promise<ResumeCandidate | null> {
+  const { candidate } = await resolveResumeCandidate();
+  return candidate;
 }
 
 /**
@@ -209,6 +266,20 @@ async function discardResumeCandidate(
   }
 
   await discardServerResumeCandidate();
+}
+
+/**
+ * Удаляет resume candidate из нескольких источников.
+ * Повторяющиеся источники очищаются только один раз.
+ */
+async function discardResumeCandidates(
+  sources: ResumeCandidateSource[]
+): Promise<void> {
+  const uniqueSources = [...new Set(sources)];
+
+  for (const source of uniqueSources) {
+    await discardResumeCandidate(source);
+  }
 }
 
 /**
@@ -276,21 +347,23 @@ async function restoreResumedGame(game: GameState): Promise<void> {
  */
 export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
   try {
-    const candidate = await getResumeCandidate();
+    const { candidate, staleSources } = await resolveResumeCandidate();
 
     if (!candidate) {
+      await discardResumeCandidates(staleSources);
       return 'no-game';
     }
 
     const shouldResume = await promptResumeGame(candidate.game);
 
     if (shouldResume) {
+      await discardResumeCandidates(staleSources);
       await restoreResumedGame(candidate.game);
       navigate(ROUTES.Practice, true);
       return 'resumed';
     }
 
-    await discardResumeCandidate(candidate.source);
+    await discardResumeCandidates([...staleSources, candidate.source]);
     return 'discarded';
   } catch (error) {
     console.error('Resume game flow failed:', error);
