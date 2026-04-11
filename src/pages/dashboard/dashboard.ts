@@ -77,17 +77,19 @@ export const createDashboardView = (): HTMLElement => {
       const gameIds = gameResults.map((game) => game.game_id);
       const uniqueIds = Array.from(new Set(gameIds));
       const games: GameData[] = (await getGames({ gameIds: uniqueIds })) || [];
+      const statsTable = document.querySelector('.stats-table');
+      const badgeImage = document.querySelector('.badge-img');
+      const panelContent: HTMLDivElement | null =
+        document.querySelector('.panel-content');
+      if (!panelContent) return;
+      statsTable?.remove();
+      badgeImage?.remove();
+      panelContent.style.display = 'flex';
       if (gameResults.length === 0 && games.length === 0) {
-        const statsTable = document.querySelector('.stats-table');
-        const badgeImage = document.querySelector('.badge-img');
-        const panelContent: HTMLDivElement | null =
-          document.querySelector('.panel-content');
-        if (!panelContent) return;
-        statsTable?.remove();
         panelContent.textContent =
           'There are no results for this difficulty level';
-        panelContent.style.display = 'flex';
-        badgeImage?.remove();
+      } else {
+        panelContent.textContent = 'Please select a game to see your results';
       }
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
