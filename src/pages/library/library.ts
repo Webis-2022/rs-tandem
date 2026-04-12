@@ -17,8 +17,11 @@ import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
-import { showModal } from '../../components/ui/modal/modal';
 import { getResumeCandidate } from '../../services/resume-active-game';
+import {
+  confirmContinueSameTopic,
+  confirmReplaceActiveTopic,
+} from './library-resume-modals.ts';
 
 type GameState = AppState['game'];
 
@@ -36,44 +39,6 @@ function getTopicTitleById(topicId: number): string {
   return (
     topics.find((topic) => topic.id === topicId)?.name ?? `Topic #${topicId}`
   );
-}
-
-async function confirmReplaceActiveGame(
-  difficulty: Difficulty | null | undefined,
-  topicTitle: string
-): Promise<boolean> {
-  const result = await showModal({
-    title: 'Start new game?',
-    messageHtml: `
-      <p>You already have an unfinished game:</p>
-      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
-      <p>Starting a new game will replace your current progress.</p>
-`,
-    showConfirm: true,
-    confirmText: 'Start new game',
-    cancelText: 'Cancel',
-  });
-
-  return result.confirmed;
-}
-
-async function confirmContinueSameGame(
-  difficulty: Difficulty | null | undefined,
-  topicTitle: string
-): Promise<boolean> {
-  const result = await showModal({
-    title: 'Continue previous game?',
-    messageHtml: `
-      <p>You already have an unfinished game:</p>
-      <p><strong>${topicTitle}</strong> (${difficulty ?? 'another difficulty'})</p>
-      <p>Do you want to continue your previous progress?</p>
-`,
-    showConfirm: true,
-    confirmText: 'Continue game',
-    cancelText: 'Cancel',
-  });
-
-  return result.confirmed;
 }
 
 function createTopicCard(
@@ -187,7 +152,7 @@ export const createLibraryView = (): HTMLElement => {
 
       if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);
-        const shouldContinue = await confirmContinueSameGame(
+        const shouldContinue = await confirmContinueSameTopic(
           activeGame.difficulty,
           activeTopicTitle
         );
@@ -204,7 +169,7 @@ export const createLibraryView = (): HTMLElement => {
 
       if (activeGame) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);
-        const shouldReplace = await confirmReplaceActiveGame(
+        const shouldReplace = await confirmReplaceActiveTopic(
           activeGame.difficulty,
           activeTopicTitle
         );
