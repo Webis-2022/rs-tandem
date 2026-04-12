@@ -13,12 +13,20 @@ import { syncActiveGameToServer } from '../../services/sync-active-game';
 export function createPracticeView(): HTMLElement {
   const section = createEl('section', { className: 'page practice-page' });
   section.append(createLoadingView('Loading questions...'));
+
   const state = getState();
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
+
   if (!difficulty) {
-    throw new Error('Difficulty is not selected');
+    section.replaceChildren(
+      createErrorMessage(
+        'No active game found. Please start a new game from the library.'
+      )
+    );
+    return section;
   }
+
   getQuestions(topicId, difficulty)
     .then(async (questions) => {
       if (!section.isConnected) return;
@@ -28,7 +36,6 @@ export function createPracticeView(): HTMLElement {
       if (!section.isConnected) return;
 
       const practiceCard = createPracticeCard();
-      section.append(practiceCard);
 
       section.replaceChildren(practiceCard);
       createSidePanel(section, practiceCard);
