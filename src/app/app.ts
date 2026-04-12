@@ -12,9 +12,15 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import { applyTheme, restoreGameState, setActiveRoute } from './state/actions';
+import {
+  applyTheme,
+  restoreGameState,
+  saveTopics,
+  setActiveRoute,
+} from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
+import { getTopics } from '../services/api/get-topics';
 import {
   getResumeCandidate,
   runResumeGameFlow,
@@ -77,6 +83,18 @@ async function restorePracticeStateOnRefresh(): Promise<boolean> {
 
   if (!candidate) {
     return false;
+  }
+
+  if (getState().topics.length === 0) {
+    try {
+      const topics = await getTopics();
+      saveTopics(topics);
+    } catch (error) {
+      console.error(
+        'Failed to load topics while restoring practice state:',
+        error
+      );
+    }
   }
 
   restoreGameState(candidate);
