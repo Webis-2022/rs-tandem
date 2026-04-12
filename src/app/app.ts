@@ -12,19 +12,10 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import {
-  applyTheme,
-  restoreGameState,
-  saveTopics,
-  setActiveRoute,
-} from './state/actions';
+import { applyTheme, setActiveRoute } from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
-import { getTopics } from '../services/api/get-topics';
-import {
-  getResumeCandidate,
-  runResumeGameFlow,
-} from '../services/resume-active-game';
+import { runResumeGameFlow } from '../services/resume-active-game';
 
 /**
  * Initialize authentication state
@@ -79,25 +70,8 @@ async function restorePracticeStateOnRefresh(): Promise<boolean> {
     return false;
   }
 
-  const candidate = await getResumeCandidate();
-
-  if (!candidate) {
-    return false;
-  }
-
-  if (getState().topics.length === 0) {
-    try {
-      const topics = await getTopics();
-      saveTopics(topics);
-    } catch (error) {
-      console.error(
-        'Failed to load topics while restoring practice state:',
-        error
-      );
-    }
-  }
-
-  restoreGameState(candidate);
+  // Use the same resume flow as the rest of the app to avoid state/UI divergence.
+  await tryResumeGame();
   return true;
 }
 
@@ -165,7 +139,9 @@ export async function initApp(mount: HTMLElement): Promise<void> {
   setNavigate(router.go);
 
   const shouldResumeBeforeStart =
-    isAuthed() && window.location.pathname === ROUTES.Practice;
+    isAuthed() &&
+    window.location.pathname === ROUTES.Practice &&
+    !restoredPracticeState;
 
   if (shouldResumeBeforeStart) {
     await tryResumeGame();
