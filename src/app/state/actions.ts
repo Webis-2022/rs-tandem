@@ -38,6 +38,21 @@ export function toggleTheme(): void {
   setTheme(prev.ui.theme === 'light' ? 'dark' : 'light');
 }
 
+export function setLibraryDifficulty(difficulty: Difficulty): void {
+  const prev = getState();
+
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        selectedLibraryDifficulty: difficulty,
+      },
+    },
+    { saveGameToStorage: false }
+  );
+}
+
 export function setActiveRoute(route: RoutePath): void {
   const prev = getState();
 

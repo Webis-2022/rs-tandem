@@ -8,9 +8,13 @@ const initialUIState: UIState = {
   activeRoute: ROUTES.Landing,
   isNavOpen: false,
   onboardingSeen: false,
+  selectedLibraryDifficulty: 'easy',
 };
 
-function loadUIState(): Pick<UIState, 'theme' | 'onboardingSeen'> {
+function loadUIState(): Pick<
+  UIState,
+  'theme' | 'onboardingSeen' | 'selectedLibraryDifficulty'
+> {
   try {
     const persisted = localStorage.getItem(UI_STORAGE_KEY);
 
@@ -18,6 +22,7 @@ function loadUIState(): Pick<UIState, 'theme' | 'onboardingSeen'> {
       return {
         theme: initialUIState.theme,
         onboardingSeen: initialUIState.onboardingSeen,
+        selectedLibraryDifficulty: initialUIState.selectedLibraryDifficulty,
       };
     }
 
@@ -26,12 +31,18 @@ function loadUIState(): Pick<UIState, 'theme' | 'onboardingSeen'> {
     return {
       theme: parsed.theme === 'dark' ? 'dark' : 'light',
       onboardingSeen: Boolean(parsed.onboardingSeen),
+      selectedLibraryDifficulty:
+        parsed.selectedLibraryDifficulty === 'medium' ||
+        parsed.selectedLibraryDifficulty === 'hard'
+          ? parsed.selectedLibraryDifficulty
+          : 'easy',
     };
   } catch (error) {
     console.error('Failed to load UI state from localStorage:', error);
     return {
       theme: initialUIState.theme,
       onboardingSeen: initialUIState.onboardingSeen,
+      selectedLibraryDifficulty: initialUIState.selectedLibraryDifficulty,
     };
   }
 }
@@ -43,6 +54,7 @@ function saveUIState(ui: UIState): void {
       JSON.stringify({
         theme: ui.theme,
         onboardingSeen: ui.onboardingSeen,
+        selectedLibraryDifficulty: ui.selectedLibraryDifficulty,
       })
     );
   } catch (error) {
