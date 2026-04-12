@@ -270,7 +270,7 @@ describe('createLibraryView', () => {
     await waitFor(() => {
       expect(mocks.showModal).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'Continue previous game?',
+          title: 'Continue previous topic?',
           messageHtml: expect.stringContaining('HTML'),
         })
       );
@@ -341,8 +341,9 @@ describe('createLibraryView', () => {
 
     expect(mocks.showModal).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Start new game?',
+        title: 'Start new topic?',
         messageHtml: expect.stringContaining('HTML'),
+        confirmText: 'Start new topic',
       })
     );
   });
