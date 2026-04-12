@@ -25,7 +25,7 @@ import {
 
 type GameState = AppState['game'];
 
-function isSameActiveGame(
+function isSameActiveTopic(
   activeGame: GameState,
   topicId: number,
   difficulty: Difficulty
@@ -150,7 +150,7 @@ export const createLibraryView = (): HTMLElement => {
       const activeCandidate = await getResumeCandidate();
       const activeGame = activeCandidate?.game;
 
-      if (activeGame && isSameActiveGame(activeGame, topicId, difficulty)) {
+      if (activeGame && isSameActiveTopic(activeGame, topicId, difficulty)) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);
         const shouldContinue = await confirmContinueSameTopic(
           activeGame.difficulty,
@@ -191,7 +191,7 @@ export const createLibraryView = (): HTMLElement => {
       navigate(ROUTES.Practice, true);
     } catch (err: unknown) {
       status.textContent =
-        err instanceof Error ? err.message : 'Failed to start game.';
+        err instanceof Error ? err.message : 'Failed to start topic.';
       status.classList.add('is-error');
     } finally {
       if (shouldEnableButton) {
