@@ -55,35 +55,16 @@ export async function showNextQuestion() {
   if (!questionContainer) return;
 
   const gameMode = getState().game.gameMode;
-  if (gameMode === 'game') {
-    const currentMeta = getQuestionMeta('questions');
-    const currentQuestions = currentMeta.questions;
-    const currentQuestionNum = currentMeta.questionNum;
+  const source = gameMode === 'game' ? 'questions' : 'wrongAnswers';
+  const currentMeta = getQuestionMeta(source);
+  const currentQuestions = currentMeta.questions;
+  const currentQuestionNum = currentMeta.questionNum;
 
-    if (
-      currentQuestionNum < 0 ||
-      currentQuestionNum >= currentQuestions.length
-    ) {
-      return;
-    }
-
-    question = currentQuestions[currentQuestionNum];
-    questionContainer.textContent = question.question;
-    createAnswers(question);
-  } else {
-    const currentMeta = getQuestionMeta('wrongAnswers');
-    const currentQuestions = currentMeta.questions;
-    const currentQuestionNum = currentMeta.questionNum;
-
-    if (
-      currentQuestionNum < 0 ||
-      currentQuestionNum >= currentQuestions.length
-    ) {
-      return;
-    }
-
-    question = currentQuestions[currentQuestionNum];
-    questionContainer.textContent = question.question;
-    createAnswers(question);
+  if (currentQuestionNum < 0 || currentQuestionNum >= currentQuestions.length) {
+    return;
   }
+
+  question = currentQuestions[currentQuestionNum];
+  questionContainer.textContent = question.question;
+  createAnswers(question);
 }
