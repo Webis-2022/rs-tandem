@@ -66,15 +66,31 @@ export const createDashboardView = (): HTMLElement => {
     };
 
     const handleDifficultySelector = async (e: Event) => {
+      gameSelector.value = '';
       const target = e.target as HTMLOptionElement;
       const difficulty = target?.value;
       const gameResults: GameResult[] = await getGameResult({
         gameId: undefined,
         difficulty,
       });
+
       const gameIds = gameResults.map((game) => game.game_id);
       const uniqueIds = Array.from(new Set(gameIds));
       const games: GameData[] = (await getGames({ gameIds: uniqueIds })) || [];
+      const statsTable = document.querySelector('.stats-table');
+      const badgeImage = document.querySelector('.badge-img');
+      const panelContent: HTMLDivElement | null =
+        document.querySelector('.panel-content');
+      if (!panelContent) return;
+      statsTable?.remove();
+      badgeImage?.remove();
+      panelContent.style.display = 'flex';
+      if (gameResults.length === 0 && games.length === 0) {
+        panelContent.textContent =
+          'There are no results for this difficulty level';
+      } else {
+        panelContent.textContent = 'Please select a game to see your results';
+      }
       const createOptionDataObj = (games: GameData[]) => {
         const obj: { [key: string]: string } = {};
         games.forEach((game, index) => {
@@ -94,7 +110,7 @@ export const createDashboardView = (): HTMLElement => {
     difficultySelector.addEventListener('change', handleDifficultySelector);
 
     const handleGameChange = async (e: Event) => {
-      const badgesContainer = document.querySelector('.badges-container');
+      const badgeContainer = document.querySelector('.badge-container');
       const badge = createEl('img', {
         className: 'badge-img',
       }) as HTMLImageElement;
@@ -108,7 +124,7 @@ export const createDashboardView = (): HTMLElement => {
       const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
 
       badge.src = games[0].achievement;
-      badgesContainer?.replaceChildren(badge);
+      badgeContainer?.replaceChildren(badge);
       const table = createStatsTable(gameResult);
       const panelContent: HTMLDivElement | null =
         document.querySelector('.panel-content');
