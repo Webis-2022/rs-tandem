@@ -22,12 +22,12 @@
   cursor: pointer;
 }
 
-.badges-container {
+.badge-container {
   height: fit-content;
   display: inline-block;
 }
 
-.achievements {
+.achievement {
   @include m.flex(row, center, center);
   gap: v.$spacing-md;
 }
