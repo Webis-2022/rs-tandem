@@ -24,8 +24,8 @@ type FooterAuthor = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Login', route: ROUTES.Login, visibility: 'guest' },
-  { label: 'Play the game', route: ROUTES.Library, visibility: 'authed' },
-  { label: 'Score Results', route: ROUTES.Dashboard, visibility: 'authed' },
+  { label: 'Start Practice', route: ROUTES.Library, visibility: 'authed' },
+  { label: 'Results', route: ROUTES.Dashboard, visibility: 'authed' },
   { label: 'Logout', route: ROUTES.Logout, visibility: 'authed' },
 ];
 
