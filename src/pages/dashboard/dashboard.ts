@@ -9,6 +9,7 @@ import type { GameData, GameResult } from '../../types';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
+  let difficulty: string;
 
   const status = createEl('div', { className: 'dashboard-status' });
 
@@ -66,8 +67,9 @@ export const createDashboardView = (): HTMLElement => {
     };
 
     const handleDifficultySelector = async (e: Event) => {
+      gameSelector.value = '';
       const target = e.target as HTMLOptionElement;
-      const difficulty = target?.value;
+      difficulty = target?.value;
       const gameResults: GameResult[] = await getGameResult({
         gameId: undefined,
         difficulty,
@@ -103,10 +105,9 @@ export const createDashboardView = (): HTMLElement => {
       const gameId = Number(target?.value);
       const gameResult: GameResult[] = await getGameResult({
         gameId,
-        difficulty: undefined,
+        difficulty,
       });
       const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
-
       badge.src = games[0].achievement;
       badgesContainer?.replaceChildren(badge);
       const table = createStatsTable(gameResult);
