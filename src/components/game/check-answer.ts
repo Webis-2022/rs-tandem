@@ -18,6 +18,7 @@ import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
 import { handleGameCompletion } from './handle-game-completion';
 import { getState } from '../../app/state/store';
+import { finishCurrentGame } from '../../services/finish-current-game';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
@@ -26,7 +27,6 @@ export async function checkAnswer(gameMode: string) {
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
     const currentQuestion = questionMeta.questions[questionMeta.questionNum];
-    questionsLength = questionMeta.questions.length;
     const [correctAnswer, selectedValue, isCorrect] =
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
@@ -68,6 +68,7 @@ export async function checkAnswer(gameMode: string) {
         });
         handleRoundEnd(questionsLength);
         await handleGameCompletion();
+        await finishCurrentGame();
         resetWrongAnswersCounter();
         return;
       }
@@ -86,6 +87,7 @@ export async function checkAnswer(gameMode: string) {
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
       await handleGameCompletion();
+      await finishCurrentGame();
       resetWrongAnswersCounter();
       return;
     }
