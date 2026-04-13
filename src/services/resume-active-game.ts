@@ -399,6 +399,28 @@ async function restoreResumedGame(
 }
 
 /**
+ * Silently restores an active game without showing a modal.
+ * Used on /practice page refresh: the user is already on the correct route,
+ * so navigate() must not be called.
+ * @returns true if a game was found and restored.
+ */
+export async function silentlyRestoreActiveGame(): Promise<boolean> {
+  try {
+    const candidate = await getResumeCandidate();
+
+    if (!candidate) {
+      return false;
+    }
+
+    await restoreResumedGame(candidate.session);
+    return true;
+  } catch (error) {
+    console.error('Silent game restore failed:', error);
+    return false;
+  }
+}
+
+/**
  * Запускает весь сценарий продолжения игры.
  */
 export async function runResumeGameFlow(): Promise<ResumeFlowResult> {

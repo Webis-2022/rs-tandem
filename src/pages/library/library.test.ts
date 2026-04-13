@@ -242,7 +242,62 @@ describe('createLibraryView', () => {
     });
   });
 
-  test('shows confirmation modal and restores same active game after confirmation', async () => {
+  test('shows continue button and restores same active topic without confirmation', async () => {
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+
+    mocks.getState.mockReturnValue({
+      user: null,
+      game: {
+        topicId: 0,
+        difficulty: '',
+        round: 0,
+        score: 0,
+        usedHints: [],
+        wrongAnswers: [],
+        questions: [],
+      },
+      topics: [{ id: 1, name: 'HTML' }],
+      isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'easy',
+      },
+    });
+
+    mocks.getResumeCandidate.mockResolvedValue({
+      game: resumeGameMock,
+      source: 'local',
+    });
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Continue?' })
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continue?' }));
+
+    await waitFor(() => {
+      expect(mocks.restoreGameState).toHaveBeenCalledWith(
+        expect.objectContaining({
+          topicId: 1,
+          difficulty: 'easy',
+        })
+      );
+
+      expect(mocks.showModal).not.toHaveBeenCalled();
+      expect(mocks.startNewGame).not.toHaveBeenCalled();
+      expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
+    });
+  });
+
+  test('shows restart confirmation when starting same unfinished topic', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
 
     mocks.getState.mockReturnValue({
@@ -286,18 +341,16 @@ describe('createLibraryView', () => {
     await waitFor(() => {
       expect(mocks.showModal).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'Continue previous topic?',
+          title: 'Start topic from the beginning?',
           messageHtml: expect.stringContaining('HTML'),
         })
       );
 
-      expect(mocks.restoreGameState).toHaveBeenCalledWith(
-        expect.objectContaining({
-          topicId: 1,
-          difficulty: 'easy',
-        })
-      );
-      expect(mocks.startNewGame).not.toHaveBeenCalled();
+      expect(mocks.startNewGame).toHaveBeenCalledWith({
+        topicId: 1,
+        difficulty: 'easy',
+      });
+      expect(mocks.restoreGameState).not.toHaveBeenCalled();
       expect(mocks.navigate).toHaveBeenCalledWith(ROUTES.Practice, true);
     });
   });
