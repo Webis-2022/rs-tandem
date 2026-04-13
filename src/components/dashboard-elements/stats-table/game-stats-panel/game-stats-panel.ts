@@ -14,15 +14,15 @@ export function gameStatsPanel() {
     className: 'username',
   });
   username.textContent = `User: ${state.user?.email ?? ''}`;
-  const achievements = createEl('div', {
-    className: 'achievements',
+  const achievement = createEl('div', {
+    className: 'achievement',
   });
-  const achievementsText = createEl('span', { className: 'achievements-text' });
-  const badgesContainer = createEl('span', { className: 'badges-container' });
-  achievementsText.textContent = 'Achievement';
-  achievements.append(achievementsText, badgesContainer);
+  const achievementText = createEl('span', { className: 'achievement-text' });
+  const badgeContainer = createEl('span', { className: 'badge-container' });
+  achievementText.textContent = 'Achievement';
+  achievement.append(achievementText, badgeContainer);
 
-  panelTopBar.append(username, achievements);
+  panelTopBar.append(username, achievement);
   const panelContent = createEl('div', {
     className: 'panel-content',
   });

@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   startNewGame: vi.fn(),
   saveTopics: vi.fn(),
   restoreGameState: vi.fn(),
+  setLibraryDifficulty: vi.fn(),
   getState: vi.fn(),
   fetchCompletedTopicIds: vi.fn(),
   showModal: vi.fn(),
@@ -33,6 +34,7 @@ vi.mock('../../app/state/actions', () => ({
   startNewGame: mocks.startNewGame,
   saveTopics: mocks.saveTopics,
   restoreGameState: mocks.restoreGameState,
+  setLibraryDifficulty: mocks.setLibraryDifficulty,
 }));
 
 vi.mock('../../components/ui/modal/modal', () => ({
@@ -47,6 +49,16 @@ import { createLibraryView } from './library';
 import { ROUTES } from '../../types';
 
 describe('createLibraryView', () => {
+  const resumeGameMock = {
+    topicId: 1,
+    difficulty: 'easy' as const,
+    round: 2,
+    score: 0,
+    usedHints: [],
+    wrongAnswers: [],
+    questions: [{ id: 1 }],
+  };
+
   beforeEach(() => {
     document.body.innerHTML = '';
     vi.clearAllMocks();
@@ -64,6 +76,13 @@ describe('createLibraryView', () => {
       },
       topics: [],
       isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'easy',
+      },
     });
 
     mocks.fetchCompletedTopicIds.mockResolvedValue([]);
@@ -239,16 +258,18 @@ describe('createLibraryView', () => {
       },
       topics: [{ id: 1, name: 'HTML' }],
       isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'easy',
+      },
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: true });
@@ -265,7 +286,7 @@ describe('createLibraryView', () => {
     await waitFor(() => {
       expect(mocks.showModal).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'Continue previous game?',
+          title: 'Continue previous topic?',
           messageHtml: expect.stringContaining('HTML'),
         })
       );
@@ -298,16 +319,18 @@ describe('createLibraryView', () => {
       },
       topics: [{ id: 1, name: 'HTML' }],
       isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'easy',
+      },
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: true });
@@ -341,8 +364,9 @@ describe('createLibraryView', () => {
 
     expect(mocks.showModal).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Start new game?',
+        title: 'Start new topic?',
         messageHtml: expect.stringContaining('HTML'),
+        confirmText: 'Start new topic',
       })
     );
   });
@@ -363,16 +387,18 @@ describe('createLibraryView', () => {
       },
       topics: [{ id: 1, name: 'HTML' }],
       isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'easy',
+      },
     });
 
     mocks.getResumeCandidate.mockResolvedValue({
-      topicId: 1,
-      difficulty: 'easy',
-      round: 2,
-      score: 0,
-      usedHints: [],
-      wrongAnswers: [],
-      questions: [{ id: 1 }],
+      game: resumeGameMock,
+      source: 'local',
     });
 
     mocks.showModal.mockResolvedValue({ confirmed: false });
@@ -420,6 +446,42 @@ describe('createLibraryView', () => {
     await waitFor(() => {
       expect(screen.getByText('Start failed')).toBeInTheDocument();
       expect(startBtn).not.toBeDisabled();
+    });
+  });
+
+  test('restores selected library difficulty after refresh', async () => {
+    mocks.getState.mockReturnValue({
+      user: null,
+      game: {
+        topicId: 0,
+        difficulty: null,
+        round: 0,
+        score: 0,
+        usedHints: [],
+        wrongAnswers: [],
+        questions: [],
+      },
+      topics: [],
+      isLoading: false,
+      ui: {
+        theme: 'light',
+        activeRoute: ROUTES.Library,
+        isNavOpen: false,
+        onboardingSeen: false,
+        selectedLibraryDifficulty: 'medium',
+      },
+    });
+
+    mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
+
+    const view = createLibraryView();
+    document.body.append(view);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Medium' })).toHaveClass(
+        'is-active'
+      );
+      expect(mocks.fetchCompletedTopicIds).toHaveBeenCalledWith('medium');
     });
   });
 });
