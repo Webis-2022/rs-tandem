@@ -356,7 +356,7 @@ export async function silentlyRestoreActiveGame(): Promise<boolean> {
       return false;
     }
 
-    await restoreResumedGame(game);
+    await restoreResumedGame(game.game);
     return true;
   } catch (error) {
     console.error('Silent game restore failed:', error);
