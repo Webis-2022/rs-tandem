@@ -280,6 +280,14 @@ async function discardResumeCandidates(
 }
 
 /**
+ * Очищает активную сессию во всех источниках:
+ * и локально, и на сервере.
+ */
+async function discardAllActiveSessions(): Promise<void> {
+  await discardResumeCandidates(['local', 'server']);
+}
+
+/**
  * Спрашивает пользователя, хочет ли он продолжить игру.
  */
 export async function promptResumeGame(game: GameState): Promise<boolean> {
@@ -340,7 +348,7 @@ export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResul
       return 'continued';
     }
 
-    await discardResumeCandidates([...staleSources, candidate.source]);
+    await discardAllActiveSessions();
     return 'start-new';
   } catch (error) {
     console.error('Login game choice flow failed:', error);

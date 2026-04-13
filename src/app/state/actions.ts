@@ -11,7 +11,7 @@ import type {
 } from '../../types';
 import { getState, initialGameState, setState } from './store';
 import { syncActiveGameToServer } from '../../services/sync-active-game';
-import { clearActiveGame } from '../../services/storage-service';
+import { clearActiveSession } from '../../services/storage-service';
 
 export function applyTheme(theme: UITheme): void {
   document.documentElement.dataset.theme = theme;
@@ -376,12 +376,13 @@ export function resetGameState() {
   setState(
     {
       ...prev,
+      gameId: null,
       game: { ...initialGameState },
     },
     { saveGameToStorage: false }
   );
 
-  clearActiveGame();
+  clearActiveSession();
 }
 
 export function resetUsedHints() {
