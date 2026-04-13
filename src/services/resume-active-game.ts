@@ -4,17 +4,18 @@ import {
   type AppState,
   type Difficulty,
   type HintCounter,
+  type PersistedActiveSession,
 } from '../types';
 import { navigate } from '../app/navigation';
-import { restoreGameState, saveTopics } from '../app/state/actions';
 import { getState } from '../app/state/store';
 import * as authService from './auth-service';
-import { getActiveGame, clearActiveGame } from './storage-service';
-import { getActiveGameByUser } from './api/active-games';
 import { getTopics } from './api/get-topics';
 import { removeActiveGameFromServer } from './sync-active-game';
 import { showModal } from '../components/ui/modal/modal';
 import { fetchCompletedTopicIds } from './api/fetch-completed-topic-ids';
+import { clearActiveSession, getActiveSession } from './storage-service';
+import { getActiveSessionByUser } from './api/active-games';
+import { restoreActiveSession, saveTopics } from '../app/state/actions';
 
 type GameState = AppState['game'];
 
@@ -23,7 +24,7 @@ export type ResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
 type ResumeCandidateSource = 'local' | 'server';
 
 type ResumeCandidate = {
-  game: GameState;
+  session: PersistedActiveSession;
   source: ResumeCandidateSource;
 };
 
@@ -115,18 +116,16 @@ async function isCompletedResumeCandidate(game: GameState): Promise<boolean> {
  * и возвращает результат в виде статуса resume candidate.
  */
 async function checkLocalResumeCandidate(): Promise<ResumeLookupResult> {
-  const localGame = getActiveGame();
-
-  if (!localGame) {
+  const localSession = getActiveSession();
+  if (!localSession) {
     return { status: 'missing' };
   }
 
-  if (!hasRequiredResumeData(localGame)) {
+  if (!hasRequiredResumeData(localSession.game)) {
     return { status: 'invalid', source: 'local' };
   }
 
-  const isCompleted = await isCompletedResumeCandidate(localGame);
-
+  const isCompleted = await isCompletedResumeCandidate(localSession.game);
   if (isCompleted) {
     return { status: 'completed', source: 'local' };
   }
@@ -134,7 +133,7 @@ async function checkLocalResumeCandidate(): Promise<ResumeLookupResult> {
   return {
     status: 'ready',
     candidate: {
-      game: localGame,
+      session: localSession,
       source: 'local',
     },
   };
@@ -148,18 +147,16 @@ async function checkServerResumeCandidate(
   userId: string
 ): Promise<ResumeLookupResult> {
   try {
-    const serverGame = await getActiveGameByUser(userId);
-
-    if (!serverGame) {
+    const serverSession = await getActiveSessionByUser(userId);
+    if (!serverSession) {
       return { status: 'missing' };
     }
 
-    if (!hasRequiredResumeData(serverGame)) {
+    if (!hasRequiredResumeData(serverSession.game)) {
       return { status: 'invalid', source: 'server' };
     }
 
-    const isCompleted = await isCompletedResumeCandidate(serverGame);
-
+    const isCompleted = await isCompletedResumeCandidate(serverSession.game);
     if (isCompleted) {
       return { status: 'completed', source: 'server' };
     }
@@ -167,7 +164,7 @@ async function checkServerResumeCandidate(
     return {
       status: 'ready',
       candidate: {
-        game: serverGame,
+        session: serverSession,
         source: 'server',
       },
     };
@@ -236,10 +233,10 @@ export async function getResumeCandidate(): Promise<ResumeCandidate | null> {
 }
 
 /**
- * Удаляет сохраненную игру локально.
+ * Удаляет сохраненную активную сессию локально.
  */
 function discardLocalResumeCandidate(): void {
-  clearActiveGame();
+  clearActiveSession();
 }
 
 /**
@@ -335,11 +332,13 @@ async function ensureTopicsLoaded(): Promise<void> {
 }
 
 /**
- * Восстанавливает игру и при необходимости загружает topics.
+ * Восстанавливает активную сессию и при необходимости загружает topics.
  */
-async function restoreResumedGame(game: GameState): Promise<void> {
+async function restoreResumedGame(
+  session: PersistedActiveSession
+): Promise<void> {
   await ensureTopicsLoaded();
-  restoreGameState(game);
+  restoreActiveSession(session);
 }
 
 /**
@@ -354,11 +353,11 @@ export async function runResumeGameFlow(): Promise<ResumeFlowResult> {
       return 'no-game';
     }
 
-    const shouldResume = await promptResumeGame(candidate.game);
+    const shouldResume = await promptResumeGame(candidate.session.game);
 
     if (shouldResume) {
       await discardResumeCandidates(staleSources);
-      await restoreResumedGame(candidate.game);
+      await restoreResumedGame(candidate.session);
       navigate(ROUTES.Practice, true);
       return 'resumed';
     }

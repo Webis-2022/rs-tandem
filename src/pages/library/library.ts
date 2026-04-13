@@ -151,7 +151,7 @@ export const createLibraryView = (): HTMLElement => {
 
     try {
       const activeCandidate = await getResumeCandidate();
-      const activeGame = activeCandidate?.game;
+      const activeGame = activeCandidate?.session.game;
 
       if (activeGame && isSameActiveTopic(activeGame, topicId, difficulty)) {
         const activeTopicTitle = getTopicTitleById(activeGame.topicId);

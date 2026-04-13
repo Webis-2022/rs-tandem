@@ -1,5 +1,6 @@
 import type {
   AppState,
+  PersistedActiveSession,
   Difficulty,
   HintCounter,
   Question,
@@ -354,6 +355,19 @@ export function restoreGameState(game: AppState['game']) {
     ...prev,
     game,
   });
+}
+
+export function restoreActiveSession(session: PersistedActiveSession): void {
+  const prev = getState();
+
+  setState(
+    {
+      ...prev,
+      gameId: session.gameId,
+      game: session.game,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function resetGameState() {
