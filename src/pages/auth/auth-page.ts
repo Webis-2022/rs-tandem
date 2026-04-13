@@ -8,7 +8,7 @@ import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/auth-service';
 import { saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runResumeGameFlow } from '../../services/resume-active-game';
+import { runLoginGameChoiceFlow } from '../../services/resume-active-game';
 
 type Field = {
   root: HTMLElement;
@@ -238,13 +238,19 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const user = await authService.login(email, password);
       saveUserData(user);
 
-      const resumeResult = await runResumeGameFlow();
+      const loginChoiceResult = await runLoginGameChoiceFlow();
 
-      if (resumeResult === 'resumed') {
+      if (loginChoiceResult === 'continued') {
         return;
       }
 
-      await createNewGame(user.id);
+      if (
+        loginChoiceResult === 'no-game' ||
+        loginChoiceResult === 'start-new'
+      ) {
+        await createNewGame(user.id);
+        navigate(ROUTES.Dashboard, true);
+      }
 
       // Navigate to dashboard on success
       navigate(ROUTES.Dashboard, true);

@@ -300,6 +300,55 @@ export async function promptResumeGame(game: GameState): Promise<boolean> {
 }
 
 /**
+ * Спрашивает пользователя при логине,
+ * хочет ли он продолжить текущую игру или начать новую.
+ */
+export async function promptLoginGameChoice(): Promise<boolean> {
+  const result = await showModal({
+    title: 'Continue current game?',
+    messageHtml:
+      '<p>You already have a saved game. Do you want to continue it or start a new one?</p>',
+    showConfirm: true,
+    confirmText: 'Continue',
+    cancelText: 'Start new',
+  });
+
+  return result.confirmed;
+}
+
+export type LoginGameChoiceFlowResult = 'no-game' | 'continued' | 'start-new';
+
+/**
+ * Запускает сценарий выбора при логине:
+ * продолжить текущую игру или начать новую.
+ */
+export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResult> {
+  try {
+    const { candidate, staleSources } = await resolveResumeCandidate();
+
+    if (!candidate) {
+      await discardResumeCandidates(staleSources);
+      return 'no-game';
+    }
+
+    const shouldContinue = await promptLoginGameChoice();
+
+    if (shouldContinue) {
+      await discardResumeCandidates(staleSources);
+      await restoreResumedGame(candidate.session);
+      navigate(ROUTES.Practice, true);
+      return 'continued';
+    }
+
+    await discardResumeCandidates([...staleSources, candidate.source]);
+    return 'start-new';
+  } catch (error) {
+    console.error('Login game choice flow failed:', error);
+    return 'no-game';
+  }
+}
+
+/**
  * Загружает topics, если их еще нет в store.
  */
 let topicsLoadingPromise: Promise<void> | null = null;
