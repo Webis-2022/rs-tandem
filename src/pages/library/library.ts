@@ -12,6 +12,7 @@ import {
   restoreGameState,
   saveTopics,
   startNewGame,
+  setLibraryDifficulty,
 } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
@@ -129,7 +130,7 @@ export const createLibraryView = (): HTMLElement => {
     className: 'library-subtitle',
   });
 
-  let difficulty: Difficulty = getState().game.difficulty || 'easy';
+  let difficulty: Difficulty = getState().ui.selectedLibraryDifficulty;
 
   const difficultyRow = createEl('div', { className: 'library-difficulty' });
 
@@ -140,7 +141,9 @@ export const createLibraryView = (): HTMLElement => {
 
   const handleDifficultyChange = (key: Difficulty) => {
     if (difficulty === key) return;
+
     difficulty = key;
+    setLibraryDifficulty(key);
     void updateTopicsList();
   };
 

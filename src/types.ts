@@ -52,6 +52,7 @@ export type UIState = {
   activeRoute: RoutePath;
   isNavOpen: boolean;
   onboardingSeen: boolean;
+  selectedLibraryDifficulty: Difficulty;
 };
 
 type GameState = {

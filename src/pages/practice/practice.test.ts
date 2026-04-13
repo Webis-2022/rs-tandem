@@ -45,6 +45,7 @@ const createMockState = (
     activeRoute: '/',
     isNavOpen: false,
     onboardingSeen: true,
+    selectedLibraryDifficulty: 'easy',
   },
 });
 

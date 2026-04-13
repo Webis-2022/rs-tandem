@@ -70,6 +70,7 @@ const createMockState = (
     activeRoute: '/' as const,
     isNavOpen: false,
     onboardingSeen: true,
+    selectedLibraryDifficulty: 'easy',
   },
 });
 
