@@ -244,15 +244,13 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
         return;
       }
 
-      if (
-        loginChoiceResult === 'no-game' ||
-        loginChoiceResult === 'start-new'
-      ) {
+      if (loginChoiceResult === 'start-new') {
         await createNewGame(user.id);
         navigate(ROUTES.Dashboard, true);
+        return;
       }
 
-      // Navigate to dashboard on success
+      // no-game: просто пускаем пользователя дальше без создания новой игры
       navigate(ROUTES.Dashboard, true);
     } catch (error) {
       const authError = error as AuthError;

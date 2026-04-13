@@ -23,6 +23,8 @@ import {
   confirmContinueSameTopic,
   confirmReplaceActiveTopic,
 } from './library-resume-modals.ts';
+import { createNewGame } from '../../services/api/create-new-game.ts';
+import { authService } from '../../services/auth-service.ts';
 
 type GameState = AppState['game'];
 
@@ -183,6 +185,16 @@ export const createLibraryView = (): HTMLElement => {
       }
 
       status.textContent = 'Starting practice...';
+
+      if (!getState().gameId) {
+        const user = authService.getCurrentUser();
+
+        if (!user) {
+          throw new Error('User not found.');
+        }
+
+        await createNewGame(user.id);
+      }
 
       await startNewGame({
         topicId,
