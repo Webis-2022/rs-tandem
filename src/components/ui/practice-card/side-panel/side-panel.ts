@@ -6,7 +6,12 @@ import { createEl } from '../../../../shared/dom';
 import { createDivider } from '../divider/divider';
 import './side-panel.scss';
 
-export function createSidePanel() {
+export function createSidePanel(container: HTMLElement, card: HTMLElement) {
+  const existingSidePanel = document.querySelector('.side-panel');
+  if (existingSidePanel) {
+    existingSidePanel.remove();
+  }
+
   const sidePanel = createEl('div', {
     text: '',
     className: 'side-panel',
@@ -15,17 +20,21 @@ export function createSidePanel() {
     text: 'X',
     className: 'close-btn',
   });
+  closeButton.setAttribute('aria-label', 'Close explanation panel');
   closeButton.addEventListener('click', closeSidePanel);
-  const title = createEl('h1', { className: 'side-panel-title' });
+  const title = createEl('h2', { className: 'side-panel-title' });
   title.textContent = 'Explanation';
   const divider = createDivider();
-  const textContainer = createEl('div', { className: 'text-container' });
+  const textContainer = createEl('div', { className: 'side-panel-text' });
   sidePanel.append(closeButton, title, divider, textContainer);
-  sidePanel.classList.add('side-panel');
-  const sectionPage = document.querySelector('.page');
-  const card: HTMLDivElement | null = document.querySelector('.card');
-  const cardHeight = card?.style.height;
-  sidePanel.style.height = cardHeight as string;
-  sectionPage?.append(sidePanel);
+  sidePanel.classList.add('closed');
+  sidePanel.setAttribute('aria-hidden', 'true');
+
+  const cardHeight = card.style.height;
+  if (cardHeight) {
+    sidePanel.style.height = cardHeight;
+  }
+
+  container.append(sidePanel);
   initSidePanelClose();
 }

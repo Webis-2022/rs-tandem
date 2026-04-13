@@ -1,12 +1,11 @@
-import { supabase } from './supabaseClient';
+import { supabase } from './supabase-client';
 import type {
   User,
   AuthSession,
   AuthError,
   AuthChangeCallback,
 } from '../types';
-import { state, notify } from '../app/state/store';
-import { createNewGame } from './api/create-new-game';
+import { getState, setState } from '../app/state/store';
 
 // Storage keys for localStorage persistence
 const STORAGE_KEYS = {
@@ -154,8 +153,11 @@ function createSessionFromSupabase(supabaseSession: {
  */
 function persistSession(session: AuthSession): void {
   saveSession(session);
-  state.user = session.user;
-  notify();
+  const prev = getState();
+  setState({
+    ...prev,
+    user: session.user,
+  });
   scheduleTokenRefresh(session.expires_at);
 }
 
@@ -206,7 +208,6 @@ export async function login(email: string, password: string): Promise<User> {
 
     const session = createSessionFromSupabase(data.session);
     persistSession(session);
-    createNewGame();
 
     return session.user;
   } catch (error) {
@@ -233,8 +234,11 @@ export async function logout(): Promise<void> {
   } finally {
     // Always clear local state, even if Supabase call fails
     clearSession();
-    state.user = null;
-    notify();
+    const prev = getState();
+    setState({
+      ...prev,
+      user: null,
+    });
   }
 }
 
@@ -290,7 +294,8 @@ export async function validateToken(): Promise<boolean> {
  */
 export function getCurrentUser(): User | null {
   // First check global state
-  if (state.user) return state.user;
+  const currentState = getState();
+  if (currentState.user) return currentState.user;
 
   // Try to restore from localStorage
   try {
@@ -298,7 +303,11 @@ export function getCurrentUser(): User | null {
     if (!userData) return null;
 
     const user = JSON.parse(userData) as User;
-    state.user = user;
+    const prev = getState();
+    setState({
+      ...prev,
+      user,
+    });
     return user;
   } catch (error) {
     console.error('Failed to get current user:', error);
@@ -320,8 +329,11 @@ export function onAuthChange(callback: AuthChangeCallback): () => void {
       callback(authSession);
     } else {
       clearSession();
-      state.user = null;
-      notify();
+      const prev = getState();
+      setState({
+        ...prev,
+        user: null,
+      });
       callback(null);
     }
   });

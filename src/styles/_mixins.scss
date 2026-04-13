@@ -27,3 +27,19 @@
 @mixin button-shadow {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+@mixin pulse($duration: 1s, $timing: ease-in-out, $count: infinite) {
+  animation: pulse-keyframes $duration $timing $count alternate;
+
+  @keyframes pulse-keyframes {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}

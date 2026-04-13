@@ -2,6 +2,7 @@ import {
   calculateScore,
   countWrongAnswers,
   markAsCorrected,
+  resetWrongAnswersCounter,
   saveWrongAnswers,
 } from '../../app/state/actions';
 import { highLightAnswer } from './high-light-answer';
@@ -15,30 +16,25 @@ import { checkIfCorrect } from './check-if-correct';
 import { isLastQuestion } from '../../utils/is-last-question';
 import { handleAnswerFeedback } from './handle-answer-feedback';
 import { handleRoundEnd } from './handle-round-end';
-import { isAllTopicsCompleted } from '../../utils/is-all-topics-completed';
-import { markTopicAsCompleted } from '../../services/api/mark-topic-as-completed';
-import { getProgress } from '../../services/api/get-progress';
-import { saveProgress } from '../../services/api/save-progress';
+import { handleGameCompletion } from './handle-game-completion';
+import { getState } from '../../app/state/store';
+import { finishCurrentGame } from '../../services/finish-current-game';
 
 export async function checkAnswer(gameMode: string) {
   let questionsLength;
+  const state = getState();
   let isLast;
   if (gameMode === 'game') {
     const questionMeta = getQuestionMeta('questions');
     const currentQuestion = questionMeta.questions[questionMeta.questionNum];
-    questionsLength = questionMeta.questions.length;
     const [correctAnswer, selectedValue, isCorrect] =
       checkIfCorrect(currentQuestion);
     const roundScore = isCorrect ? 1 : -1;
     isLast = isLastQuestion('questions');
+    const wrongAnswersCounter = state.game.wrongAnswersCounter;
 
-    if (isCorrect && isLast) {
-      await saveProgress();
-      await markTopicAsCompleted();
-      const isAllCompleted = await isAllTopicsCompleted();
-      if (isAllCompleted) {
-        getProgress();
-      }
+    if (isLast && isCorrect && wrongAnswersCounter === 0) {
+      await handleGameCompletion();
     }
 
     if (isCorrect) {
@@ -61,22 +57,28 @@ export async function checkAnswer(gameMode: string) {
     if (isCorrect) {
       isLast = isLastQuestion('wrongAnswers');
       questionsLength = questionMeta.questions.length;
-      handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
       markAsCorrected(currentQuestion);
+
       if (isLast) {
-        showModal({
+        await showModal({
           title: undefined,
           messageHtml: buildModalParagraphsHtml([winText]),
           showConfirm: false,
           confirmText: 'Ok',
         });
         handleRoundEnd(questionsLength);
+        await handleGameCompletion();
+        await finishCurrentGame();
+        resetWrongAnswersCounter();
+        return;
       }
+
+      handleAnswerFeedback(correctAnswer, './sound/correct.mp3', '#57fa2e');
     } else {
       playSound('./sound/incorrect.mp3');
       highLightAnswer(selectedValue, '#fa2525');
       await delay(1000);
-      showModal({
+      await showModal({
         title: undefined,
         messageHtml: buildModalParagraphsHtml([lossText]),
         showConfirm: false,
@@ -84,6 +86,9 @@ export async function checkAnswer(gameMode: string) {
       });
       questionsLength = getQuestionMeta('wrongAnswers').questions.length;
       handleRoundEnd(-questionsLength);
+      await handleGameCompletion();
+      await finishCurrentGame();
+      resetWrongAnswersCounter();
       return;
     }
     countWrongAnswers();

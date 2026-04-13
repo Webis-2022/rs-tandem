@@ -8,26 +8,37 @@ import { createSidePanel } from '../../components/ui/practice-card/side-panel/si
 import { getQuestions } from '../../services/api/get-questions';
 import { createEl } from '../../shared/dom';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
-import { syncActiveGameToServer } from '../../services/syncActiveGame';
+import { syncActiveGameToServer } from '../../services/sync-active-game';
 
 export function createPracticeView(): HTMLElement {
-  const section = createEl('section', { className: 'page' });
-  if (window.location.pathname === '/practice') {
-    section.style.flexDirection = 'row';
-  }
+  const section = createEl('section', { className: 'page practice-page' });
   section.append(createLoadingView('Loading questions...'));
+
   const state = getState();
   const topicId = state.game.topicId;
   const difficulty = state.game.difficulty;
+
+  if (!difficulty) {
+    section.replaceChildren(
+      createErrorMessage(
+        'No active game found. Please start a new game from the library.'
+      )
+    );
+    return section;
+  }
+
   getQuestions(topicId, difficulty)
     .then(async (questions) => {
+      if (!section.isConnected) return;
+
       saveTopicQuestions(questions);
       await syncActiveGameToServer();
+      if (!section.isConnected) return;
+
       const practiceCard = createPracticeCard();
-      section.append(practiceCard);
 
       section.replaceChildren(practiceCard);
-      createSidePanel();
+      createSidePanel(section, practiceCard);
       updateScore();
     })
     .catch((err: unknown) => {

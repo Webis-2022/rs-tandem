@@ -15,6 +15,7 @@ type CreateRouterOptions = {
   routes: RoutesMap;
   fallback: RoutePath;
   isAuthed: () => boolean | Promise<boolean>;
+  onRouteChange?: (route: RoutePath) => void;
 };
 
 export type Router = {
@@ -23,7 +24,7 @@ export type Router = {
 };
 
 export const createRouter = (options: CreateRouterOptions): Router => {
-  const { mount, routes, fallback, isAuthed } = options;
+  const { mount, routes, fallback, isAuthed, onRouteChange } = options;
 
   // Возвращает конфиг маршрута для текущего пути или fallback-маршрута
   const resolve = (path: RoutePath): RouteConfig => {
@@ -33,6 +34,10 @@ export const createRouter = (options: CreateRouterOptions): Router => {
   };
 
   const render = async (): Promise<void> => {
+    const layoutHeader = document.querySelector('.layout-header');
+    const layoutFooter = document.querySelector('.layout-footer');
+    layoutHeader?.classList.remove('is-hidden');
+    layoutFooter?.classList.remove('is-hidden');
     // Показываем loading state до проверки guard-ов и рендера страницы
     mount.replaceChildren(createLoadingView());
 
@@ -61,6 +66,7 @@ export const createRouter = (options: CreateRouterOptions): Router => {
     }
 
     mount.replaceChildren(route.createView());
+    onRouteChange?.(path);
     window.scrollTo(0, 0);
   };
 

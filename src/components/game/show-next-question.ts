@@ -5,7 +5,8 @@ import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
 import { createAnswers } from '../ui/practice-card/answers/answers';
 import { toggleButtonsStatement } from './toggle-buttons-statement';
-import { finishCurrentGame } from '../../services/finishCurrentGame';
+import { finishCurrentGame } from '../../services/finish-current-game';
+import { handleGameCompletion } from './handle-game-completion';
 
 export async function showNextQuestion() {
   const title = 'Would you like to play super game?';
@@ -20,7 +21,7 @@ export async function showNextQuestion() {
   const wrongAnswers = wrongAnswerMeta.questions;
   const round = questionMeta.round;
   const questionNum = questionMeta.questionNum;
-  let question = questions[questionMeta.questionNum];
+  let question = questions[questionNum];
 
   if (round > questions.length && wrongAnswers.length === 0) {
     await finishCurrentGame();
@@ -40,26 +41,30 @@ export async function showNextQuestion() {
     if (result.confirmed) {
       changeGameMode('super-game');
       resetRound();
-      showNextQuestion();
+      await showNextQuestion();
+      return;
     } else {
+      await handleGameCompletion();
       toggleButtonsStatement('allButtons');
       await finishCurrentGame();
       return;
     }
   }
+
   const questionContainer = document.querySelector('.question-container');
   if (!questionContainer) return;
+
   const gameMode = getState().game.gameMode;
-  if (gameMode === 'game') {
-    if (questionNum < questions.length) {
-      questionContainer.textContent = questions[questionNum].question;
-      createAnswers(question);
-    }
-  } else {
-    if (questionNum < wrongAnswers.length) {
-      question = wrongAnswers[questionNum];
-      questionContainer.textContent = question.question;
-      createAnswers(question);
-    }
+  const source = gameMode === 'game' ? 'questions' : 'wrongAnswers';
+  const currentMeta = getQuestionMeta(source);
+  const currentQuestions = currentMeta.questions;
+  const currentQuestionNum = currentMeta.questionNum;
+
+  if (currentQuestionNum < 0 || currentQuestionNum >= currentQuestions.length) {
+    return;
   }
+
+  question = currentQuestions[currentQuestionNum];
+  questionContainer.textContent = question.question;
+  createAnswers(question);
 }

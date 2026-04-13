@@ -1,8 +1,8 @@
 import { navigate } from '../../app/navigation';
 import { ROUTES } from '../../types';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 import { createEl } from '../../shared/dom';
-import { removeUserData } from '../../app/state/actions';
+import { removeUserData, resetGameState } from '../../app/state/actions';
 
 /**
  * Logout page component
@@ -17,6 +17,7 @@ export const createLogoutView = (): HTMLElement => {
     try {
       await authService.logout();
       removeUserData();
+      resetGameState();
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {

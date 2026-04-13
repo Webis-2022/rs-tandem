@@ -1,8 +1,63 @@
 @use '../../../styles/variables' as v;
-@use '../../../styles/mixins' as m;
 
 .loading-view {
   width: 100%;
   color: v.$text-light;
   font-size: v.$font-size-base;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$spacing-sm;
+}
+
+.loading-view-text {
+  text-align: center;
+}
+
+.loader {
+  display: flex;
+  gap: v.$spacing-sm;
+}
+
+.square {
+  width: v.$loader-square-size;
+  height: v.$loader-square-size;
+  background: v.$text-light;
+  opacity: 0;
+  animation: loadingPulse 1s infinite;
+}
+
+.square:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.square:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.square:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.square:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.square:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingPulse {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

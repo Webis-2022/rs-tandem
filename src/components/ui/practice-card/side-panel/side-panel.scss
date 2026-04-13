@@ -3,21 +3,34 @@
 .side-panel {
   width: 300px;
   background-color: v.$secondary-color;
-  position: relative;
-  right: -350px;
+  position: absolute;
+  top: 0;
+  left: calc(50% + 330px);
   display: flex;
   flex-direction: column;
   border-radius: v.$border-radius;
+  box-shadow: v.$shadow-default;
 }
 
 .opened {
-  transform: translateX(-350px);
-  transition: transform 0.5s ease-in-out;
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition:
+    opacity 0.25s ease-in-out,
+    transform 0.25s ease-in-out;
 }
 
 .closed {
-  transform: translateX(0);
-  transition: transform 0.5s ease-in-out;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(16px);
+  transition:
+    opacity 0.25s ease-in-out,
+    transform 0.25s ease-in-out;
 }
 
 .close-btn {
@@ -31,6 +44,14 @@
   font-family: v.$font-family-base;
 }
 
-.text-container {
+.side-panel-text {
+  color: v.$text-color;
   padding: v.$spacing-md;
+}
+
+@media (max-width: 1280px) {
+  .side-panel {
+    left: auto;
+    right: 0;
+  }
 }

@@ -28,6 +28,82 @@ During this project, each of us learned something new. We tried working with the
 - [Fourth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-16.md)
 - [Fifth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-23.md)
 
+## Game Rules
+
+This training app follows a quiz-based system designed to simulate real interview preparation for HTML and CSS.
+
+---
+
+### Scoring System
+
+- Each correct answer gives **+1 point**
+- Each incorrect answer gives **−1 point**
+
+---
+
+### Topic Completion & Super Game
+
+At the end of each topic, if the user answered any questions incorrectly, they are offered a **Super Game**.
+
+The Super Game includes only the questions that were answered incorrectly during the topic.
+
+---
+
+### Super Game Rules
+
+- The user must answer **all questions correctly** to win the Super Game
+
+#### If the user answers all questions correctly:
+
+- They receive **+1 point for each question** in the Super Game
+- The total bonus is **added only after all questions are completed**
+
+#### If the user answers at least one question incorrectly:
+
+- The Super Game ends immediately
+- The user loses points equal to the number of remaining unanswered questions
+
+---
+
+### Hints System
+
+The following hints are available during each topic:
+
+- **50/50** — removes two incorrect options
+- **Call a Friend** — suggests a possible correct answer
+- **I Don’t Know** — opens an explanation panel for the current question
+
+Each hint can be used **only once per topic**
+
+---
+
+### Game Completion & Achievements
+
+At the end of the game, the user receives an **achievement badge** based on their final score.
+
+The badge is:
+
+- Displayed on the final screen
+- **Saved to the database**
+- Available later in the results/history section
+
+#### Achievement Levels
+
+| Score Range | Badge  | Description                                                          |
+| ----------- | ------ | -------------------------------------------------------------------- |
+| ≤ 50        | Loser  | Insufficient knowledge of HTML and CSS. More practice is recommended |
+| 51–85       | Master | Solid understanding of HTML and CSS with room for improvement        |
+| 86–100      | Guru   | Excellent knowledge and strong readiness for interviews              |
+
+---
+
+### Game End Options
+
+After completing the game, the user can:
+
+- **Restart the game** (progress will be reset)
+- Go to the **Library** section
+
 ## Tech Stack
 
 - TypeScript

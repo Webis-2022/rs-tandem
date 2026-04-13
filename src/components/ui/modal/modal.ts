@@ -10,6 +10,8 @@ let activeResolve: ((result: ModalResult) => void) | null = null;
  * Shows a modal dialog with customizable content and buttons.
  * @param options Modal options:
  * - title: optional header text
+ * - messageText: plain text body (rendered as text)
+ * - messageStrongText: optional bold part appended to messageText
  * - messageHtml: trusted HTML for body content
  * - showConfirm: when true shows Cancel + Confirm buttons, otherwise one OK button
  * - confirmText/cancelText: custom labels for confirm mode buttons
@@ -28,6 +30,8 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
 
   const {
     title,
+    messageText,
+    messageStrongText,
     messageHtml,
     showConfirm = false,
     confirmText = 'Confirm',
@@ -52,8 +56,17 @@ export function showModal(options: ModalOptions): Promise<ModalResult> {
     const messageEl = createEl('div', {
       className: 'modal-message',
     });
-    // messageHtml is expected to be trusted UI markup from app code.
-    messageEl.innerHTML = messageHtml;
+    if (typeof messageText === 'string') {
+      messageEl.textContent = messageText;
+
+      if (typeof messageStrongText === 'string') {
+        const strongEl = createEl('b', { text: messageStrongText });
+        messageEl.append(strongEl);
+      }
+    } else {
+      // messageHtml is expected to be trusted UI markup from app code.
+      messageEl.innerHTML = messageHtml ?? '';
+    }
     card.append(messageEl);
 
     // Buttons container

@@ -3,11 +3,12 @@
 
 .library-title {
   margin: 0;
+  color: var(--text-color, v.$text-color);
 }
 
 .library-subtitle {
   margin: 0;
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   font-size: v.$font-size-base;
 }
 
@@ -19,14 +20,14 @@
 }
 
 .library-difficulty-label {
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   font-size: v.$font-size-base;
 }
 
 .library-diff-btn {
-  background: v.$secondary-color;
-  color: v.$text-color;
-  border: 1px solid v.$border-color;
+  background: var(--surface-muted, v.$secondary-color);
+  color: var(--text-color, v.$text-color);
+  border: 1px solid var(--border-color, v.$border-color);
 
   &.is-active {
     background: v.$primary-color;
@@ -41,36 +42,68 @@
   gap: v.$spacing-md;
 }
 
+.loading-view {
+  grid-column: 1 / -1;
+}
+
 .library-card {
-  background: v.$color-white;
-  border: 1px solid v.$border-color;
+  background: var(--library-card-bg, v.$color-white);
+  border: 1px solid var(--library-card-border, v.$border-color);
   border-radius: v.$border-radius;
-  box-shadow: v.$shadow-default;
+  box-shadow: var(--library-card-shadow, v.$shadow-default);
   padding: v.$spacing-md;
 
   @include m.flex(column, flex-start, stretch);
   gap: v.$spacing-sm;
 }
 
+.library-card-header {
+  @include m.flex(row, space-between, center);
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+}
+
 .library-card-title {
   font-size: v.$font-size-lg;
-  color: v.$text-color;
+  color: var(--library-card-title-color, v.$text-color);
+  min-width: 0;
+}
+
+.library-topic-badge {
+  color: var(--text-light-color, v.$text-light);
+  font-size: v.$font-size-sm;
+  white-space: nowrap;
+}
+
+.library-card.is-completed {
+  opacity: v.$modal-overlay-opacity;
+  background-color: var(--library-card-completed-bg, v.$border-color);
+}
+
+.topic-icon {
+  width: v.$spacing-xl;
+  height: v.$spacing-xl;
+  object-fit: contain;
 }
 
 .library-card-actions {
-  @include m.flex(row, flex-end, center);
+  @include m.flex(row, space-between, center);
+  gap: v.$spacing-sm;
 }
 
-// .library-list-status {
-//   color: v.$text-light;
-// }
+.library-card-actions-right {
+  @include m.flex(row, flex-end, center);
+  gap: v.$spacing-sm;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
 
 .library-list-status.is-error {
   color: v.$color-error;
 }
 
 .library-status {
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   font-size: v.$font-size-base;
 
   &.is-error {

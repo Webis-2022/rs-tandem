@@ -2,7 +2,7 @@ import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
 import { setNavigate } from './navigation';
-import * as authService from '../services/authService';
+import * as authService from '../services/auth-service';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
 import { createLandingView } from '../pages/landing/landing';
@@ -12,10 +12,10 @@ import { createPracticeView } from '../pages/practice/practice';
 import { createLogoutView } from '../pages/logout/logout';
 import { createNotFoundView } from '../pages/not-found/not-found';
 
-import { getActiveGame } from '../services/storageService';
-import { getActiveGameByUser } from '../services/api/active-games';
-import { restoreGameState } from './state/actions';
+import { applyTheme, setActiveRoute } from './state/actions';
+import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
+import { silentlyRestoreActiveGame } from '../services/resume-active-game';
 
 /**
  * Initialize authentication state
@@ -50,33 +50,18 @@ function isAuthed(): boolean {
 }
 
 /**
- * Restore active game
- * Priority:
- * 1. localStorage (for authenticated users)
- * 2. Supabase fallback
+ * If the user refreshed directly on /practice, silently restores game state
+ * from localStorage / server without showing a modal and without calling navigate().
+ * The "Continue game?" modal is shown only:
+ *   - on the login page (auth-page.ts) after a successful login
+ *   - in Library when the user clicks the Start button (library.ts)
  */
-
-async function restoreActiveGame(): Promise<void> {
-  const localGame = getActiveGame();
-
-  if (localGame) {
-    restoreGameState(localGame);
+async function restorePracticeStateOnRefresh(): Promise<void> {
+  if (window.location.pathname !== ROUTES.Practice || !isAuthed()) {
     return;
   }
 
-  const user = authService.getCurrentUser();
-
-  if (!user) return;
-
-  try {
-    const serverGame = await getActiveGameByUser(user.id);
-
-    if (serverGame) {
-      restoreGameState(serverGame);
-    }
-  } catch (error) {
-    console.error('Failed to restore active game from Supabase:', error);
-  }
+  await silentlyRestoreActiveGame();
 }
 
 function waitForPaint(): Promise<void> {
@@ -86,6 +71,8 @@ function waitForPaint(): Promise<void> {
 }
 
 export async function initApp(mount: HTMLElement): Promise<void> {
+  applyTheme(getState().ui.theme);
+
   const layout = createLayout();
   mount.replaceChildren(layout.root);
 
@@ -95,23 +82,29 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   // Initialize auth state before setting up router
   await initAuth();
-  await restoreActiveGame();
+
+  // If the user refreshed directly on /practice — silently restore game state.
+  // No modal, no navigate needed: user is already on the correct route.
+  await restorePracticeStateOnRefresh();
 
   const router = createRouter({
     mount: layout.outlet,
     fallback: ROUTES.NotFound,
     isAuthed,
+    onRouteChange: (route) => {
+      setActiveRoute(route);
+    },
     routes: {
       [ROUTES.Landing]: {
         createView: createLandingView,
         guard: 'guest',
-        redirectTo: ROUTES.Dashboard,
+        redirectTo: ROUTES.Library,
       },
       [ROUTES.NotFound]: { createView: createNotFoundView },
       [ROUTES.Login]: {
         createView: createLoginView,
         guard: 'guest',
-        redirectTo: ROUTES.Dashboard,
+        redirectTo: ROUTES.Library,
       },
       [ROUTES.Logout]: {
         createView: createLogoutView,
@@ -135,6 +128,8 @@ export async function initApp(mount: HTMLElement): Promise<void> {
     },
   });
 
+  // setNavigate must be called before router.start() so that any code
+  // triggered by route rendering (e.g. auth-page resume flow) can call navigate().
   setNavigate(router.go);
   router.start();
 }
