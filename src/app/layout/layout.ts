@@ -23,11 +23,9 @@ type FooterAuthor = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', route: ROUTES.Landing, visibility: 'all' },
   { label: 'Login', route: ROUTES.Login, visibility: 'guest' },
-  { label: 'Dashboard', route: ROUTES.Dashboard, visibility: 'authed' },
-  { label: 'Library', route: ROUTES.Library, visibility: 'authed' },
-  { label: 'Practice', route: ROUTES.Practice, visibility: 'authed' },
+  { label: 'Start Practice', route: ROUTES.Library, visibility: 'authed' },
+  { label: 'Results', route: ROUTES.Dashboard, visibility: 'authed' },
   { label: 'Logout', route: ROUTES.Logout, visibility: 'authed' },
 ];
 

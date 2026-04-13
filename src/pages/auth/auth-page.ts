@@ -231,7 +231,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       if (mode === 'register') {
         await authService.register(email, password);
-        navigate(ROUTES.Dashboard, true);
+        navigate(ROUTES.Library, true);
         return;
       }
 
@@ -246,8 +246,8 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       await createNewGame(user.id);
 
-      // Navigate to dashboard on success
-      navigate(ROUTES.Dashboard, true);
+      // Navigate to library on success
+      navigate(ROUTES.Library, true);
     } catch (error) {
       const authError = error as AuthError;
 
