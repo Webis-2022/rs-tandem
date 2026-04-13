@@ -1,10 +1,9 @@
 import type { AppState } from '../types';
 
-const ACTIVE_GAME_KEY = 'activeGame'; // 'activeGame' - имя ключа в localStorage
+const ACTIVE_GAME_KEY = 'activeGame';
 
-// возьми тип поля game из типа AppState
 export function saveActiveGame(game: AppState['game']): void {
-  localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(game)); // localStorage умеет хранить только строки
+  localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(game));
 }
 
 export function getActiveGame(): AppState['game'] | null {
@@ -12,13 +11,12 @@ export function getActiveGame(): AppState['game'] | null {
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw) as AppState['game']; // снова делаем из строки объект
+    return JSON.parse(raw) as AppState['game'];
   } catch {
     return null;
   }
 }
 
-// понадобится при logout, после завершения игры и тп
 export function clearActiveGame(): void {
   localStorage.removeItem(ACTIVE_GAME_KEY);
 }
