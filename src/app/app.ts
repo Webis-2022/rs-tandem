@@ -1,7 +1,7 @@
 import { ROUTES } from '../types';
 import { createRouter } from './router';
 import { createLayout } from './layout/layout';
-import { navigate, setNavigate } from './navigation';
+import { setNavigate } from './navigation';
 import * as authService from '../services/auth-service';
 
 import { createDashboardView } from '../pages/dashboard/dashboard';
@@ -15,7 +15,7 @@ import { createNotFoundView } from '../pages/not-found/not-found';
 import { applyTheme, setActiveRoute } from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
-import { runResumeGameFlow } from '../services/resume-active-game';
+import { silentlyRestoreActiveGame } from '../services/resume-active-game';
 
 /**
  * Initialize authentication state
@@ -50,29 +50,18 @@ function isAuthed(): boolean {
 }
 
 /**
- * Checks for an unfinished game and asks the user
- * whether it should be resumed.
+ * If the user refreshed directly on /practice, silently restores game state
+ * from localStorage / server without showing a modal and without calling navigate().
+ * The "Continue game?" modal is shown only:
+ *   - on the login page (auth-page.ts) after a successful login
+ *   - in Library when the user clicks the Start button (library.ts)
  */
-async function tryResumeGame(): Promise<void> {
-  const result = await runResumeGameFlow();
-
-  if (result === 'discarded') {
-    navigate(ROUTES.Library, true);
-  }
-}
-
-async function restorePracticeStateOnRefresh(): Promise<boolean> {
-  if (window.location.pathname !== ROUTES.Practice) {
-    return false;
+async function restorePracticeStateOnRefresh(): Promise<void> {
+  if (window.location.pathname !== ROUTES.Practice || !isAuthed()) {
+    return;
   }
 
-  if (!isAuthed()) {
-    return false;
-  }
-
-  // Use the same resume flow as the rest of the app to avoid state/UI divergence.
-  await tryResumeGame();
-  return true;
+  await silentlyRestoreActiveGame();
 }
 
 function waitForPaint(): Promise<void> {
@@ -93,7 +82,10 @@ export async function initApp(mount: HTMLElement): Promise<void> {
 
   // Initialize auth state before setting up router
   await initAuth();
-  const restoredPracticeState = await restorePracticeStateOnRefresh();
+
+  // If the user refreshed directly on /practice — silently restore game state.
+  // No modal, no navigate needed: user is already on the correct route.
+  await restorePracticeStateOnRefresh();
 
   const router = createRouter({
     mount: layout.outlet,
@@ -136,25 +128,8 @@ export async function initApp(mount: HTMLElement): Promise<void> {
     },
   });
 
+  // setNavigate must be called before router.start() so that any code
+  // triggered by route rendering (e.g. auth-page resume flow) can call navigate().
   setNavigate(router.go);
-
-  const shouldResumeBeforeStart =
-    isAuthed() &&
-    window.location.pathname === ROUTES.Practice &&
-    !restoredPracticeState;
-
-  if (shouldResumeBeforeStart) {
-    await tryResumeGame();
-  }
-
   router.start();
-
-  if (restoredPracticeState) {
-    return;
-  }
-
-  if (!shouldResumeBeforeStart && isAuthed()) {
-    await waitForPaint();
-    await tryResumeGame();
-  }
 }
