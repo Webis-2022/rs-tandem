@@ -57,6 +57,24 @@
   gap: v.$spacing-sm;
 }
 
+.library-card-header {
+  @include m.flex(row, space-between, center);
+  gap: v.$spacing-sm;
+  flex-wrap: wrap;
+}
+
+.library-card-title {
+  font-size: v.$font-size-lg;
+  color: var(--library-card-title-color, v.$text-color);
+  min-width: 0;
+}
+
+.library-topic-badge {
+  color: var(--text-light-color, v.$text-light);
+  font-size: v.$font-size-sm;
+  white-space: nowrap;
+}
+
 .library-card.is-completed {
   opacity: v.$modal-overlay-opacity;
   background-color: var(--library-card-completed-bg, v.$border-color);
@@ -68,17 +86,16 @@
   object-fit: contain;
 }
 
-.library-card-title {
-  font-size: v.$font-size-lg;
-  color: var(--library-card-title-color, v.$text-color);
-}
-
 .library-card-actions {
   @include m.flex(row, space-between, center);
+  gap: v.$spacing-sm;
+}
 
-  .btn {
-    margin-left: auto;
-  }
+.library-card-actions-right {
+  @include m.flex(row, flex-end, center);
+  gap: v.$spacing-sm;
+  margin-left: auto;
+  flex-wrap: wrap;
 }
 
 .library-list-status.is-error {

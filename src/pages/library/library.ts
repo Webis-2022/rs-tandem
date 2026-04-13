@@ -20,18 +20,28 @@ import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic
 import { getState } from '../../app/state/store';
 import { getResumeCandidate } from '../../services/resume-active-game';
 import {
-  confirmContinueSameTopic,
   confirmReplaceActiveTopic,
+  confirmRestartActiveTopic,
 } from './library-resume-modals.ts';
 
 type GameState = AppState['game'];
 
+type CreateTopicCardParams = {
+  topic: Topic;
+  isCompleted: boolean;
+  isActiveTopic: boolean;
+  onStart: (startBtn: HTMLButtonElement) => void;
+  onContinue: () => void;
+};
+
 function isSameActiveTopic(
-  activeGame: GameState,
+  activeTopic: GameState,
   topicId: number,
   difficulty: Difficulty
 ): boolean {
-  return activeGame.topicId === topicId && activeGame.difficulty === difficulty;
+  return (
+    activeTopic.topicId === topicId && activeTopic.difficulty === difficulty
+  );
 }
 
 function getTopicTitleById(topicId: number): string {
@@ -42,28 +52,40 @@ function getTopicTitleById(topicId: number): string {
   );
 }
 
-function createTopicCard(
-  topic: Topic,
-  isCompleted: boolean,
-  onStart: (startBtn: HTMLButtonElement) => void
-): HTMLElement {
+function createTopicCard({
+  topic,
+  isCompleted,
+  isActiveTopic,
+  onStart,
+  onContinue,
+}: CreateTopicCardParams): HTMLElement {
   const card = createEl('div', {
     className: `library-card${isCompleted ? ' is-completed' : ''}`,
+  });
+
+  const header = createEl('div', {
+    className: 'library-card-header',
   });
 
   const name = createEl('div', {
     text: topic.name ?? `Topic #${topic.id}`,
     className: 'library-card-title',
   });
+  header.append(name);
+
+  if (isActiveTopic) {
+    const activeBadge = createEl('span', {
+      text: 'Unfinished',
+      className: 'library-topic-badge',
+    });
+
+    header.append(activeBadge);
+  }
 
   const actions = createEl('div', { className: 'library-card-actions' });
-
-  const startBtn = createButton(
-    'Start',
-    () => onStart(startBtn as HTMLButtonElement),
-    'btn',
-    isCompleted
-  );
+  const actionsRight = createEl('div', {
+    className: 'library-card-actions-right',
+  });
 
   if (isCompleted) {
     const topicIcon = createEl('img', {
@@ -76,8 +98,25 @@ function createTopicCard(
     actions.append(topicIcon);
   }
 
-  actions.append(startBtn);
-  card.append(name, actions);
+  if (isActiveTopic) {
+    const continueBtn = createButton(
+      'Continue?',
+      onContinue,
+      'btn btn-secondary'
+    );
+    actionsRight.append(continueBtn);
+  }
+
+  const startBtn = createButton(
+    'Start',
+    () => onStart(startBtn as HTMLButtonElement),
+    'btn',
+    isCompleted
+  );
+  actionsRight.append(startBtn);
+
+  actions.append(actionsRight);
+  card.append(header, actions);
 
   return card;
 }
@@ -139,9 +178,20 @@ export const createLibraryView = (): HTMLElement => {
     });
   };
 
+  const handleContinueClick = (activeTopic: GameState | null): void => {
+    if (!activeTopic) return;
+
+    status.textContent = '';
+    status.classList.remove('is-error');
+
+    restoreGameState(activeTopic);
+    navigate(ROUTES.Practice, true);
+  };
+
   const handleStartClick = async (
     topicId: number,
-    startBtn: HTMLButtonElement
+    startBtn: HTMLButtonElement,
+    activeTopic: GameState | null
   ): Promise<void> => {
     status.textContent = '';
     status.classList.remove('is-error');
@@ -150,30 +200,20 @@ export const createLibraryView = (): HTMLElement => {
     let shouldEnableButton = true;
 
     try {
-      const activeCandidate = await getResumeCandidate();
-      const activeGame = activeCandidate?.game;
-
-      if (activeGame && isSameActiveTopic(activeGame, topicId, difficulty)) {
-        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
-        const shouldContinue = await confirmContinueSameTopic(
-          activeGame.difficulty,
+      if (activeTopic && isSameActiveTopic(activeTopic, topicId, difficulty)) {
+        const activeTopicTitle = getTopicTitleById(activeTopic.topicId);
+        const shouldRestart = await confirmRestartActiveTopic(
+          activeTopic.difficulty,
           activeTopicTitle
         );
 
-        if (!shouldContinue) {
+        if (!shouldRestart) {
           return;
         }
-
-        restoreGameState(activeGame);
-        shouldEnableButton = false;
-        navigate(ROUTES.Practice, true);
-        return;
-      }
-
-      if (activeGame) {
-        const activeTopicTitle = getTopicTitleById(activeGame.topicId);
+      } else if (activeTopic) {
+        const activeTopicTitle = getTopicTitleById(activeTopic.topicId);
         const shouldReplace = await confirmReplaceActiveTopic(
-          activeGame.difficulty,
+          activeTopic.difficulty,
           activeTopicTitle
         );
 
@@ -208,9 +248,10 @@ export const createLibraryView = (): HTMLElement => {
     list.replaceChildren(createLoadingView('Loading topics...'));
 
     try {
-      const [topics, completedTopicIds] = await Promise.all([
+      const [topics, completedTopicIds, activeCandidate] = await Promise.all([
         getTopics(),
         fetchCompletedTopicIds(difficulty),
+        getResumeCandidate(),
       ]);
 
       list.replaceChildren();
@@ -226,14 +267,25 @@ export const createLibraryView = (): HTMLElement => {
       }
 
       const completedIds = new Set(completedTopicIds);
+      const activeTopic = activeCandidate?.game ?? null;
 
       topics.forEach((topic) => {
+        const isCompleted = completedIds.has(topic.id);
+        const isActiveTopic =
+          Boolean(activeTopic) &&
+          activeTopic?.difficulty === difficulty &&
+          activeTopic.topicId === topic.id &&
+          !isCompleted;
+
         list.append(
-          createTopicCard(
+          createTopicCard({
             topic,
-            completedIds.has(topic.id),
-            (startBtn) => void handleStartClick(topic.id, startBtn)
-          )
+            isCompleted,
+            isActiveTopic,
+            onContinue: () => void handleContinueClick(activeTopic),
+            onStart: (startBtn) =>
+              void handleStartClick(topic.id, startBtn, activeTopic),
+          })
         );
       });
 
