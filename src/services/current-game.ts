@@ -6,7 +6,7 @@ type CurrentGame = {
 };
 
 function hasValidGameId(gameId: number | null | undefined): gameId is number {
-  return typeof gameId === 'number' && Number.isInteger(gameId) && gameId > 0;
+  return typeof gameId === 'number' && gameId > 0;
 }
 
 export async function resolveCurrentGame(): Promise<CurrentGame | null> {
