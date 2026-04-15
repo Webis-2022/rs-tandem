@@ -14,21 +14,31 @@ export async function promptLoginGameChoice(): Promise<boolean> {
   return result.confirmed;
 }
 
-export type LoginGameChoiceFlowResult = 'no-game' | 'continued' | 'start-new';
+export type LoginGameChoiceFlowResult =
+  | { status: 'no-game' }
+  | { status: 'continued'; gameId: number }
+  | { status: 'start-new' };
 
 export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResult> {
   try {
     const currentGame = await resolveCurrentGame();
 
     if (!currentGame) {
-      return 'no-game';
+      return { status: 'no-game' };
     }
 
     const shouldContinue = await promptLoginGameChoice();
 
-    return shouldContinue ? 'continued' : 'start-new';
+    if (shouldContinue) {
+      return {
+        status: 'continued',
+        gameId: currentGame.gameId,
+      };
+    }
+
+    return { status: 'start-new' };
   } catch (error) {
     console.error('Login game choice flow failed:', error);
-    return 'no-game';
+    return { status: 'no-game' };
   }
 }

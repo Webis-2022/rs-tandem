@@ -6,7 +6,11 @@ import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/auth-service';
-import { resetGameState, saveUserData } from '../../app/state/actions';
+import {
+  resetGameState,
+  saveGameId,
+  saveUserData,
+} from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
 import { runLoginGameChoiceFlow } from '../../services/login-game-choice-flow';
 
@@ -240,12 +244,13 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       const loginChoiceResult = await runLoginGameChoiceFlow();
 
-      if (loginChoiceResult === 'continued') {
+      if (loginChoiceResult.status === 'continued') {
+        saveGameId(loginChoiceResult.gameId);
         navigate(ROUTES.Library, true);
         return;
       }
 
-      if (loginChoiceResult === 'start-new') {
+      if (loginChoiceResult.status === 'start-new') {
         resetGameState();
         await createNewGame(user.id);
         navigate(ROUTES.Library, true);
