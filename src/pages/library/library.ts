@@ -263,7 +263,7 @@ export const createLibraryView = (): HTMLElement => {
     list.replaceChildren(createLoadingView('Loading topics...'));
 
     try {
-      const [topics, completedTopicIds, activeCandidate] = await Promise.all([
+      const [topics, completedTopicIds, activeSession] = await Promise.all([
         getTopics(),
         fetchCompletedTopicIds(difficulty),
         getTopicResumeCandidate(),
@@ -282,7 +282,6 @@ export const createLibraryView = (): HTMLElement => {
       }
 
       const completedIds = new Set(completedTopicIds);
-      const activeSession = activeCandidate?.session ?? null;
       const activeTopic = activeSession?.game ?? null;
 
       topics.forEach((topic) => {

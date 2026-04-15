@@ -1,19 +1,8 @@
-// Shared restore helpers
-import { navigate } from '../app/navigation';
 import { restoreActiveSession, saveTopics } from '../app/state/actions';
 import { getState } from '../app/state/store';
-import { showModal } from '../components/ui/modal/modal';
-import { ROUTES, type AppState, type PersistedActiveSession } from '../types';
+import { type PersistedActiveSession } from '../types';
 import { getTopics } from './api/get-topics';
-import {
-  discardTopicResumeCandidates,
-  getTopicResumeCandidate,
-  hasRequiredResumeData,
-  resolveTopicResumeCandidate,
-} from './topic-resume-candidate';
-
-type GameState = AppState['game'];
-type TopicResumeFlowResult = 'no-game' | 'resumed' | 'discarded';
+import { getTopicResumeCandidate } from './topic-resume-candidate';
 
 /**
  * Загружает topics, если их еще нет в store.
@@ -57,27 +46,6 @@ export async function restoreTopicSession(
   restoreActiveSession(session);
 }
 
-// Topic-level UI and public flow
-/**
- * Спрашивает пользователя, хочет ли он продолжить топик.
- */
-export async function promptResumeTopic(game: GameState): Promise<boolean> {
-  if (!hasRequiredResumeData(game)) {
-    return false;
-  }
-
-  const result = await showModal({
-    title: 'Continue unfinished game?',
-    messageHtml:
-      '<p>You have an unfinished game. Do you want to continue it?</p>',
-    showConfirm: true,
-    confirmText: 'Yes',
-    cancelText: 'No',
-  });
-
-  return result.confirmed;
-}
-
 /**
  * Silently restores an active topic without showing a modal.
  * Used on /practice page refresh: the user is already on the correct route,
@@ -86,45 +54,16 @@ export async function promptResumeTopic(game: GameState): Promise<boolean> {
  */
 export async function silentlyRestoreTopicSession(): Promise<boolean> {
   try {
-    const candidate = await getTopicResumeCandidate();
+    const activeSession = await getTopicResumeCandidate();
 
-    if (!candidate) {
+    if (!activeSession) {
       return false;
     }
 
-    await restoreTopicSession(candidate.session);
+    await restoreTopicSession(activeSession);
     return true;
   } catch (error) {
     console.error('Silent game restore failed:', error);
     return false;
-  }
-}
-
-/**
- * Запускает весь сценарий продолжения топика.
- */
-export async function runTopicResumeFlow(): Promise<TopicResumeFlowResult> {
-  try {
-    const { candidate, staleSources } = await resolveTopicResumeCandidate();
-
-    if (!candidate) {
-      await discardTopicResumeCandidates(staleSources);
-      return 'no-game';
-    }
-
-    const shouldResume = await promptResumeTopic(candidate.session.game);
-
-    if (shouldResume) {
-      await discardTopicResumeCandidates(staleSources);
-      await restoreTopicSession(candidate.session);
-      navigate(ROUTES.Practice, true);
-      return 'resumed';
-    }
-
-    await discardTopicResumeCandidates([...staleSources, candidate.source]);
-    return 'discarded';
-  } catch (error) {
-    console.error('Resume game flow failed:', error);
-    return 'no-game';
   }
 }

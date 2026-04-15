@@ -8,8 +8,7 @@ import {
 import { getActiveSessionByUser } from './api/active-games';
 import { fetchCompletedTopicIds } from './api/fetch-completed-topic-ids';
 import * as authService from './auth-service';
-import { clearActiveSession, getActiveSession } from './storage-service';
-import { removeActiveGameFromServer } from './sync-active-game';
+import { getActiveSession } from './storage-service';
 
 type GameState = AppState['game'];
 const validDifficulties: Difficulty[] = ['easy', 'medium', 'hard'];
@@ -75,51 +74,31 @@ export async function isCompletedResumeCandidate(
   }
 }
 
-// Topic resume lookup helpers
-type TopicResumeCandidateSource = 'local' | 'server';
+async function validateTopicResumeSession(
+  session: PersistedActiveSession | null
+): Promise<PersistedActiveSession | null> {
+  if (!session) {
+    return null;
+  }
 
-type TopicResumeCandidate = {
-  session: PersistedActiveSession;
-  source: TopicResumeCandidateSource;
-};
+  if (!hasRequiredResumeData(session.game)) {
+    return null;
+  }
 
-type TopicResumeLookupResult =
-  | { status: 'missing' }
-  | { status: 'invalid'; source: TopicResumeCandidateSource }
-  | { status: 'completed'; source: TopicResumeCandidateSource }
-  | { status: 'ready'; candidate: TopicResumeCandidate };
+  const isCompleted = await isCompletedResumeCandidate(session.game);
+  if (isCompleted) {
+    return null;
+  }
 
-type TopicResumeCandidateResolution = {
-  candidate: TopicResumeCandidate | null;
-  staleSources: TopicResumeCandidateSource[];
-};
+  return session;
+}
 
 /**
  * Проверяет сохраненный топик в localStorage
  * и возвращает результат в виде статуса resume candidate.
  */
-async function checkLocalTopicResumeCandidate(): Promise<TopicResumeLookupResult> {
-  const localSession = getActiveSession();
-  if (!localSession) {
-    return { status: 'missing' };
-  }
-
-  if (!hasRequiredResumeData(localSession.game)) {
-    return { status: 'invalid', source: 'local' };
-  }
-
-  const isCompleted = await isCompletedResumeCandidate(localSession.game);
-  if (isCompleted) {
-    return { status: 'completed', source: 'local' };
-  }
-
-  return {
-    status: 'ready',
-    candidate: {
-      session: localSession,
-      source: 'local',
-    },
-  };
+async function checkLocalTopicResumeCandidate(): Promise<PersistedActiveSession | null> {
+  return validateTopicResumeSession(getActiveSession());
 }
 
 /**
@@ -128,139 +107,31 @@ async function checkLocalTopicResumeCandidate(): Promise<TopicResumeLookupResult
  */
 async function checkServerTopicResumeCandidate(
   userId: string
-): Promise<TopicResumeLookupResult> {
+): Promise<PersistedActiveSession | null> {
   try {
     const serverSession = await getActiveSessionByUser(userId);
-    if (!serverSession) {
-      return { status: 'missing' };
-    }
-
-    if (!hasRequiredResumeData(serverSession.game)) {
-      return { status: 'invalid', source: 'server' };
-    }
-
-    const isCompleted = await isCompletedResumeCandidate(serverSession.game);
-    if (isCompleted) {
-      return { status: 'completed', source: 'server' };
-    }
-
-    return {
-      status: 'ready',
-      candidate: {
-        session: serverSession,
-        source: 'server',
-      },
-    };
+    return validateTopicResumeSession(serverSession);
   } catch (error) {
     console.error('Failed to load resume candidate from server:', error);
-    return { status: 'missing' };
+    return null;
   }
-}
-
-/**
- * Проверяет, есть ли топик для продолжения.
- * Возвращает найденный топик и источники,
- * которые нужно очистить отдельно.
- */
-export async function resolveTopicResumeCandidate(): Promise<TopicResumeCandidateResolution> {
-  const user = authService.getCurrentUser();
-
-  if (!user) {
-    return { candidate: null, staleSources: [] };
-  }
-
-  const staleSources: TopicResumeCandidateSource[] = [];
-
-  const localResult = await checkLocalTopicResumeCandidate();
-
-  if (localResult.status === 'ready') {
-    return {
-      candidate: localResult.candidate,
-      staleSources,
-    };
-  }
-
-  if (localResult.status === 'invalid' || localResult.status === 'completed') {
-    staleSources.push(localResult.source);
-  }
-
-  const serverResult = await checkServerTopicResumeCandidate(user.id);
-
-  if (serverResult.status === 'ready') {
-    return {
-      candidate: serverResult.candidate,
-      staleSources,
-    };
-  }
-
-  if (
-    serverResult.status === 'invalid' ||
-    serverResult.status === 'completed'
-  ) {
-    staleSources.push(serverResult.source);
-  }
-
-  return {
-    candidate: null,
-    staleSources,
-  };
 }
 
 /**
  * Возвращает resume candidate для продолжения топика
  * без очистки невалидных или устаревших данных.
  */
-export async function getTopicResumeCandidate(): Promise<TopicResumeCandidate | null> {
-  const { candidate } = await resolveTopicResumeCandidate();
-  return candidate;
-}
+export async function getTopicResumeCandidate(): Promise<PersistedActiveSession | null> {
+  const user = authService.getCurrentUser();
 
-// Topic resume discard helpers
-function discardLocalTopicResumeCandidate(): void {
-  clearActiveSession();
-}
-
-async function discardServerTopicResumeCandidate(): Promise<void> {
-  try {
-    await removeActiveGameFromServer();
-  } catch (error) {
-    console.error('Failed to remove active game from server:', error);
-  }
-}
-
-/**
- * Удаляет resume candidate из указанного источника:
- * localStorage или сервера.
- */
-async function discardTopicResumeCandidate(
-  source: TopicResumeCandidateSource
-): Promise<void> {
-  if (source === 'local') {
-    discardLocalTopicResumeCandidate();
-    return;
+  if (!user) {
+    return null;
   }
 
-  await discardServerTopicResumeCandidate();
-}
-
-/**
- * Удаляет resume candidate из нескольких источников.
- * Повторяющиеся источники очищаются только один раз.
- */
-export async function discardTopicResumeCandidates(
-  sources: TopicResumeCandidateSource[]
-): Promise<void> {
-  const uniqueSources = [...new Set(sources)];
-
-  for (const source of uniqueSources) {
-    await discardTopicResumeCandidate(source);
+  const localCandidate = await checkLocalTopicResumeCandidate();
+  if (localCandidate) {
+    return localCandidate;
   }
-}
 
-/**
- * Очищает сохраненный топик во всех источниках:
- * и локально, и на сервере.
- */
-export async function discardAllActiveSessions(): Promise<void> {
-  await discardTopicResumeCandidates(['local', 'server']);
+  return checkServerTopicResumeCandidate(user.id);
 }
