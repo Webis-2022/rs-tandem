@@ -40,7 +40,7 @@ vi.mock('../../app/state/actions', () => ({
   setLibraryDifficulty: mocks.setLibraryDifficulty,
 }));
 
-vi.mock('../../services/resume-active-game', () => ({
+vi.mock('../../services/topic-resume-candidate.ts', () => ({
   getTopicResumeCandidate: mocks.getTopicResumeCandidate,
 }));
 
@@ -280,10 +280,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getTopicResumeCandidate.mockResolvedValue({
-      session: activeSessionMock,
-      source: 'local',
-    });
+    mocks.getTopicResumeCandidate.mockResolvedValue(activeSessionMock);
 
     const view = createLibraryView();
     document.body.append(view);
@@ -315,10 +312,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getTopicResumeCandidate.mockResolvedValue({
-      session: activeSessionMock,
-      source: 'local',
-    });
+    mocks.getTopicResumeCandidate.mockResolvedValue(activeSessionMock);
 
     mocks.confirmRestartActiveTopic.mockResolvedValue(true);
 
@@ -354,10 +348,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getTopicResumeCandidate.mockResolvedValue({
-      session: activeSessionMock,
-      source: 'local',
-    });
+    mocks.getTopicResumeCandidate.mockResolvedValue(activeSessionMock);
 
     mocks.confirmReplaceActiveTopic.mockResolvedValue(true);
 
@@ -399,10 +390,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getTopicResumeCandidate.mockResolvedValue({
-      session: activeSessionMock,
-      source: 'local',
-    });
+    mocks.getTopicResumeCandidate.mockResolvedValue(activeSessionMock);
 
     mocks.confirmReplaceActiveTopic.mockResolvedValue(false);
 
