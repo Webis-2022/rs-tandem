@@ -13,6 +13,9 @@ import {
 } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
 import { runLoginGameChoiceFlow } from '../../services/login-game-choice-flow';
+import { deleteCompletedTopicsByUser } from '../../services/api/delete-completed-topics';
+import { clearActiveSession } from '../../services/storage-service';
+import { removeActiveGameFromServer } from '../../services/sync-active-game';
 
 type Field = {
   root: HTMLElement;
@@ -251,6 +254,10 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       }
 
       if (loginChoiceResult.status === 'start-new') {
+        await deleteCompletedTopicsByUser(user.id);
+        clearActiveSession();
+        await removeActiveGameFromServer();
+
         resetGameState();
         await createNewGame(user.id);
         navigate(ROUTES.Library, true);
