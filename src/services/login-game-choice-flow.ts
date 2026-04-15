@@ -1,14 +1,10 @@
-import { ROUTES } from '../types';
-import { navigate } from '../app/navigation';
 import { showModal } from '../components/ui/modal/modal';
 import {
-  discardAllActiveSessions,
-  discardTopicResumeCandidates,
-  resolveTopicResumeCandidate,
-} from './topic-resume-candidate';
-import { restoreTopicSession } from './topic-resume-flow';
+  discardAllCurrentGames,
+  discardCurrentGames,
+  resolveCurrentGame,
+} from './current-game';
 
-// Login/game-choice UI and public flow
 /**
  * Спрашивает пользователя при логине,
  * хочет ли он продолжить текущую игру или начать новую.
@@ -34,23 +30,21 @@ export type LoginGameChoiceFlowResult = 'no-game' | 'continued' | 'start-new';
  */
 export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResult> {
   try {
-    const { candidate, staleSources } = await resolveTopicResumeCandidate();
+    const { currentGame, staleSources } = await resolveCurrentGame();
 
-    if (!candidate) {
-      await discardTopicResumeCandidates(staleSources);
+    if (!currentGame) {
+      await discardCurrentGames(staleSources);
       return 'no-game';
     }
 
     const shouldContinue = await promptLoginGameChoice();
 
     if (shouldContinue) {
-      await discardTopicResumeCandidates(staleSources);
-      await restoreTopicSession(candidate.session);
-      navigate(ROUTES.Practice, true);
+      await discardCurrentGames(staleSources);
       return 'continued';
     }
 
-    await discardAllActiveSessions();
+    await discardAllCurrentGames();
     return 'start-new';
   } catch (error) {
     console.error('Login game choice flow failed:', error);

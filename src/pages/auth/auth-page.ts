@@ -241,6 +241,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const loginChoiceResult = await runLoginGameChoiceFlow();
 
       if (loginChoiceResult === 'continued') {
+        navigate(ROUTES.Library, true);
         return;
       }
 
