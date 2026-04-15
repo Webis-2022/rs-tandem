@@ -15,7 +15,7 @@ import { createNotFoundView } from '../pages/not-found/not-found';
 import { applyTheme, setActiveRoute } from './state/actions';
 import { getState } from './state/store';
 import { createLoadingView } from '../components/ui/loading/loading';
-import { silentlyRestoreActiveGame } from '../services/resume-active-game';
+import { silentlyRestoreTopicSession } from '../services/topic-resume-flow';
 
 /**
  * Initialize authentication state
@@ -61,7 +61,7 @@ async function restorePracticeStateOnRefresh(): Promise<void> {
     return;
   }
 
-  await silentlyRestoreActiveGame();
+  await silentlyRestoreTopicSession();
 }
 
 function waitForPaint(): Promise<void> {

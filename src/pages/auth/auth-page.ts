@@ -8,7 +8,7 @@ import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/auth-service';
 import { resetGameState, saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runLoginGameChoiceFlow } from '../../services/resume-active-game';
+import { runLoginGameChoiceFlow } from '../../services/login-game-choice-flow';
 
 type Field = {
   root: HTMLElement;

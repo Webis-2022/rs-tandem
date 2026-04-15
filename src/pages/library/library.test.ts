@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   setLibraryDifficulty: vi.fn(),
   getState: vi.fn(),
   fetchCompletedTopicIds: vi.fn(),
-  getResumeCandidate: vi.fn(),
+  getTopicResumeCandidate: vi.fn(),
   confirmReplaceActiveTopic: vi.fn(),
   confirmRestartActiveTopic: vi.fn(),
   createNewGame: vi.fn(),
@@ -41,7 +41,7 @@ vi.mock('../../app/state/actions', () => ({
 }));
 
 vi.mock('../../services/resume-active-game', () => ({
-  getResumeCandidate: mocks.getResumeCandidate,
+  getTopicResumeCandidate: mocks.getTopicResumeCandidate,
 }));
 
 vi.mock('./library-resume-modals.ts', () => ({
@@ -114,7 +114,7 @@ describe('createLibraryView', () => {
 
     mocks.getState.mockReturnValue(buildState());
     mocks.fetchCompletedTopicIds.mockResolvedValue([]);
-    mocks.getResumeCandidate.mockResolvedValue(null);
+    mocks.getTopicResumeCandidate.mockResolvedValue(null);
     mocks.confirmReplaceActiveTopic.mockResolvedValue(true);
     mocks.confirmRestartActiveTopic.mockResolvedValue(true);
     mocks.createNewGame.mockResolvedValue(undefined);
@@ -176,7 +176,7 @@ describe('createLibraryView', () => {
   test('starts new game and navigates to practice after clicking Start', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockResolvedValue(undefined);
-    mocks.getResumeCandidate.mockResolvedValue(null);
+    mocks.getTopicResumeCandidate.mockResolvedValue(null);
 
     const view = createLibraryView();
     document.body.append(view);
@@ -250,7 +250,7 @@ describe('createLibraryView', () => {
   test('starts new game without modal when there is no active game', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockResolvedValue(undefined);
-    mocks.getResumeCandidate.mockResolvedValue(null);
+    mocks.getTopicResumeCandidate.mockResolvedValue(null);
 
     const view = createLibraryView();
     document.body.append(view);
@@ -280,7 +280,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getResumeCandidate.mockResolvedValue({
+    mocks.getTopicResumeCandidate.mockResolvedValue({
       session: activeSessionMock,
       source: 'local',
     });
@@ -315,7 +315,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getResumeCandidate.mockResolvedValue({
+    mocks.getTopicResumeCandidate.mockResolvedValue({
       session: activeSessionMock,
       source: 'local',
     });
@@ -354,7 +354,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getResumeCandidate.mockResolvedValue({
+    mocks.getTopicResumeCandidate.mockResolvedValue({
       session: activeSessionMock,
       source: 'local',
     });
@@ -399,7 +399,7 @@ describe('createLibraryView', () => {
       })
     );
 
-    mocks.getResumeCandidate.mockResolvedValue({
+    mocks.getTopicResumeCandidate.mockResolvedValue({
       session: activeSessionMock,
       source: 'local',
     });
@@ -433,7 +433,7 @@ describe('createLibraryView', () => {
   test('shows error message and re-enables button when startNewGame fails', async () => {
     mocks.getTopics.mockResolvedValue([{ id: 1, name: 'HTML' }]);
     mocks.startNewGame.mockRejectedValue(new Error('Start failed'));
-    mocks.getResumeCandidate.mockResolvedValue(null);
+    mocks.getTopicResumeCandidate.mockResolvedValue(null);
 
     const view = createLibraryView();
     document.body.append(view);

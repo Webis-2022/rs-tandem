@@ -19,7 +19,7 @@ import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
-import { getResumeCandidate } from '../../services/resume-active-game';
+import { getTopicResumeCandidate } from '../../services/topic-resume-candidate.ts';
 import {
   confirmReplaceActiveTopic,
   confirmRestartActiveTopic,
@@ -266,7 +266,7 @@ export const createLibraryView = (): HTMLElement => {
       const [topics, completedTopicIds, activeCandidate] = await Promise.all([
         getTopics(),
         fetchCompletedTopicIds(difficulty),
-        getResumeCandidate(),
+        getTopicResumeCandidate(),
       ]);
 
       list.replaceChildren();
