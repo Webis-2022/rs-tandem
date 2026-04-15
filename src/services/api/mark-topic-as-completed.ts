@@ -1,6 +1,6 @@
 import { getState } from '../../app/state/store';
 import { withApiErrorHandling } from '../../shared/helpers/request-error';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 
 export function markTopicAsCompleted() {
   return withApiErrorHandling(async () => {

@@ -9,7 +9,7 @@ export function showSidePanel(e: MouseEvent) {
     document.querySelector('.side-panel');
   if (!sidePanel) return;
 
-  const textContainer = sidePanel?.querySelector('.text-container');
+  const textContainer = sidePanel?.querySelector('.side-panel-text');
   if (!textContainer) return;
 
   const fallbackExplanation =

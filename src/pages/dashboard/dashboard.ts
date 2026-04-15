@@ -9,6 +9,7 @@ import type { GameData, GameResult } from '../../types';
 
 export const createDashboardView = (): HTMLElement => {
   const section = createEl('section', { className: 'page' });
+  let difficulty: string;
 
   const status = createEl('div', { className: 'dashboard-status' });
 
@@ -28,14 +29,19 @@ export const createDashboardView = (): HTMLElement => {
       medium: 'medium',
       hard: 'hard',
     };
+
     const topBar = createEl('div', { className: 'top-bar' });
+
     const difficultySelector = createEl('select', {
       className: 'difficulty-selector',
     }) as HTMLSelectElement;
+
     const gameSelector = createEl('select', {
       className: 'game-selector',
     }) as HTMLSelectElement;
+
     difficultySelector.setAttribute('name', 'difficulty');
+
     const createPlaceholder = (text: string) => {
       const placeholder = createEl('option');
       if (placeholder instanceof HTMLOptionElement) {
@@ -46,10 +52,13 @@ export const createDashboardView = (): HTMLElement => {
         return placeholder;
       }
     };
+
     const difficultyPlaceholder = createPlaceholder('Difficulty');
     const gamePlaceholder = createPlaceholder('Select Game');
+
     difficultySelector.append(difficultyPlaceholder as Node);
     gameSelector.append(gamePlaceholder as Node);
+
     const createSelectOptions = (
       optionsData: { [key: string]: string },
       selector: HTMLSelectElement
@@ -66,56 +75,100 @@ export const createDashboardView = (): HTMLElement => {
     };
 
     const handleDifficultySelector = async (e: Event) => {
-      const target = e.target as HTMLOptionElement;
-      const difficulty = target?.value;
-      const gameResults: GameResult[] = await getGameResult({
-        gameId: undefined,
-        difficulty,
-      });
-      const gameIds = gameResults.map((game) => game.game_id);
-      const uniqueIds = Array.from(new Set(gameIds));
-      const games: GameData[] = (await getGames({ gameIds: uniqueIds })) || [];
-      const createOptionDataObj = (games: GameData[]) => {
-        const obj: { [key: string]: string } = {};
-        games.forEach((game, index) => {
-          const date = new Date(game.created_at);
-          obj[`Game ${index + 1}: ${date.toLocaleString()}`] = String(game.id);
+      try {
+        gameSelector.value = '';
+        const target = e.target as HTMLOptionElement;
+        difficulty = target?.value;
+
+        const gameResults: GameResult[] = await getGameResult({
+          gameId: undefined,
+          difficulty,
         });
-        return obj;
-      };
-      const options = gameSelector.children;
-      Array.from(options).forEach((option, index) => {
-        if (index !== 0) option.remove();
-      });
-      const optionData = createOptionDataObj(games);
-      createSelectOptions(optionData, gameSelector);
+
+        const gameIds = gameResults.map((game) => game.game_id);
+        const uniqueIds = Array.from(new Set(gameIds));
+
+        const games: GameData[] =
+          (await getGames({ gameIds: uniqueIds })) || [];
+
+        const statsTable = document.querySelector('.stats-table');
+        const badgeImage = document.querySelector('.badge-img');
+        const panelContent: HTMLDivElement | null =
+          document.querySelector('.panel-content');
+
+        if (!panelContent) return;
+
+        statsTable?.remove();
+        badgeImage?.remove();
+        panelContent.style.display = 'flex';
+
+        if (gameResults.length === 0 && games.length === 0) {
+          panelContent.textContent =
+            'There are no results for this difficulty level';
+        } else {
+          panelContent.textContent = 'Please select a game to see your results';
+        }
+
+        const createOptionDataObj = (games: GameData[]) => {
+          const obj: { [key: string]: string } = {};
+          games.forEach((game, index) => {
+            const date = new Date(game.created_at);
+            obj[`Game ${index + 1}: ${date.toLocaleString()}`] = String(
+              game.id
+            );
+          });
+          return obj;
+        };
+
+        const options = gameSelector.children;
+        Array.from(options).forEach((option, index) => {
+          if (index !== 0) option.remove();
+        });
+
+        const optionData = createOptionDataObj(games);
+        createSelectOptions(optionData, gameSelector);
+      } catch (error) {
+        console.error(error);
+        gameSelector.value = '';
+      }
     };
 
     difficultySelector.addEventListener('change', handleDifficultySelector);
 
     const handleGameChange = async (e: Event) => {
-      const badgesContainer = document.querySelector('.badges-container');
-      const badge = createEl('img', {
-        className: 'badge-img',
-      }) as HTMLImageElement;
+      try {
+        const badgeContainer = document.querySelector('.badge-container');
 
-      const target = e.target as HTMLOptionElement;
-      const gameId = Number(target?.value);
-      const gameResult: GameResult[] = await getGameResult({
-        gameId,
-        difficulty: undefined,
-      });
-      const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
+        const badge = createEl('img', {
+          className: 'badge-img',
+        }) as HTMLImageElement;
 
-      badge.src = games[0].achievement;
-      badgesContainer?.replaceChildren(badge);
-      const table = createStatsTable(gameResult);
-      const panelContent: HTMLDivElement | null =
-        document.querySelector('.panel-content');
-      if (!panelContent) return;
-      panelContent.textContent = '';
-      panelContent.style.display = 'block';
-      panelContent?.append(table);
+        const target = e.target as HTMLOptionElement;
+        const gameId = Number(target?.value);
+
+        const gameResult: GameResult[] = await getGameResult({
+          gameId,
+          difficulty,
+        });
+
+        const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
+
+        badge.src = games[0].achievement;
+        badgeContainer?.replaceChildren(badge);
+
+        const table = createStatsTable(gameResult);
+
+        const panelContent: HTMLDivElement | null =
+          document.querySelector('.panel-content');
+
+        if (!panelContent) return;
+
+        panelContent.textContent = '';
+        panelContent.style.display = 'block';
+        panelContent.append(table);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     gameSelector.addEventListener('change', handleGameChange);
@@ -129,5 +182,6 @@ export const createDashboardView = (): HTMLElement => {
   createTopBar().then((topBar) => {
     section.append(topBar, status, gameStatsPanel());
   });
+
   return section;
 };

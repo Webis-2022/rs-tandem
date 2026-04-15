@@ -4,7 +4,7 @@ import { navigate } from '../../app/navigation';
 import { createEl, createButton, createLink } from '../../shared/dom';
 import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../../components/ui/modal/modal';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 
 type Feature = {
   title: string;
@@ -107,8 +107,8 @@ export const createLandingView = (): HTMLElement => {
 
   const heroActions = createEl('div', { className: 'landing-actions' });
   const primaryCta = createButton(
-    isAuthed ? 'Go to Dashboard' : 'Start from Login',
-    () => navigate(isAuthed ? ROUTES.Dashboard : ROUTES.Login),
+    isAuthed ? 'Go to Library' : 'Start from Login',
+    () => navigate(isAuthed ? ROUTES.Library : ROUTES.Login),
     'btn landing-actions-primary'
   );
   const secondaryCta = createButton(

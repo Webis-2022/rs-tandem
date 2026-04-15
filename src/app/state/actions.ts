@@ -9,8 +9,8 @@ import type {
   User,
 } from '../../types';
 import { getState, initialGameState, setState } from './store';
-import { syncActiveGameToServer } from '../../services/syncActiveGame';
-import { clearActiveGame } from '../../services/storageService';
+import { syncActiveGameToServer } from '../../services/sync-active-game';
+import { clearActiveGame } from '../../services/storage-service';
 
 export function applyTheme(theme: UITheme): void {
   document.documentElement.dataset.theme = theme;
@@ -36,6 +36,21 @@ export function setTheme(theme: UITheme): void {
 export function toggleTheme(): void {
   const prev = getState();
   setTheme(prev.ui.theme === 'light' ? 'dark' : 'light');
+}
+
+export function setLibraryDifficulty(difficulty: Difficulty): void {
+  const prev = getState();
+
+  setState(
+    {
+      ...prev,
+      ui: {
+        ...prev.ui,
+        selectedLibraryDifficulty: difficulty,
+      },
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function setActiveRoute(route: RoutePath): void {

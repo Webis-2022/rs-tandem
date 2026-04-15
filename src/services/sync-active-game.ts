@@ -1,4 +1,4 @@
-import * as authService from './authService';
+import * as authService from './auth-service';
 import { getState } from '../app/state/store';
 import { upsertActiveGame, deleteActiveGame } from './api/active-games';
 import type { AppState } from '../types';

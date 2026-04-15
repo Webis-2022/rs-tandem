@@ -1,5 +1,5 @@
 import { saveGameId } from '../../app/state/actions';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase-client';
 import { PostgrestError } from '@supabase/supabase-js';
 import { type GameData } from '../../types';
 

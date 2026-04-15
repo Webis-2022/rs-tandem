@@ -3,7 +3,7 @@ import { startNewGame } from '../../../app/state/actions';
 import { getState } from '../../../app/state/store';
 import { deleteCompletedTopics } from '../../../services/api/delete-completed-topics';
 import { saveAchievement } from '../../../services/api/save-achievement';
-import { finishCurrentGame } from '../../../services/finishCurrentGame';
+import { finishCurrentGame } from '../../../services/finish-current-game';
 import { createButton, createEl } from '../../../shared/dom';
 import { ROUTES } from '../../../types';
 import { delay } from '../../../utils/delay';
@@ -15,8 +15,11 @@ export async function createFinalScreen() {
   const score = state.game.score;
   let background = createEl('div');
   let modalWindow = createEl('div');
+  const layoutHeader = document.querySelector('.layout-header');
+  const layoutFooter = document.querySelector('.layout-footer');
   const layout = document.querySelector('.layout');
   const layoutMain = layout?.querySelector('.layout-main');
+  if (!layoutMain) return;
   const delayForModal = 600;
 
   const loserScore = 50;
@@ -58,7 +61,7 @@ export async function createFinalScreen() {
     const modalWindow = createEl('div', {
       className: 'final-screen-modal',
     }) as HTMLDivElement;
-    const textContainer = createEl('div', { className: 'text-container' });
+    const textContainer = createEl('div', { className: 'final-screen-text' });
     textContainer.innerHTML = text;
     const badgeContainer = createEl('span', { className: 'badge-container' });
     badgeContainer.innerHTML = achievementText;
@@ -70,12 +73,19 @@ export async function createFinalScreen() {
     const buttonSet = createEl('div', { className: 'button-set' });
     const restartButton = createButton(
       'Restart',
-      handleRestartButton,
+      () => {
+        handleRestartButton();
+      },
       'restart-btn'
     );
+    const handleLibraryButton = async () => {
+      await finishCurrentGame();
+      navigate(ROUTES.Library, true);
+    };
+
     const libraryButton = createButton(
       'Library',
-      () => navigate(ROUTES.Library, true),
+      handleLibraryButton,
       'library-btn'
     );
 
@@ -106,7 +116,9 @@ export async function createFinalScreen() {
     console.error('Failed to save achievement', e);
   }
 
-  layout.firstChild?.remove();
+  layoutHeader?.classList.add('is-hidden');
+  layoutFooter?.classList.add('is-hidden');
+
   layoutMain?.replaceChildren();
   layoutMain?.append(background);
   await delay(delayForModal);

@@ -5,10 +5,10 @@ import { createEl, createButton, createLink } from '../../shared/dom';
 import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
-import * as authService from '../../services/authService';
+import * as authService from '../../services/auth-service';
 import { saveUserData } from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runResumeGameFlow } from '../../services/resumeActiveGame';
+import { runResumeGameFlow } from '../../services/resume-active-game';
 
 type Field = {
   root: HTMLElement;
@@ -231,7 +231,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       if (mode === 'register') {
         await authService.register(email, password);
-        navigate(ROUTES.Dashboard, true);
+        navigate(ROUTES.Library, true);
         return;
       }
 
@@ -246,8 +246,8 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       await createNewGame(user.id);
 
-      // Navigate to dashboard on success
-      navigate(ROUTES.Dashboard, true);
+      // Navigate to library on success
+      navigate(ROUTES.Library, true);
     } catch (error) {
       const authError = error as AuthError;
 
