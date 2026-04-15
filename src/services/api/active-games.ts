@@ -32,17 +32,6 @@ export async function getActiveSessionByUser(
 }
 
 /**
- * Совместимая обертка для существующих вызовов,
- * которым пока нужен только active game state.
- */
-export async function getActiveGameByUser(
-  userId: string
-): Promise<AppState['game'] | null> {
-  const session = await getActiveSessionByUser(userId);
-  return session?.game ?? null;
-}
-
-/**
  * Создает или обновляет активную сессию пользователя в Supabase.
  */
 export async function upsertActiveSession(
@@ -65,20 +54,6 @@ export async function upsertActiveSession(
       throw error;
     }
   }, 'Failed to save active session.');
-}
-
-/**
- * Совместимая обертка для существующих вызовов,
- * которые пока сохраняют только состояние активного топика.
- */
-export async function upsertActiveGame(
-  userId: string,
-  game: AppState['game']
-): Promise<void> {
-  return upsertActiveSession(userId, {
-    gameId: null,
-    game,
-  });
 }
 
 /**

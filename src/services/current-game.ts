@@ -116,11 +116,6 @@ export async function resolveCurrentGame(): Promise<CurrentGameResolution> {
   };
 }
 
-export async function getCurrentGame(): Promise<CurrentGame | null> {
-  const { currentGame } = await resolveCurrentGame();
-  return currentGame;
-}
-
 async function discardCurrentGame(source: CurrentGameSource): Promise<void> {
   if (source === 'local') {
     clearActiveSession();

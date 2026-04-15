@@ -1,5 +1,4 @@
 import type {
-  AppState,
   PersistedActiveSession,
   Difficulty,
   HintCounter,
@@ -346,15 +345,6 @@ export async function startNewGame(params: {
   } catch (error) {
     console.error('Failed to save active game to Supabase:', error);
   }
-}
-
-export function restoreGameState(game: AppState['game']) {
-  const prev = getState();
-
-  setState({
-    ...prev,
-    game,
-  });
 }
 
 export function restoreActiveSession(session: PersistedActiveSession): void {
