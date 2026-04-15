@@ -23,6 +23,16 @@ const mockGameResult = [
     used_hints: '{"50/50":0,"call a friend":0,"i don\'t know":0}',
     wrong_answers_count: 2,
   },
+  {
+    game_id: 226,
+    user_id: 'd6c58d3c-e6ea-405c-87d7-28e698ebc457',
+    score: 5,
+    topic: 'HTML Basics',
+    difficulty: 'medium',
+    topic_id: 1,
+    used_hints: '{"50/50":0,"call a friend":0,"i don\'t know":0}',
+    wrong_answers_count: 2,
+  },
 ];
 
 const mockGames = [
@@ -75,6 +85,38 @@ describe('createDashboardView', () => {
       ).not.toBeNull();
       expect(document.querySelector('.panel-content')?.textContent).toContain(
         'Semantic Tags'
+      );
+    });
+  });
+  test('notification is shown', async () => {
+    vi.mocked(getGames).mockResolvedValue([]);
+    vi.mocked(getGameResult).mockResolvedValue([]);
+    const difficultySelector = document.querySelector('.difficulty-selector');
+    if (difficultySelector instanceof HTMLSelectElement) {
+      await userEvent.selectOptions(difficultySelector, 'medium');
+    }
+
+    await waitFor(() => {
+      expect(document.querySelector('.panel-content')?.textContent).toContain(
+        'There are no results for this difficulty level'
+      );
+    });
+  });
+  test('results replaced according to difficulty level', async () => {
+    const difficultySelector = document.querySelector('.difficulty-selector');
+    const gameSelector = document.querySelector('.game-selector');
+
+    if (
+      difficultySelector instanceof HTMLSelectElement &&
+      gameSelector instanceof HTMLSelectElement
+    ) {
+      await userEvent.selectOptions(difficultySelector, 'medium');
+      await userEvent.selectOptions(gameSelector, '226');
+    }
+
+    await waitFor(() => {
+      expect(document.querySelector('.panel-content')?.textContent).toContain(
+        'HTML Basics'
       );
     });
   });
