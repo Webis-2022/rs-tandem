@@ -29,17 +29,6 @@ export function clearActiveSession(): void {
   localStorage.removeItem(ACTIVE_SESSION_KEY);
 }
 
-export function saveActiveGame(game: AppState['game']): void {
-  saveActiveSession({
-    gameId: null,
-    game,
-  });
-}
-
-export function getActiveGame(): AppState['game'] | null {
-  return getActiveSession()?.game ?? null;
-}
-
 export function clearActiveGame(): void {
   clearActiveSession();
 }
