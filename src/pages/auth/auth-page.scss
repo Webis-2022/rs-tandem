@@ -113,10 +113,8 @@
 
 .auth-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: v.$spacing-md;
-  flex-wrap: wrap;
 }
 
 .auth-link {
