@@ -6,9 +6,9 @@ function handleDocumentClick(event: MouseEvent) {
 
   const target = event.target as Node;
 
-  // Ignore clicks outside the main content area (e.g. header theme toggle, nav)
-  const layoutMain = document.querySelector('.layout-main');
-  if (layoutMain && !layoutMain.contains(target)) return;
+  // Ignore clicks on the theme switcher button
+  const layoutThemeSwitcher = document.querySelector('.layout-theme-switcher');
+  if (layoutThemeSwitcher?.contains(target)) return;
 
   if (!sidePanel.contains(target)) {
     closeSidePanel();
