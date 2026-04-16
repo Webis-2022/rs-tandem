@@ -7,7 +7,7 @@ import {
 } from '../../app/state/actions';
 import { highLightAnswer } from './high-light-answer';
 import { playSound } from './play-sound';
-import { updateScore } from './updateScore';
+import { updateScore } from './update-score';
 import { delay } from '../../utils/delay';
 import { buildModalParagraphsHtml } from '../../shared/helpers';
 import { showModal } from '../ui/modal/modal';
