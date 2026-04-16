@@ -1,26 +1,37 @@
 # RSS Tandem App – DOMinator
 
-## Project description
+## About the project
+
+### App Deploy Link: [DOMinator App](https://webis-2022-rs-tandem.netlify.app/)
+
+### Project description
 
 HTML & CSS Trainer for interview preparation. The app generates a wide range of questions on key topics using a language model, helping you reinforce knowledge and identify gaps. Suitable for both revising fundamentals and deeper practice. A convenient training format makes learning fast and effective.
 
-## What we are proud of in this project
+### Video Demo
+
+- [RSS Tandem App Checkpoint 5 Preview](https://youtu.be/HWwnsfwI7CI). This video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
+
+### What we are proud of in this project
 
 We are proud that we were able to build this trainer despite all the difficulties, including those not directly related to development.
 
 During this project, each of us learned something new. We tried working with the backend, and for some of us it was the first such experience. We also learned how to integrate an AI agent into the application for question generation and explored GitHub features for team collaboration in more depth.
 
-## Video Demo
-
-- [RSS Tandem App Checkpoint 5 Preview](https://youtu.be/HWwnsfwI7CI). This video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
-
-## Team:
+## Team and diaries
 
 - [Jevgeni Verjovkin](https://github.com/Webis-2022/Jevgeni-Verjovkin), link to diary - [Webis-2022](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/Webis-2022)
 - [Aleksandra Potapova](https://github.com/alekspanda), link to diary - [alekspanda](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/alekspanda)
 - [Sergei Urazov](https://github.com/urazof), link to diary - [Urazof](https://github.com/Webis-2022/rs-tandem/tree/main/development-notes/Urazof)
 
-## Meeting notes:
+## Trello
+
+- [Trello board link](https://trello.com/b/sp5J9fxW/my-trello-board)
+- [Trello board screen]()
+
+## The best PRs
+
+## Meeting notes
 
 - [First meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-17.md)
 - [Second meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-19.md)
@@ -137,10 +148,6 @@ After completing the game, the user can:
    npm run dev
 
 5. After running the server, open the URL shown in the terminal
-
-## App Deploy Link
-
-[https://webis-2022-rs-tandem.netlify.app/](https://webis-2022-rs-tandem.netlify.app/)
 
 ## Branch Strategy
 
