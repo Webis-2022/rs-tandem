@@ -187,10 +187,6 @@ export function calculateScore(roundScore: number) {
   void syncActiveGameToServer(nextGame).catch((error) => {
     console.error('Failed to sync active game after score update:', error);
   });
-
-  void syncActiveGameToServer().catch((error) => {
-    console.error('Failed to sync active game after score update:', error);
-  });
 }
 
 export function resetRound() {
@@ -292,10 +288,6 @@ export function saveUsedHint(hintName: keyof HintCounter) {
   });
 
   void syncActiveGameToServer(nextGame).catch((error) => {
-    console.error('Failed to sync active game after hint update:', error);
-  });
-
-  void syncActiveGameToServer().catch((error) => {
     console.error('Failed to sync active game after hint update:', error);
   });
 }
