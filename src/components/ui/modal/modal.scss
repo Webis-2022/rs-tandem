@@ -11,6 +11,8 @@
   z-index: v.$modal-overlay-z-index;
   background: rgba(0, 0, 0, v.$modal-overlay-opacity);
   backdrop-filter: blur(v.$modal-backdrop-blur);
+  -webkit-backdrop-filter: blur(v.$modal-backdrop-blur);
+  backdrop-filter: blur(v.$modal-backdrop-blur);
   display: flex;
   align-items: center;
   justify-content: center;
