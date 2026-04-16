@@ -123,7 +123,6 @@ async function checkServerTopicResumeCandidate(
  */
 export async function getTopicResumeCandidate(): Promise<PersistedActiveSession | null> {
   const user = authService.getCurrentUser();
-
   if (!user) {
     return null;
   }
@@ -133,5 +132,10 @@ export async function getTopicResumeCandidate(): Promise<PersistedActiveSession 
     return localCandidate;
   }
 
-  return checkServerTopicResumeCandidate(user.id);
+  const serverCandidate = await checkServerTopicResumeCandidate(user.id);
+  if (serverCandidate) {
+    return serverCandidate;
+  }
+
+  return localCandidate;
 }

@@ -345,7 +345,7 @@ export function restoreActiveSession(session: PersistedActiveSession): void {
   setState(
     {
       ...prev,
-      gameId: session.gameId,
+      gameId: session.gameId ?? prev.gameId,
       game: session.game,
     },
     { saveGameToStorage: false }
