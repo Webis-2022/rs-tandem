@@ -6,13 +6,13 @@
   max-width: 600px;
 
   border-radius: v.$border-radius;
-  background-color: v.$primary-dark;
+  background-color: var(--practice-card-bg, v.$primary-dark);
   box-shadow: v.$shadow-default;
 }
 
 .card-header {
   padding: v.$spacing-md;
-  background-color: v.$primary-color;
+  background-color: var(--practice-card-header-bg, v.$primary-color);
   border-top-left-radius: v.$border-radius;
   border-top-right-radius: v.$border-radius;
   color: v.$color-white;
@@ -61,8 +61,9 @@
 .next-topic-btn,
 .library-btn {
   background-color: transparent;
-  color: v.$color-white;
-  border: v.$border-width-md solid v.$color-white;
+  color: var(--practice-card-action-text, v.$color-white);
+  border: v.$border-width-md solid
+    var(--practice-card-action-border, v.$color-white);
   border-radius: v.$border-radius;
   padding: v.$spacing-xs v.$spacing-xs;
   cursor: pointer;
@@ -75,8 +76,8 @@
   }
 
   &:not(:disabled):hover {
-    background-color: v.$color-white;
-    color: v.$primary-color;
+    background-color: var(--practice-card-action-hover-bg, v.$color-white);
+    color: var(--practice-card-action-hover-text, v.$primary-color);
   }
 }
 
@@ -87,8 +88,8 @@
 
 .card-body {
   padding: v.$spacing-md;
-  background-color: v.$secondary-color;
-  color: v.$text-color;
+  background-color: var(--practice-card-body-bg, v.$secondary-color);
+  color: var(--practice-card-body-text, v.$text-color);
   font-size: v.$font-size-base;
   font-weight: bold;
   @include m.flex(column, center, center);
@@ -111,14 +112,15 @@
   font-size: v.$font-size-lg;
   font-weight: bold;
   text-align: center;
-  color: v.$text-color;
-  background-color: v.$color-white;
+  background-color: var(--practice-card-question-bg, v.$color-white);
+  color: var(--practice-card-question-text, v.$text-color);
   border-radius: v.$border-radius;
   padding: v.$spacing-md;
 }
 
 .answer-container {
   width: 100%;
+  color: var(--practice-card-question-text, v.$text-color);
 }
 
 .answers {
@@ -132,7 +134,7 @@
 }
 
 .card-footer {
-  background-color: v.$primary-color;
+  background-color: var(--practice-card-header-bg, v.$primary-color);
   border-bottom-left-radius: v.$border-radius;
   border-bottom-right-radius: v.$border-radius;
   color: v.$color-white;
@@ -147,13 +149,12 @@
 
 .check-button {
   background-color: transparent;
-  color: v.$text-light;
+  color: var(--practice-card-question-text, v.$text-light);
   border: v.$border-width-md solid v.$color-success;
   border-radius: v.$border-radius;
   padding: v.$spacing-xs v.$spacing-md;
   cursor: pointer;
   transition: all v.$transition-speed ease-in-out;
-  font-size: v.$font-size-sm;
   position: relative;
 }
 
