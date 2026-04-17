@@ -6,9 +6,16 @@ import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/auth-service';
-import { saveUserData } from '../../app/state/actions';
+import {
+  resetGameState,
+  saveGameId,
+  saveUserData,
+} from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runResumeGameFlow } from '../../services/resume-active-game';
+import { runLoginGameChoiceFlow } from '../../services/login-game-choice-flow';
+import { deleteCompletedTopicsByUser } from '../../services/api/delete-completed-topics';
+import { clearActiveSession } from '../../services/storage-service';
+import { removeActiveGameFromServer } from '../../services/sync-active-game';
 
 type Field = {
   root: HTMLElement;
@@ -223,15 +230,30 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const user = await authService.login(email, password);
       saveUserData(user);
 
-      const resumeResult = await runResumeGameFlow();
+      const loginChoiceResult = await runLoginGameChoiceFlow(user.id);
 
-      if (resumeResult === 'resumed') {
+      if (loginChoiceResult.status === 'error') {
+        throw new Error('Failed to resolve current game.');
+      }
+
+      if (loginChoiceResult.status === 'continued') {
+        saveGameId(loginChoiceResult.gameId);
+        navigate(ROUTES.Library, true);
         return;
       }
 
-      await createNewGame(user.id);
+      if (loginChoiceResult.status === 'start-new') {
+        await deleteCompletedTopicsByUser(user.id);
+        clearActiveSession();
+        await removeActiveGameFromServer();
 
-      // Navigate to library on success
+        resetGameState();
+        await createNewGame(user.id);
+        navigate(ROUTES.Library, true);
+        return;
+      }
+
+      // Navigate to library on success // no-user / no-game
       navigate(ROUTES.Library, true);
     } catch (error) {
       const authError = error as AuthError;

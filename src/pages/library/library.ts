@@ -3,26 +3,29 @@ import {
   ROUTES,
   type AppState,
   type Difficulty,
+  type PersistedActiveSession,
   type Topic,
 } from '../../types';
 import { navigate } from '../../app/navigation';
 import { getTopics } from '../../services/api/get-topics';
 import { createEl, createButton } from '../../shared/dom';
 import {
-  restoreGameState,
   saveTopics,
   startNewGame,
   setLibraryDifficulty,
+  restoreActiveSession,
 } from '../../app/state/actions';
 import { createLoadingView } from '../../components/ui/loading/loading';
 import { createErrorMessage } from '../../components/ui/error-message/error-message';
 import { fetchCompletedTopicIds } from '../../services/api/fetch-completed-topic-ids';
 import { getState } from '../../app/state/store';
-import { getResumeCandidate } from '../../services/resume-active-game';
+import { getTopicResumeCandidate } from '../../services/topic-resume-candidate.ts';
 import {
   confirmReplaceActiveTopic,
   confirmRestartActiveTopic,
 } from './library-resume-modals.ts';
+import { createNewGame } from '../../services/api/create-new-game.ts';
+import { authService } from '../../services/auth-service.ts';
 
 type GameState = AppState['game'];
 
@@ -178,13 +181,15 @@ export const createLibraryView = (): HTMLElement => {
     });
   };
 
-  const handleContinueClick = (activeTopic: GameState | null): void => {
-    if (!activeTopic) return;
+  const handleContinueClick = (
+    activeSession: PersistedActiveSession | null
+  ): void => {
+    if (!activeSession) return;
 
     status.textContent = '';
     status.classList.remove('is-error');
 
-    restoreGameState(activeTopic);
+    restoreActiveSession(activeSession);
     navigate(ROUTES.Practice, true);
   };
 
@@ -224,6 +229,16 @@ export const createLibraryView = (): HTMLElement => {
 
       status.textContent = 'Starting practice...';
 
+      if (!getState().gameId) {
+        const user = authService.getCurrentUser();
+
+        if (!user) {
+          throw new Error('User not found.');
+        }
+
+        await createNewGame(user.id);
+      }
+
       await startNewGame({
         topicId,
         difficulty,
@@ -248,10 +263,16 @@ export const createLibraryView = (): HTMLElement => {
     list.replaceChildren(createLoadingView('Loading topics...'));
 
     try {
-      const [topics, completedTopicIds, activeCandidate] = await Promise.all([
+      const user = authService.getCurrentUser();
+
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      const [topics, completedTopicIds, activeSession] = await Promise.all([
         getTopics(),
         fetchCompletedTopicIds(difficulty),
-        getResumeCandidate(),
+        getTopicResumeCandidate(user.id),
       ]);
 
       list.replaceChildren();
@@ -267,7 +288,7 @@ export const createLibraryView = (): HTMLElement => {
       }
 
       const completedIds = new Set(completedTopicIds);
-      const activeTopic = activeCandidate?.game ?? null;
+      const activeTopic = activeSession?.game ?? null;
 
       topics.forEach((topic) => {
         const isCompleted = completedIds.has(topic.id);
@@ -282,7 +303,7 @@ export const createLibraryView = (): HTMLElement => {
             topic,
             isCompleted,
             isActiveTopic,
-            onContinue: () => void handleContinueClick(activeTopic),
+            onContinue: () => void handleContinueClick(activeSession),
             onStart: (startBtn) =>
               void handleStartClick(topic.id, startBtn, activeTopic),
           })

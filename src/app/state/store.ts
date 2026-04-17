@@ -1,5 +1,5 @@
 import { ROUTES, type AppState, type UIState } from '../../types';
-import { saveActiveGame } from '../../services/storage-service';
+import { saveActiveSession } from '../../services/storage-service';
 
 const UI_STORAGE_KEY = 'tandem:ui';
 
@@ -118,7 +118,10 @@ export function setState(
   state = newState;
 
   if (options?.saveGameToStorage !== false) {
-    saveActiveGame(state.game);
+    saveActiveSession({
+      gameId: state.gameId,
+      game: state.game,
+    });
   }
 
   saveUIState(state.ui);
