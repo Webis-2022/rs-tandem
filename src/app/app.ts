@@ -61,7 +61,13 @@ async function restorePracticeStateOnRefresh(): Promise<void> {
     return;
   }
 
-  await silentlyRestoreTopicSession();
+  const user = authService.getCurrentUser();
+
+  if (!user) {
+    return;
+  }
+
+  await silentlyRestoreTopicSession(user.id);
 }
 
 function waitForPaint(): Promise<void> {

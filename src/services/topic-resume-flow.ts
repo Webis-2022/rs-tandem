@@ -52,9 +52,11 @@ export async function restoreTopicSession(
  * so navigate() must not be called.
  * @returns true if a game was found and restored.
  */
-export async function silentlyRestoreTopicSession(): Promise<boolean> {
+export async function silentlyRestoreTopicSession(
+  userId: string
+): Promise<boolean> {
   try {
-    const activeSession = await getTopicResumeCandidate();
+    const activeSession = await getTopicResumeCandidate(userId);
 
     if (!activeSession) {
       return false;

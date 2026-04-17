@@ -245,7 +245,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const user = await authService.login(email, password);
       saveUserData(user);
 
-      const loginChoiceResult = await runLoginGameChoiceFlow();
+      const loginChoiceResult = await runLoginGameChoiceFlow(user.id);
 
       if (loginChoiceResult.status === 'error') {
         throw new Error('Failed to resolve current game.');

@@ -21,9 +21,11 @@ export type LoginGameChoiceFlowResult =
   | { status: 'start-new' }
   | { status: 'error' };
 
-export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResult> {
+export async function runLoginGameChoiceFlow(
+  userId: string
+): Promise<LoginGameChoiceFlowResult> {
   try {
-    const currentGameResult = await resolveCurrentGame();
+    const currentGameResult = await resolveCurrentGame(userId);
 
     if (currentGameResult.status === 'no-user') {
       return { status: 'no-user' };

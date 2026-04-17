@@ -7,7 +7,6 @@ import {
 } from '../types';
 import { getActiveSessionByUser } from './api/active-games';
 import { fetchCompletedTopicIds } from './api/fetch-completed-topic-ids';
-import * as authService from './auth-service';
 import { getActiveSession } from './storage-service';
 
 type GameState = AppState['game'];
@@ -121,21 +120,18 @@ async function checkServerTopicResumeCandidate(
  * Возвращает resume candidate для продолжения топика
  * без очистки невалидных или устаревших данных.
  */
-export async function getTopicResumeCandidate(): Promise<PersistedActiveSession | null> {
-  const user = authService.getCurrentUser();
-  if (!user) {
-    return null;
-  }
-
+export async function getTopicResumeCandidate(
+  userId: string
+): Promise<PersistedActiveSession | null> {
   const localCandidate = await checkLocalTopicResumeCandidate();
   if (localCandidate) {
     return localCandidate;
   }
 
-  const serverCandidate = await checkServerTopicResumeCandidate(user.id);
+  const serverCandidate = await checkServerTopicResumeCandidate(userId);
   if (serverCandidate) {
     return serverCandidate;
   }
 
-  return localCandidate;
+  return null;
 }

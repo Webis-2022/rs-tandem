@@ -263,10 +263,16 @@ export const createLibraryView = (): HTMLElement => {
     list.replaceChildren(createLoadingView('Loading topics...'));
 
     try {
+      const user = authService.getCurrentUser();
+
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
       const [topics, completedTopicIds, activeSession] = await Promise.all([
         getTopics(),
         fetchCompletedTopicIds(difficulty),
-        getTopicResumeCandidate(),
+        getTopicResumeCandidate(user.id),
       ]);
 
       list.replaceChildren();

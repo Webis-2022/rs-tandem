@@ -1,4 +1,3 @@
-import * as authService from './auth-service';
 import { getLatestGameByUser } from './api/get-games';
 
 type CurrentGameRecord = {
@@ -22,15 +21,11 @@ function isFinishedGame(game: CurrentGameRecord): boolean {
   );
 }
 
-export async function resolveCurrentGame(): Promise<ResolveCurrentGameResult> {
-  const user = authService.getCurrentUser();
-
-  if (!user) {
-    return { status: 'no-user' };
-  }
-
+export async function resolveCurrentGame(
+  userId: string
+): Promise<ResolveCurrentGameResult> {
   try {
-    const latestGame = await getLatestGameByUser(user.id);
+    const latestGame = await getLatestGameByUser(userId);
 
     if (
       !latestGame ||
