@@ -11,6 +11,8 @@
   z-index: v.$modal-overlay-z-index;
   background: rgba(0, 0, 0, v.$modal-overlay-opacity);
   backdrop-filter: blur(v.$modal-backdrop-blur);
+  -webkit-backdrop-filter: blur(v.$modal-backdrop-blur);
+  backdrop-filter: blur(v.$modal-backdrop-blur);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,8 +39,8 @@
 }
 
 .modal-card {
-  background: v.$color-white;
-  border: 1px solid v.$border-color;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
   border-radius: v.$border-radius;
   box-shadow: 0 10px 40px rgba(0, 0, 0, v.$modal-shadow-opacity);
   padding: v.$spacing-lg;
@@ -50,13 +52,13 @@
 .modal-title {
   margin: 0;
   font-size: v.$font-size-lg;
-  color: v.$text-color;
+  color: var(--text-color);
   text-align: center;
 }
 
 .modal-message {
   margin: 0;
-  color: v.$text-light;
+  color: var(--text-light-color);
   font-size: v.$font-size-base;
   line-height: 1.5;
   text-align: center;
@@ -78,12 +80,13 @@
   }
 
   .modal-btn-cancel {
-    background: v.$secondary-color;
-    color: v.$text-color;
-    border: 1px solid v.$border-color;
+    background: var(--surface-muted);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 
     &:hover:not(:disabled) {
       background: color.scale(v.$secondary-color, $lightness: -5%);
+      color: v.$text-color;
     }
   }
 

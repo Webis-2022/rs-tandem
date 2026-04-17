@@ -127,10 +127,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   const footer = createEl('div', { className: 'auth-footer' });
   const backLink = createLink('Back to landing', ROUTES.Landing, 'auth-link');
 
-  const switchText = createEl('div', { text: '', className: 'auth-switch' });
-  const switchBtn = createButton('', undefined, 'auth-switch-btn');
-
-  footer.append(backLink, switchText);
+  footer.append(backLink);
 
   // Compose
   form.append(
@@ -182,10 +179,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
     submitBtn.textContent = mode === 'login' ? 'Sign in' : 'Create account';
 
-    switchText.textContent =
-      mode === 'login' ? 'No account? ' : 'Already have an account? ';
-    switchBtn.textContent = mode === 'login' ? 'Register' : 'Login';
-
     if (mode !== 'register') confirmField.input.value = '';
 
     clearErrors();
@@ -202,14 +195,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
     mode = 'register';
     setActiveModeUI();
   });
-
-  switchBtn.addEventListener('click', () => {
-    mode = mode === 'login' ? 'register' : 'login';
-    setActiveModeUI();
-  });
-
-  // кнопка рядом с текстом
-  switchText.append(switchBtn);
 
   const onInput = () => updateValidity();
   emailField.input.addEventListener('input', onInput);
