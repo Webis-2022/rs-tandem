@@ -7,5 +7,7 @@ export async function handleGameCompletion() {
   await saveGameResult();
   await markTopicAsCompleted();
   const isGameOver = await isAllTopicsCompleted();
-  if (isGameOver) createFinalScreen();
+  if (isGameOver) {
+    createFinalScreen();
+  }
 }
