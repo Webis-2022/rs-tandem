@@ -1,14 +1,16 @@
 import * as authService from './auth-service';
 import { getLatestGameByUser } from './api/get-games';
 
-type CurrentGame = {
-  gameId: number;
-};
-
 type CurrentGameRecord = {
   id: number | null;
   achievement?: string | null;
 };
+
+export type ResolveCurrentGameResult =
+  | { status: 'no-user' }
+  | { status: 'no-game' }
+  | { status: 'success'; gameId: number }
+  | { status: 'error' };
 
 function hasValidGameId(gameId: number | null | undefined): gameId is number {
   return typeof gameId === 'number' && gameId > 0;
@@ -20,11 +22,11 @@ function isFinishedGame(game: CurrentGameRecord): boolean {
   );
 }
 
-export async function resolveCurrentGame(): Promise<CurrentGame | null> {
+export async function resolveCurrentGame(): Promise<ResolveCurrentGameResult> {
   const user = authService.getCurrentUser();
 
   if (!user) {
-    return null;
+    return { status: 'no-user' };
   }
 
   try {
@@ -35,12 +37,15 @@ export async function resolveCurrentGame(): Promise<CurrentGame | null> {
       !hasValidGameId(latestGame.id) ||
       isFinishedGame(latestGame)
     ) {
-      return null;
+      return { status: 'no-game' };
     }
 
-    return { gameId: latestGame.id };
+    return {
+      status: 'success',
+      gameId: latestGame.id,
+    };
   } catch (error) {
     console.error('Failed to resolve current game:', error);
-    return null;
+    return { status: 'error' };
   }
 }

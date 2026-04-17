@@ -15,30 +15,35 @@ export async function promptLoginGameChoice(): Promise<boolean> {
 }
 
 export type LoginGameChoiceFlowResult =
+  | { status: 'no-user' }
   | { status: 'no-game' }
   | { status: 'continued'; gameId: number }
-  | { status: 'start-new' };
+  | { status: 'start-new' }
+  | { status: 'error' };
 
 export async function runLoginGameChoiceFlow(): Promise<LoginGameChoiceFlowResult> {
   try {
-    const currentGame = await resolveCurrentGame();
+    const currentGameResult = await resolveCurrentGame();
 
-    if (!currentGame) {
+    if (currentGameResult.status === 'no-user') {
+      return { status: 'no-user' };
+    }
+
+    if (currentGameResult.status === 'no-game') {
       return { status: 'no-game' };
+    }
+
+    if (currentGameResult.status === 'error') {
+      return { status: 'error' };
     }
 
     const shouldContinue = await promptLoginGameChoice();
 
-    if (shouldContinue) {
-      return {
-        status: 'continued',
-        gameId: currentGame.gameId,
-      };
-    }
-
-    return { status: 'start-new' };
+    return shouldContinue
+      ? { status: 'continued', gameId: currentGameResult.gameId }
+      : { status: 'start-new' };
   } catch (error) {
     console.error('Login game choice flow failed:', error);
-    return { status: 'no-game' };
+    return { status: 'error' };
   }
 }

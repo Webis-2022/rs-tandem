@@ -247,6 +247,10 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
       const loginChoiceResult = await runLoginGameChoiceFlow();
 
+      if (loginChoiceResult.status === 'error') {
+        throw new Error('Failed to resolve current game.');
+      }
+
       if (loginChoiceResult.status === 'continued') {
         saveGameId(loginChoiceResult.gameId);
         navigate(ROUTES.Library, true);
@@ -264,7 +268,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
         return;
       }
 
-      // Navigate to library on success
+      // Navigate to library on success // no-user / no-game
       navigate(ROUTES.Library, true);
     } catch (error) {
       const authError = error as AuthError;
