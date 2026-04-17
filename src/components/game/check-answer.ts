@@ -44,6 +44,7 @@ export async function checkAnswer(gameMode: string) {
       handleAnswerFeedback(selectedValue, './sound/incorrect.mp3', '#fa2525');
     }
     countWrongAnswers();
+    console.log(roundScore);
     calculateScore(roundScore);
     updateScore();
   } else if (gameMode === 'super-game') {

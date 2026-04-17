@@ -152,9 +152,12 @@ export const createDashboardView = (): HTMLElement => {
         });
 
         const games: GameData[] = (await getGames({ gameIds: [gameId] })) || [];
+        const achievement = games[0].achievement;
 
-        badge.src = games[0].achievement;
-        badgeContainer?.replaceChildren(badge);
+        if (achievement) {
+          badge.src = games[0].achievement;
+          badgeContainer?.replaceChildren(badge);
+        }
 
         const table = createStatsTable(gameResult);
 
