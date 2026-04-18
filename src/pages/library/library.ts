@@ -76,29 +76,28 @@ function createTopicCard({
   });
   header.append(name);
 
-  if (isActiveTopic) {
-    const activeBadge = createEl('span', {
-      text: 'Unfinished',
-      className: 'library-topic-badge',
-    });
-
-    header.append(activeBadge);
-  }
-
   const actions = createEl('div', { className: 'library-card-actions' });
   const actionsRight = createEl('div', {
     className: 'library-card-actions-right',
   });
 
   if (isCompleted) {
-    const topicIcon = createEl('img', {
+    const statusIcon = createEl('img', {
       className: 'topic-icon',
     }) as HTMLImageElement;
 
-    topicIcon.src = '/img/tick-mark.png';
-    topicIcon.alt = '';
-    topicIcon.setAttribute('aria-hidden', 'true');
-    actions.append(topicIcon);
+    statusIcon.src = '/img/tick-mark.png';
+    statusIcon.alt = '';
+    statusIcon.setAttribute('aria-hidden', 'true');
+
+    actions.append(statusIcon);
+  } else if (isActiveTopic) {
+    const statusIcon = createEl('span', {
+      className: 'library-topic-badge topic-icon',
+    });
+
+    statusIcon.setAttribute('aria-hidden', 'true');
+    actions.append(statusIcon);
   }
 
   if (isActiveTopic) {
