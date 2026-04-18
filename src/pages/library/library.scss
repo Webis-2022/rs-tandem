@@ -83,8 +83,8 @@
 
 .library-topic-badge {
   background-color: var(--text-color, v.$text-color);
-  -webkit-mask: url('/img/icon-in-progress.svg') center / contain no-repeat;
-  mask: url('/img/icon-in-progress.svg') center / contain no-repeat;
+  -webkit-mask: url('/img/icon-in-progress.svg') center / 90% no-repeat;
+  mask: url('/img/icon-in-progress.svg') center / 90% no-repeat;
 }
 
 .library-card.is-completed {
