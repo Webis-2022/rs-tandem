@@ -34,3 +34,5 @@
 Также резолвил баги, проводил ревью кода, писал юнит-тесты для всех своих модулей.
 
 По тестам: 13 файлов, 140 тестов. Покрыты все мои модули — modal, layout, landing, auth-service, store и actions.
+
+PR: https://github.com/Webis-2022/rs-tandem/pull/171
