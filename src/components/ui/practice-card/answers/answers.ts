@@ -24,7 +24,7 @@ export function createAnswers(question: Question) {
     const span = createEl('span');
 
     if (span) {
-      span.innerHTML = option;
+      span.textContent = option;
     }
 
     label.append(radioInput, span);
