@@ -31,6 +31,13 @@ During this project, each of us learned something new. We tried working with the
 
 ## The best PRs
 
+These pull requests were selected as the best ones because they made a significant contribution to the application and went through a meaningful review process.
+
+- [PR #112 Feature/disable and mark completed topics](https://github.com/Webis-2022/rs-tandem/pull/112)
+- [PR #120 Feature/game achievements.](https://github.com/Webis-2022/rs-tandem/pull/120)
+- [PR #144 Fix/redirecting, super-game, state before render.](https://github.com/Webis-2022/rs-tandem/pull/144)
+- [PR #156 Feature/login resume game choice.](https://github.com/Webis-2022/rs-tandem/pull/156)
+
 ## Meeting notes
 
 - [First meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-17.md)
