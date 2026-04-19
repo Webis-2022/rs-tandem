@@ -1,6 +1,6 @@
 ## Self-Assessment: [GitHub Aleksandra](https://github.com/AleksPanda)
 
-**Ссылка на PR с данным файлом:** [PR #175](https://github.com/Webis-2022/rs-tandem/pull/175)
+**Ссылка на PR с данным файлом:** [PR #176](https://github.com/Webis-2022/rs-tandem/pull/176)
 
 ## 📊 Feature Score Table
 
