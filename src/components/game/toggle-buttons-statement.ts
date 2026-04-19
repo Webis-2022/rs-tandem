@@ -5,7 +5,9 @@ export function toggleButtonsStatement(
 ) {
   if (mode === 'allButtons') {
     const nextTopicButton = document.querySelector('.next-topic-btn');
-    const libraryButton = document.querySelector('.library-btn');
+    const libraryButton = document.querySelector(
+      '.library-btn:not(.final-screen-btn)'
+    );
     const hintButtons = document.querySelectorAll('.hint-btn');
     const checkButton = document.querySelector('.check-button');
     const answerButtons: NodeListOf<HTMLButtonElement> =

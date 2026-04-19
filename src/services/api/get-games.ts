@@ -18,3 +18,19 @@ export async function getGames(params: { gameIds: number[] }) {
   }
   return;
 }
+
+export async function getLatestGameByUser(userId: string) {
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

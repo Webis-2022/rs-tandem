@@ -21,7 +21,13 @@ export function createAnswers(question: Question) {
       });
     }
 
-    label.append(radioInput, option);
+    const span = createEl('span');
+
+    if (span) {
+      span.textContent = option;
+    }
+
+    label.append(radioInput, span);
     answers?.append(label);
     answerContainer?.prepend(answers);
   });

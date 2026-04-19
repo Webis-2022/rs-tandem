@@ -6,7 +6,7 @@ import * as api from '../../services/api/get-questions';
 import * as actions from '../../app/state/actions';
 import * as syncModule from '../../services/sync-active-game';
 import * as showNextModule from '../../components/game/show-next-question';
-import * as updateScoreModule from '../../components/game/updateScore';
+import * as updateScoreModule from '../../components/game/update-score';
 import * as practiceCardModule from '../../components/ui/practice-card/practice-card';
 import * as sidePanelModule from '../../components/ui/practice-card/side-panel/side-panel';
 
@@ -15,7 +15,7 @@ vi.mock('../../services/api/get-questions');
 vi.mock('../../app/state/actions');
 vi.mock('../../services/sync-active-game');
 vi.mock('../../components/game/show-next-question');
-vi.mock('../../components/game/updateScore');
+vi.mock('../../components/game/update-score');
 vi.mock('../../components/ui/practice-card/practice-card');
 vi.mock('../../components/ui/practice-card/side-panel/side-panel');
 

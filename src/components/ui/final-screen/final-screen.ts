@@ -86,7 +86,7 @@ export async function createFinalScreen() {
     const libraryButton = createButton(
       'Library',
       handleLibraryButton,
-      'library-btn'
+      'library-btn final-screen-btn'
     );
 
     buttonSet.append(restartButton, libraryButton);
