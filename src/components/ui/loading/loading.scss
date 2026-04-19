@@ -2,7 +2,7 @@
 
 .loading-view {
   width: 100%;
-  color: v.$text-light;
+  color: var(--text-light-color, v.$text-light);
   font-size: v.$font-size-base;
 
   display: flex;

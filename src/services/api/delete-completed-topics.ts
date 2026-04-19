@@ -19,3 +19,16 @@ export function deleteCompletedTopics(difficulty: Difficulty) {
     }
   }, 'Failed to delete complete topics');
 }
+
+export function deleteCompletedTopicsByUser(userId: string): Promise<void> {
+  return withApiErrorHandling(async () => {
+    const { error } = await supabase
+      .from('topic_status')
+      .delete()
+      .eq('user_id', userId);
+
+    if (error) {
+      throw error;
+    }
+  }, 'Failed to delete completed topics');
+}

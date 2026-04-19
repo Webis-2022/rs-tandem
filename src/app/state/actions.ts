@@ -1,5 +1,5 @@
 import type {
-  AppState,
+  PersistedActiveSession,
   Difficulty,
   HintCounter,
   Question,
@@ -10,7 +10,7 @@ import type {
 } from '../../types';
 import { getState, initialGameState, setState } from './store';
 import { syncActiveGameToServer } from '../../services/sync-active-game';
-import { clearActiveGame } from '../../services/storage-service';
+import { clearActiveSession } from '../../services/storage-service';
 
 export function applyTheme(theme: UITheme): void {
   document.documentElement.dataset.theme = theme;
@@ -187,10 +187,6 @@ export function calculateScore(roundScore: number) {
   void syncActiveGameToServer(nextGame).catch((error) => {
     console.error('Failed to sync active game after score update:', error);
   });
-
-  void syncActiveGameToServer().catch((error) => {
-    console.error('Failed to sync active game after score update:', error);
-  });
 }
 
 export function resetRound() {
@@ -294,10 +290,6 @@ export function saveUsedHint(hintName: keyof HintCounter) {
   void syncActiveGameToServer(nextGame).catch((error) => {
     console.error('Failed to sync active game after hint update:', error);
   });
-
-  void syncActiveGameToServer().catch((error) => {
-    console.error('Failed to sync active game after hint update:', error);
-  });
 }
 
 export function saveUserData(user: User) {
@@ -347,13 +339,17 @@ export async function startNewGame(params: {
   }
 }
 
-export function restoreGameState(game: AppState['game']) {
+export function restoreActiveSession(session: PersistedActiveSession): void {
   const prev = getState();
 
-  setState({
-    ...prev,
-    game,
-  });
+  setState(
+    {
+      ...prev,
+      gameId: session.gameId ?? prev.gameId,
+      game: session.game,
+    },
+    { saveGameToStorage: false }
+  );
 }
 
 export function resetGameState() {
@@ -362,12 +358,13 @@ export function resetGameState() {
   setState(
     {
       ...prev,
+      gameId: null,
       game: { ...initialGameState },
     },
     { saveGameToStorage: false }
   );
 
-  clearActiveGame();
+  clearActiveSession();
 }
 
 export function resetUsedHints() {

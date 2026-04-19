@@ -71,6 +71,47 @@ describe('Modal Component', () => {
       await user.click(okBtn);
       await promise;
     });
+
+    it('should render messageText as plain text', async () => {
+      const promise = showModal({ messageText: 'Plain text content' });
+
+      const messageEl = document.querySelector('.modal-message');
+      expect(messageEl?.textContent).toBe('Plain text content');
+
+      const okBtn = screen.getByRole('button', { name: /ok/i });
+      await user.click(okBtn);
+      await promise;
+    });
+
+    it('should append messageStrongText in bold after messageText', async () => {
+      const promise = showModal({
+        messageText: 'Continue with topic: ',
+        messageStrongText: 'HTML Basics',
+      });
+
+      const messageEl = document.querySelector('.modal-message');
+      const strongEl = messageEl?.querySelector('b');
+
+      expect(messageEl?.textContent).toContain('Continue with topic:');
+      expect(strongEl).toBeInTheDocument();
+      expect(strongEl?.textContent).toBe('HTML Basics');
+
+      const okBtn = screen.getByRole('button', { name: /ok/i });
+      await user.click(okBtn);
+      await promise;
+    });
+
+    it('should render messageText without bold when messageStrongText is absent', async () => {
+      const promise = showModal({ messageText: 'Simple message' });
+
+      const messageEl = document.querySelector('.modal-message');
+      expect(messageEl?.querySelector('b')).not.toBeInTheDocument();
+      expect(messageEl?.textContent).toBe('Simple message');
+
+      const okBtn = screen.getByRole('button', { name: /ok/i });
+      await user.click(okBtn);
+      await promise;
+    });
   });
 
   describe('Single button mode', () => {

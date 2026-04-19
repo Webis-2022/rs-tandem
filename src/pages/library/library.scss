@@ -69,21 +69,27 @@
   min-width: 0;
 }
 
+.topic-icon,
 .library-topic-badge {
-  color: var(--text-light-color, v.$text-light);
-  font-size: v.$font-size-sm;
-  white-space: nowrap;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: block;
+}
+
+.topic-icon {
+  object-fit: contain;
+}
+
+.library-topic-badge {
+  background-color: var(--text-color, v.$text-color);
+  -webkit-mask: url('/img/icon-in-progress.svg') center / 90% no-repeat;
+  mask: url('/img/icon-in-progress.svg') center / 90% no-repeat;
 }
 
 .library-card.is-completed {
   opacity: v.$modal-overlay-opacity;
   background-color: var(--library-card-completed-bg, v.$border-color);
-}
-
-.topic-icon {
-  width: v.$spacing-xl;
-  height: v.$spacing-xl;
-  object-fit: contain;
 }
 
 .library-card-actions {

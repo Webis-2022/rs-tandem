@@ -6,9 +6,16 @@ import { getAuthErrorMessage } from '../../shared/helpers';
 import type { Mode, AuthErrors } from './validate';
 import { validateAuth, isValid } from './validate';
 import * as authService from '../../services/auth-service';
-import { saveUserData } from '../../app/state/actions';
+import {
+  resetGameState,
+  saveGameId,
+  saveUserData,
+} from '../../app/state/actions';
 import { createNewGame } from '../../services/api/create-new-game';
-import { runResumeGameFlow } from '../../services/resume-active-game';
+import { runLoginGameChoiceFlow } from '../../services/login-game-choice-flow';
+import { deleteCompletedTopicsByUser } from '../../services/api/delete-completed-topics';
+import { clearActiveSession } from '../../services/storage-service';
+import { removeActiveGameFromServer } from '../../services/sync-active-game';
 
 type Field = {
   root: HTMLElement;
@@ -120,10 +127,7 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
   const footer = createEl('div', { className: 'auth-footer' });
   const backLink = createLink('Back to landing', ROUTES.Landing, 'auth-link');
 
-  const switchText = createEl('div', { text: '', className: 'auth-switch' });
-  const switchBtn = createButton('', undefined, 'auth-switch-btn');
-
-  footer.append(backLink, switchText);
+  footer.append(backLink);
 
   // Compose
   form.append(
@@ -175,10 +179,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
 
     submitBtn.textContent = mode === 'login' ? 'Sign in' : 'Create account';
 
-    switchText.textContent =
-      mode === 'login' ? 'No account? ' : 'Already have an account? ';
-    switchBtn.textContent = mode === 'login' ? 'Register' : 'Login';
-
     if (mode !== 'register') confirmField.input.value = '';
 
     clearErrors();
@@ -195,14 +195,6 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
     mode = 'register';
     setActiveModeUI();
   });
-
-  switchBtn.addEventListener('click', () => {
-    mode = mode === 'login' ? 'register' : 'login';
-    setActiveModeUI();
-  });
-
-  // кнопка рядом с текстом
-  switchText.append(switchBtn);
 
   const onInput = () => updateValidity();
   emailField.input.addEventListener('input', onInput);
@@ -238,15 +230,30 @@ export function createAuthView(initialMode: Mode = 'login'): HTMLElement {
       const user = await authService.login(email, password);
       saveUserData(user);
 
-      const resumeResult = await runResumeGameFlow();
+      const loginChoiceResult = await runLoginGameChoiceFlow(user.id);
 
-      if (resumeResult === 'resumed') {
+      if (loginChoiceResult.status === 'error') {
+        throw new Error('Failed to resolve current game.');
+      }
+
+      if (loginChoiceResult.status === 'continued') {
+        saveGameId(loginChoiceResult.gameId);
+        navigate(ROUTES.Library, true);
         return;
       }
 
-      await createNewGame(user.id);
+      if (loginChoiceResult.status === 'start-new') {
+        await deleteCompletedTopicsByUser(user.id);
+        clearActiveSession();
+        await removeActiveGameFromServer();
 
-      // Navigate to library on success
+        resetGameState();
+        await createNewGame(user.id);
+        navigate(ROUTES.Library, true);
+        return;
+      }
+
+      // Navigate to library on success // no-user / no-game
       navigate(ROUTES.Library, true);
     } catch (error) {
       const authError = error as AuthError;
