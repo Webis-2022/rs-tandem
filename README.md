@@ -40,11 +40,11 @@ These pull requests were selected as the best ones because they made a significa
 
 ## Meeting notes
 
-- [First meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-17.md)
-- [Second meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-02-19.md)
-- [Third meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-08.md)
-- [Fourth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-16.md)
-- [Fifth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting%20notes/DevBand-2026-03-23.md)
+- [First meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting-notes/DevBand-2026-02-17.md)
+- [Second meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting-notes/DevBand-2026-02-19.md)
+- [Third meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting-notes/DevBand-2026-03-08.md)
+- [Fourth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting-notes/DevBand-2026-03-16.md)
+- [Fifth meeting](https://github.com/Webis-2022/rs-tandem/blob/main/development-notes/meeting-notes/DevBand-2026-03-23.md)
 
 ## Game Rules
 
