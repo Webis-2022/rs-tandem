@@ -27,7 +27,7 @@ During this project, each of us learned something new. We tried working with the
 ## Trello
 
 - [Trello board link](https://trello.com/b/sp5J9fxW/my-trello-board)
-- [Trello board screen]()
+- [Trello board screen](./development-notes/meeting-notes/Trello-screen.png)
 
 ## The best PRs
 
