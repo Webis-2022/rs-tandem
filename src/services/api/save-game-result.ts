@@ -5,7 +5,7 @@ import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 export function saveGameResult() {
   return withApiErrorHandling(async () => {
     const state = getState();
-    const questionsPerTopic = 1;
+    const questionsPerTopic = 10;
     const score = questionsPerTopic - state.game.wrongAnswersCounter;
     if (!state.user) {
       throw new Error('Cannot save progress: user not authenticated');
