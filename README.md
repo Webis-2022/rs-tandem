@@ -27,9 +27,16 @@ During this project, each of us learned something new. We tried working with the
 ## Trello
 
 - [Trello board link](https://trello.com/b/sp5J9fxW/my-trello-board)
-- [Trello board screen]()
+- [Trello board screen](./development-notes/meeting-notes/Trello-screen.png)
 
 ## The best PRs
+
+These pull requests were selected as the best ones because they made a significant contribution to the application and went through a meaningful review process.
+
+- [PR #112 Feature/disable and mark completed topics](https://github.com/Webis-2022/rs-tandem/pull/112)
+- [PR #120 Feature/game achievements.](https://github.com/Webis-2022/rs-tandem/pull/120)
+- [PR #144 Fix/redirecting, super-game, state before render.](https://github.com/Webis-2022/rs-tandem/pull/144)
+- [PR #156 Feature/login resume game choice.](https://github.com/Webis-2022/rs-tandem/pull/156)
 
 ## Meeting notes
 
