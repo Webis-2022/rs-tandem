@@ -329,6 +329,7 @@ export async function startNewGame(params: {
       topicId: params.topicId,
       difficulty: params.difficulty,
       round: 1,
+      score: prev.game.score,
     },
   });
 
