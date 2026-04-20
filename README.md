@@ -10,6 +10,8 @@ HTML & CSS Trainer for interview preparation. The app generates a wide range of 
 
 ### Video Demo
 
+- [RSS Tandem App Checkpoint 7 Preview](https://youtu.be/G-3mqGBa_RM). This video contains a demo about app pages and topics completion.
+
 - [RSS Tandem App Checkpoint 5 Preview](https://youtu.be/HWwnsfwI7CI). This video contains small demo about loading state, error handling and 404 page - it's all for 5th week of the development.
 
 ### What we are proud of in this project
