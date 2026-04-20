@@ -2,10 +2,6 @@ import { supabase } from '../supabase-client.ts';
 import type { AppState, PersistedActiveSession } from '../../types';
 import { withApiErrorHandling } from '../../shared/helpers/request-error.ts';
 
-/**
- * Получает активную сессию пользователя из Supabase.
- * Сессия включает текущий gameId и состояние незавершенного топика.
- */
 export async function getActiveSessionByUser(
   userId: string
 ): Promise<PersistedActiveSession | null> {
@@ -31,9 +27,6 @@ export async function getActiveSessionByUser(
   }, 'Failed to load active session.');
 }
 
-/**
- * Создает или обновляет активную сессию пользователя в Supabase.
- */
 export async function upsertActiveSession(
   userId: string,
   session: PersistedActiveSession
@@ -56,9 +49,6 @@ export async function upsertActiveSession(
   }, 'Failed to save active session.');
 }
 
-/**
- * Удаляет активную сессию пользователя из Supabase.
- */
 export async function deleteActiveGame(userId: string): Promise<void> {
   return withApiErrorHandling(async () => {
     const { error } = await supabase

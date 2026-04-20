@@ -5,13 +5,13 @@ import { getTopics } from './api/get-topics';
 import { getTopicResumeCandidate } from './topic-resume-candidate';
 
 /**
- * Загружает topics, если их еще нет в store.
+ * Хранит текущий промис загрузки topics, чтобы не запускать дублирующие запросы.
  */
 let topicsLoadingPromise: Promise<void> | null = null;
 
 /**
  * Загружает topics, если их еще нет в store.
- * Параллельные вызовы переиспользуют один и тот же запрос.
+ * Повторные параллельные вызовы переиспользуют текущий запрос.
  */
 async function ensureTopicsLoaded(): Promise<void> {
   if (getState().topics.length > 0) {
@@ -36,9 +36,6 @@ async function ensureTopicsLoaded(): Promise<void> {
   return topicsLoadingPromise;
 }
 
-/**
- * Восстанавливает активный топик и при необходимости загружает topics.
- */
 export async function restoreTopicSession(
   session: PersistedActiveSession
 ): Promise<void> {

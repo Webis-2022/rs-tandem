@@ -13,7 +13,6 @@ type GameState = AppState['game'];
 const validDifficulties: Difficulty[] = ['easy', 'medium', 'hard'];
 type ValidDifficulty = (typeof validDifficulties)[number];
 
-// Validation helpers
 function hasValidDifficulty(
   difficulty: GameState['difficulty']
 ): difficulty is ValidDifficulty {
@@ -50,10 +49,6 @@ export function hasRequiredResumeData(
   );
 }
 
-/**
- * Проверяет, не относится ли сохраненный топик
- * к уже завершенной теме на текущей сложности.
- */
 export async function isCompletedResumeCandidate(
   game: GameState
 ): Promise<boolean> {
@@ -92,18 +87,10 @@ async function validateTopicResumeSession(
   return session;
 }
 
-/**
- * Проверяет сохраненный топик в localStorage
- * и возвращает результат в виде статуса resume candidate.
- */
 async function checkLocalTopicResumeCandidate(): Promise<PersistedActiveSession | null> {
   return validateTopicResumeSession(getActiveSession());
 }
 
-/**
- * Проверяет сохраненный топик на сервере
- * и возвращает результат в виде статуса resume candidate.
- */
 async function checkServerTopicResumeCandidate(
   userId: string
 ): Promise<PersistedActiveSession | null> {
@@ -116,10 +103,6 @@ async function checkServerTopicResumeCandidate(
   }
 }
 
-/**
- * Возвращает resume candidate для продолжения топика
- * без очистки невалидных или устаревших данных.
- */
 export async function getTopicResumeCandidate(
   userId: string
 ): Promise<PersistedActiveSession | null> {
