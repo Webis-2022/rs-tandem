@@ -5,11 +5,6 @@ import type { AppState, PersistedActiveSession } from '../types';
 
 type GameState = AppState['game'];
 
-/**
- * Сохраняет активную сессию в Supabase.
- * Если game передан явно, сохраняет его.
- * Иначе берет текущее состояние game из store.
- */
 export async function syncActiveGameToServer(game?: GameState): Promise<void> {
   const user = authService.getCurrentUser();
   if (!user) return;
@@ -24,9 +19,6 @@ export async function syncActiveGameToServer(game?: GameState): Promise<void> {
   await upsertActiveSession(user.id, session);
 }
 
-/**
- * Удаляет активную сессию пользователя из Supabase.
- */
 export async function removeActiveGameFromServer(): Promise<void> {
   const user = authService.getCurrentUser();
   if (!user) return;
