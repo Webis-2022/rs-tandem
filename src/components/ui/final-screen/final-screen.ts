@@ -50,7 +50,7 @@ export async function createFinalScreen() {
     try {
       await deleteCompletedTopics(difficulty);
       await finishCurrentGame();
-      await startNewGame({ topicId: 1, difficulty });
+      await startNewGame({ topicId: 1, difficulty, isRestart: true });
       navigate(ROUTES.Practice, true);
     } catch (error) {
       console.error('Failed to restart progress:', error);
