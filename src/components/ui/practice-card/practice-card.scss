@@ -187,3 +187,10 @@
     background-position: 200% 50%;
   }
 }
+
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    max-width: none;
+  }
+}
