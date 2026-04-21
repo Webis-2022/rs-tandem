@@ -1004,11 +1004,6 @@ flowchart LR
 
 ---
 
-layout: center
-class: text-center
-
----
-
 # Итого
 
 <div class="grid grid-cols-4 gap-6 mt-8 text-center">
