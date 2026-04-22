@@ -3,7 +3,7 @@
 
 .card {
   width: 50%;
-  max-width: 600px;
+  min-width: 300px;
 
   border-radius: v.$border-radius;
   background-color: var(--practice-card-bg, v.$primary-dark);
@@ -103,13 +103,24 @@
   -webkit-text-stroke: 0.5px black;
 }
 
+.topic {
+  font-size: calc(
+    v.$font-size-base + (24 - 16) * ((100vw - 320px) / (1440 - 320))
+  );
+}
+
 .difficulty {
+  font-size: calc(
+    v.$font-size-sm + (16 - 12) * ((100vw - 320px) / (1440 - 320))
+  );
   margin-bottom: v.$spacing-sm;
 }
 
 .question-container {
   margin-bottom: v.$spacing-lg;
-  font-size: v.$font-size-lg;
+  font-size: calc(
+    v.$font-size-base + (24 - 16) * ((100vw - 320px) / (1440 - 320))
+  );
   font-weight: bold;
   text-align: center;
   background-color: var(--practice-card-question-bg, v.$color-white);
