@@ -33,8 +33,6 @@ mdc: true
 
 ---
 
-## layout: intro
-
 # Команда DevBand
 
 <div class="grid grid-cols-3 gap-8 mt-8">
@@ -71,8 +69,6 @@ mdc: true
 </div>
 
 ---
-
-## layout: two-cols
 
 # Что такое DOMinator?
 
@@ -112,11 +108,6 @@ Landing
 </div>
 
 </div>
-
----
-
-layout: center
-class: text-center
 
 ---
 
@@ -261,8 +252,6 @@ class: text-center
 </div>
 
 ---
-
-## layout: two-cols
 
 # Глобальный State
 
@@ -431,11 +420,6 @@ if (result.confirmed) {
 </div>
 
 </div>
-
----
-
-layout: center
-class: text-center
 
 ---
 
