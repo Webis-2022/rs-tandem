@@ -63,7 +63,7 @@ mdc: true
 </div>
 
 <div class="mt-10 text-center opacity-60">
-  <span class="text-sm">Ментор: Иван</span>
+  <span class="text-sm">Ментор: iShvets</span>
   <span class="mx-4">·</span>
   <span class="text-sm">5 командных встреч</span>
   <span class="mx-4">·</span>
@@ -503,34 +503,37 @@ flowchart LR
 
 ---
 
-# Приложение в действии
+# Приложение в работе
 
-<div class="grid grid-cols-3 gap-4 mt-6">
+<div class="grid grid-cols-2 gap-4 mt-4">
 
 <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
   <div class="bg-gray-200 dark:bg-gray-700 px-3 py-2 text-xs font-bold opacity-60">Library — выбор темы</div>
-  <img src="/screen-library.png" alt="Library" class="w-full h-44 object-cover object-top" />
+  <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center h-44">
+    <img src="/screen-library.png" alt="Library" class="max-w-full max-h-44 object-contain" />
+  </div>
 </div>
 
 <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
   <div class="bg-gray-200 dark:bg-gray-700 px-3 py-2 text-xs font-bold opacity-60">Practice — игровой экран</div>
-  <img src="/screen-practice.png" alt="Practice" class="w-full h-44 object-cover object-top" />
-</div>
-
-<div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-  <div class="bg-gray-200 dark:bg-gray-700 px-3 py-2 text-xs font-bold opacity-60">Dashboard — результаты</div>
-  <div class="h-44 flex items-center justify-center text-gray-400 text-xs flex-col gap-2 p-4 text-center">
-    <span class="text-3xl">📊</span>
-    <span>Добавь скриншот:<br/><code class="text-xs">public/screen-dashboard.png</code></span>
+  <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center h-44">
+    <img src="/screen-practice.png" alt="Practice" class="max-w-full max-h-44 object-contain" />
   </div>
 </div>
 
 </div>
 
+<div class="mt-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+  <div class="bg-gray-200 dark:bg-gray-700 px-3 py-2 text-xs font-bold opacity-60">Dashboard — история результатов</div>
+  <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center h-36">
+    <img src="/screen-dashboard.png" alt="Dashboard" class="max-w-full max-h-36 object-contain" />
+  </div>
+</div>
+
 <div class="mt-5 text-center">
   <a href="https://webis-2022-rs-tandem.netlify.app/" target="_blank"
      class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
-    🚀 Открыть живую версию
+    🚀 Открыть приложение
   </a>
 </div>
 
