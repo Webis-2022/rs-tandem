@@ -616,7 +616,7 @@ flowchart LR
   <span class="text-xl">📋</span>
   <div>
     <div class="font-bold">Trello для задач</div>
-    <div class="text-xs opacity-70 mt-0.5">Backlog → In Progress → Done. Середине проекта навели порядок на доске — всё разъехалось</div>
+    <div class="text-xs opacity-70 mt-0.5">Backlog → ToDo → In Progress → Done.</div>
   </div>
 </div>
 
