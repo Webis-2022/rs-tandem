@@ -514,11 +514,44 @@ flowchart LR
   </div>
 </div>
 
-<div class="mt-5 text-center">
+<div class="mt-5 text-center" style="margin-top: 0.75rem; position: relative; top: -5px;">
   <a href="https://webis-2022-rs-tandem.netlify.app/" target="_blank"
      class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
     🚀 Открыть приложение
   </a>
+</div>
+
+---
+
+# Система ачивок
+
+<div class="grid grid-cols-3 gap-8 mt-8">
+
+<div class="text-center p-6 bg-red-50 dark:bg-red-900 rounded-xl">
+  <div class="text-6xl mb-4">😔</div>
+  <div class="text-2xl font-bold">Loser</div>
+  <div class="text-sm mt-2 opacity-70">Score ≤ 50%</div>
+  <div class="text-xs mt-3 opacity-60">Недостаточные знания. Рекомендуется больше практики</div>
+</div>
+
+<div class="text-center p-6 bg-yellow-50 dark:bg-yellow-900 rounded-xl">
+  <div class="text-6xl mb-4">⚔️</div>
+  <div class="text-2xl font-bold">Master</div>
+  <div class="text-sm mt-2 opacity-70">Score 51–85%</div>
+  <div class="text-xs mt-3 opacity-60">Уверенное знание с пространством для роста</div>
+</div>
+
+<div class="text-center p-6 bg-green-50 dark:bg-green-900 rounded-xl">
+  <div class="text-6xl mb-4">🧘</div>
+  <div class="text-2xl font-bold">Guru</div>
+  <div class="text-sm mt-2 opacity-70">Score 86–100%</div>
+  <div class="text-xs mt-3 opacity-60">Отличные знания и готовность к интервью</div>
+</div>
+
+</div>
+
+<div class="mt-8 text-center opacity-70 text-sm">
+  Ачивка отображается на final screen и <strong>сохраняется в Supabase</strong> — видна в истории игр на Dashboard
 </div>
 
 ---
@@ -823,39 +856,6 @@ flowchart LR
 
 </div>
 
-</div>
-
----
-
-# Система ачивок
-
-<div class="grid grid-cols-3 gap-8 mt-8">
-
-<div class="text-center p-6 bg-red-50 dark:bg-red-900 rounded-xl">
-  <div class="text-6xl mb-4">😔</div>
-  <div class="text-2xl font-bold">Loser</div>
-  <div class="text-sm mt-2 opacity-70">Score ≤ 50%</div>
-  <div class="text-xs mt-3 opacity-60">Недостаточные знания. Рекомендуется больше практики</div>
-</div>
-
-<div class="text-center p-6 bg-yellow-50 dark:bg-yellow-900 rounded-xl">
-  <div class="text-6xl mb-4">⚔️</div>
-  <div class="text-2xl font-bold">Master</div>
-  <div class="text-sm mt-2 opacity-70">Score 51–85%</div>
-  <div class="text-xs mt-3 opacity-60">Уверенное знание с пространством для роста</div>
-</div>
-
-<div class="text-center p-6 bg-green-50 dark:bg-green-900 rounded-xl">
-  <div class="text-6xl mb-4">🧘</div>
-  <div class="text-2xl font-bold">Guru</div>
-  <div class="text-sm mt-2 opacity-70">Score 86–100%</div>
-  <div class="text-xs mt-3 opacity-60">Отличные знания и готовность к интервью</div>
-</div>
-
-</div>
-
-<div class="mt-8 text-center opacity-70 text-sm">
-  Ачивка отображается на final screen и <strong>сохраняется в Supabase</strong> — видна в истории игр на Dashboard
 </div>
 
 ---
