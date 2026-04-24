@@ -253,62 +253,6 @@ Landing
 
 ---
 
-# Глобальный State
-
-**Один объект — единый источник правды для всего приложения**
-
-<v-clicks>
-
-<div class="mt-4 space-y-3">
-
-<div class="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg text-sm">
-  <div class="font-bold">👤 user</div>
-  <div class="text-xs opacity-70 mt-1">кто залогинен, токен сессии</div>
-</div>
-
-<div class="p-3 bg-green-50 dark:bg-green-900 rounded-lg text-sm">
-  <div class="font-bold">🎮 game</div>
-  <div class="text-xs opacity-70 mt-1">тема, сложность, очки, раунд, подсказки, ошибки, режим (обычная / супер-игра)</div>
-</div>
-
-<div class="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg text-sm">
-  <div class="font-bold">🎨 ui</div>
-  <div class="text-xs opacity-70 mt-1">тема оформления, текущий маршрут, состояние меню</div>
-</div>
-
-</div>
-
-</v-clicks>
-
-::right::
-
-<div class="pl-6 mt-8">
-
-<v-clicks>
-
-**Где это хранится?**
-
-| Данные        | Где живут                                        |
-| ------------- | ------------------------------------------------ |
-| Пользователь  | `localStorage` + Supabase Auth                   |
-| Активная игра | `localStorage` + таблица `active_games`          |
-| Настройки UI  | `localStorage` (тема сохраняется между сессиями) |
-
-<div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900 rounded-lg text-sm">
-  <div class="font-bold">Почему это важно</div>
-  <div class="text-xs opacity-80 mt-1">
-    Любой компонент — Header, игровая карточка, навигация —
-    подписывается на store и получает обновления автоматически.
-    Нет prop-drilling, нет рассинхрона.
-  </div>
-</div>
-
-</v-clicks>
-
-</div>
-
----
-
 # Router: кто куда может попасть
 
 <div class="grid grid-cols-2 gap-6 mt-6">
@@ -378,6 +322,62 @@ Landing
 </v-clicks>
 
 </div>
+
+</div>
+
+---
+
+# Глобальный State
+
+**Один объект — единый источник правды для всего приложения**
+
+<v-clicks>
+
+<div class="mt-4 space-y-3">
+
+<div class="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg text-sm">
+  <div class="font-bold">👤 user</div>
+  <div class="text-xs opacity-70 mt-1">кто залогинен, токен сессии</div>
+</div>
+
+<div class="p-3 bg-green-50 dark:bg-green-900 rounded-lg text-sm">
+  <div class="font-bold">🎮 game</div>
+  <div class="text-xs opacity-70 mt-1">тема, сложность, очки, раунд, подсказки, ошибки, режим (обычная / супер-игра)</div>
+</div>
+
+<div class="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg text-sm">
+  <div class="font-bold">🎨 ui</div>
+  <div class="text-xs opacity-70 mt-1">тема оформления, текущий маршрут, состояние меню</div>
+</div>
+
+</div>
+
+</v-clicks>
+
+::right::
+
+<div class="pl-6 mt-8">
+
+<v-clicks>
+
+**Где это хранится?**
+
+| Данные        | Где живут                                        |
+| ------------- | ------------------------------------------------ |
+| Пользователь  | `localStorage` + Supabase Auth                   |
+| Активная игра | `localStorage` + таблица `active_games`          |
+| Настройки UI  | `localStorage` (тема сохраняется между сессиями) |
+
+<div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900 rounded-lg text-sm">
+  <div class="font-bold">Почему это важно</div>
+  <div class="text-xs opacity-80 mt-1">
+    Любой компонент — Header, игровая карточка, навигация —
+    подписывается на store и получает обновления автоматически.
+    Нет prop-drilling, нет рассинхрона.
+  </div>
+</div>
+
+</v-clicks>
 
 </div>
 
