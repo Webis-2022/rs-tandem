@@ -476,10 +476,10 @@ flowchart LR
 
 **Persistence подсказок:**
 
-- Использованные хинты хранятся в `state.game.usedHints`
-- Синхронизируются в `active_games` таблицу Supabase
-- Кнопки дизейблятся через `usedHints[key] > 0`
-- При refresh страницы состояние восстанавливается из store **до рендера**
+- Каждую подсказку можно использовать один раз за топик
+- После использования кнопка отключается
+- Использованные подсказки учитываются в итоговой статистике
+- При восстановлении игры подсказки остаются использованными
 
 </div>
 
@@ -764,58 +764,6 @@ flowchart LR
 
 ---
 
-# Технические сложности
-
-<div class="grid grid-cols-2 gap-4 mt-5 text-sm">
-
-<div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-  <div class="flex gap-2 items-start">
-    <span class="text-lg">🔐</span>
-    <div>
-      <div class="font-bold">Supabase RLS и upsert</div>
-      <div class="text-xs opacity-70 mt-1">Создавать запись можно, обновить — нельзя. Оказалось, что upsert требует отдельных политик на INSERT и UPDATE. Заняло несколько часов отладки.</div>
-    </div>
-  </div>
-</div>
-
-<div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-  <div class="flex gap-2 items-start">
-    <span class="text-lg">⚡</span>
-    <div>
-      <div class="font-bold">Игра завершалась дважды</div>
-      <div class="text-xs opacity-70 mt-1">Финальная логика сохранения срабатывала из двух мест одновременно. Починили явным await и единственной точкой ответственности.</div>
-    </div>
-  </div>
-</div>
-
-<div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-  <div class="flex gap-2 items-start">
-    <span class="text-lg">🕐</span>
-    <div>
-      <div class="font-bold">Навигация до инициализации</div>
-      <div class="text-xs opacity-70 mt-1">При обновлении страницы приложение пыталось перейти куда-то ещё, хотя роутер ещё не был готов. Решили строгим порядком запуска.</div>
-    </div>
-  </div>
-</div>
-
-<div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-  <div class="flex gap-2 items-start">
-    <span class="text-lg">👻</span>
-    <div>
-      <div class="font-bold">Объяснение на чужой странице</div>
-      <div class="text-xs opacity-70 mt-1">Пока сервер отвечал (~2 сек), пользователь уходил на другую страницу — панель открывалась там. Добавили проверку: DOM-элемент ещё в документе?</div>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900 rounded-xl text-xs text-center">
-  Общий урок: асинхронный код без явного порядка и проверки контекста ведёт к непредсказуемым сайд-эффектам. Дисциплина <strong>await</strong> и проверки состояния обязательны.
-</div>
-
----
-
 # Тестирование
 
 <div class="grid grid-cols-2 gap-6 mt-4">
@@ -969,7 +917,7 @@ flowchart LR
 
 <div class="p-3 bg-yellow-50 dark:bg-yellow-900 rounded-xl">
   <div class="font-bold">📖 Документация — это артефакт команды</div>
-  <div class="text-xs opacity-70 mt-1">Дневники, meeting notes и CONTEXT_GLOBAL.md сэкономили часы при ревью и онбординге на новые задачи.</div>
+  <div class="text-xs opacity-70 mt-1">Дневники, meeting notes сэкономили часы при ревью и онбординге на новые задачи.</div>
 </div>
 
 <div class="p-3 bg-orange-50 dark:bg-orange-900 rounded-xl">
@@ -979,7 +927,7 @@ flowchart LR
 
 <div class="p-3 bg-purple-50 dark:bg-purple-900 rounded-xl">
   <div class="font-bold">⚡ Async без дисциплины = хаос</div>
-  <div class="text-xs opacity-70 mt-1">Большинство наших сложных багов — это потерянный await или нарушенный порядок инициализации. Правила помогают.</div>
+  <div class="text-xs opacity-70 mt-1">Большинство наших сложных багов — это потерянный await или нарушенный порядок инициализации.</div>
 </div>
 
 <div class="p-3 bg-red-50 dark:bg-red-900 rounded-xl">
