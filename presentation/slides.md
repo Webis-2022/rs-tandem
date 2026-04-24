@@ -514,7 +514,7 @@ flowchart LR
   </div>
 </div>
 
-<div class="mt-5 text-center">
+<div class="mt-5 text-center" style="margin-top: 0.75rem; position: relative; top: -5px;">
   <a href="https://webis-2022-rs-tandem.netlify.app/" target="_blank"
      class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
     🚀 Открыть приложение
